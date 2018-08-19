@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Imagenes/DB_GenEolico.png</file>
+        <file>Imagenes/red.png</file>
+        <file>Imagenes/BUS.png</file>
+        <file>Imagenes/GEN.png</file>
+        <file>Imagenes/PANEL.png</file>
+        <file>Imagenes/PC.png</file>
+        <file>Imagenes/VOL.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EstadoRed</class>
+ <widget class="QDialog" name="EstadoRed">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>878</width>
+    <height>448</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QLabel" name="label_pc">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>160</y>
+     <width>181</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="imagenes.qrc">:/Imagenes/PC.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_bus">
+   <property name="geometry">
+    <rect>
+     <x>66</x>
+     <y>146</y>
+     <width>801</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="imagenes.qrc">:/Imagenes/BUS.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_gen">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>12</y>
+     <width>141</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>GEN</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_boost">
+   <property name="geometry">
+    <rect>
+     <x>436</x>
+     <y>12</y>
+     <width>131</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>BOOST</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_vol">
+   <property name="geometry">
+    <rect>
+     <x>710</x>
+     <y>200</y>
+     <width>161</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>VOL</string>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="imagenes.qrc"/>
+ </resources>
+ <connections/>
+</ui>
