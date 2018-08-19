@@ -4,7 +4,6 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QLabel>
-#include "clickablelabel.h"
 #include "LACAN_SEND.h"
 #include "PC.h"
 
