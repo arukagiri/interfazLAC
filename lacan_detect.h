@@ -80,7 +80,7 @@ QString detect_err(uint8_t err){
 QString detect_var(uint8_t var){
        switch (var){
        case LACAN_VAR_STATUS:
-           return "vector de Estado";
+           return "Vector de Estado";
            break;
        case LACAN_VAR_II_MAX:
            return "Corriente de Entrada Max";

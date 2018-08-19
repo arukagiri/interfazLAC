@@ -16,14 +16,20 @@ public:
     ~EstadoRed();
 
 private slots:
-    void on_PC_clicked();
-    //void on_GEN_clicked();
-    //void on_BOOST_clicked();
-    //void on_VOL_clicked();
 
+    void on_button_gen_clicked();
 
 private:
     Ui::EstadoRed *ui;
+
+    float gen_v;
+    float gen_i;
+    float bust_v;
+    float bust_i;
+    float vol_v;
+    float vol_i;
+    void refresh_values(void);
+    void update_values(void);
 };
 
 #endif // ESTADORED_H

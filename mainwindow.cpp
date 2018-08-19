@@ -304,6 +304,7 @@ void MainWindow::on_button_STOP_clicked()
     do_log=FALSE;
 }
 
+
 void MainWindow::verificarHB(){
     //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
     //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de
@@ -356,3 +357,4 @@ void MainWindow::handleRead(){
         this->agregar_log_rec(msg_log);
     }
 }
+

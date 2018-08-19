@@ -73,7 +73,9 @@ int16_t LACAN_Post(QSerialPort& serial_port, uint16_t destino, uint16_t variable
     return LACAN_SUCCESS;
 }
 
+
 int16_t LACAN_Set(QSerialPort& serial_port, uint16_t destino, uint16_t variable, uint16_t data, uint8_t &msg_cod, vector<TIMED_MSG*>& msg_ack,vector<LACAN_MSG>& msg_log){
+
     LACAN_MSG msg;
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_SET<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -96,10 +98,12 @@ int16_t LACAN_Set(QSerialPort& serial_port, uint16_t destino, uint16_t variable,
     new_msg.ack_timer.start(WAIT_ACK_TIME);
     msg_ack.push_back(&new_msg);
 
+
     msg_log.push_back(msg);
 
     return LACAN_SUCCESS;
 }
+
 
 int16_t LACAN_Query(QSerialPort& serial_port, uint16_t destino, uint16_t variable, uint8_t &msg_cod, vector<TIMED_MSG*>& msg_ack,vector<LACAN_MSG>& msg_log){
     LACAN_MSG msg;
@@ -123,6 +127,7 @@ int16_t LACAN_Query(QSerialPort& serial_port, uint16_t destino, uint16_t variabl
     new_msg.ack_timer.start(WAIT_ACK_TIME);
     msg_ack.push_back(&new_msg);
 
+
     //if(start=0)
     msg_log.push_back(msg);
 
@@ -134,7 +139,9 @@ int16_t LACAN_Query(QSerialPort& serial_port, uint16_t destino, uint16_t variabl
     return LACAN_SUCCESS;
 }
 
+
 int16_t LACAN_Do(QSerialPort& serial_port, uint16_t destino, uint16_t comando, uint8_t &msg_cod, vector<TIMED_MSG*>& msg_ack, vector<LACAN_MSG>& msg_log){
+
     LACAN_MSG msg;
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_DO<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;

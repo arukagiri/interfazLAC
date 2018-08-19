@@ -33,10 +33,12 @@ public:
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
 
+
 public slots:
      void verificarACK();
 
      void verificarHB();
+
 private slots:
 
     void handleRead();
@@ -64,6 +66,7 @@ private:
     int inlog_cont;
     bool do_log;
     vector <HB_CONTROL*> hb_con;
+
 
 };
 

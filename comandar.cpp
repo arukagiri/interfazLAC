@@ -13,7 +13,9 @@ enum TIPO_VAR {MAX,MIN,SETP};
 enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS};
 
+
 Comandar::Comandar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t comdest0,QWidget *parent) :
+
     QDialog(parent),
     ui(new Ui::Comandar)
 {
@@ -95,7 +97,9 @@ void Comandar::on_button_ENVIAR_clicked()
 {
     uint16_t data = ui->text_VALOR_COMANDO->text().toInt();
     //uint16_t data=ui->text_VALOR_COMANDO->text();
+
     int prevsize= msg_ack->size();
+
     if(ui->radio_DO->isChecked()){
         LACAN_Do(*serial_port,comdest,cmd,*code,*msg_ack,*msg_log);
     }else if(ui->radio_SET->isChecked()){
@@ -106,6 +110,7 @@ void Comandar::on_button_ENVIAR_clicked()
     if(msg_ack->size()>prevsize){
         connect(&(msg_ack->back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
+
     mw->agregar_log_sent(*msg_log);
 
     this->close();

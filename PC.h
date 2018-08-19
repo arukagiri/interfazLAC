@@ -123,6 +123,7 @@
 #define LACAN_REQ_DO            0x02
 #define LACAN_REQ_QRY           0x03
 
+
 // C digos de respuesta del protocolo
 #define LACAN_SUCCESS           0
 #define LACAN_FAILURE           -1
@@ -135,8 +136,10 @@
 #define ACK_TIMEOUT     2
 
 //Estados de los dispositivos segun heartbeat
+
 #define ACTIVE      true
 #define INACTIVE    false
+
 
 //Mascaras y corrimientos
 #define DLC_MASK            15//mascara para extraer el dlc del segundo byte del mensaje
@@ -145,6 +148,7 @@
 #define FUN_MOV_BOTTOM      5
 #define FUN_MOV_UPPER       3
 #define FUN_MOV_FORSOURCE   5//movimiento para poder armar la ID con la source y la fun
+
 
 #define HB_TIME 5000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
 #define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
@@ -183,6 +187,7 @@ typedef struct LACAN_MSG LACAN_MSG;
 struct  TIMED_MSG{
         LACAN_MSG msg;
         QTimer ack_timer;
+
         uint8_t ack_status;
 };
 
@@ -192,6 +197,7 @@ typedef struct TIMED_MSG TIMED_MSG;
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones
 struct  HB_CONTROL{
         QTimer hb_timer;
+
         bool hb_status;
         uint8_t device;
 };
@@ -204,6 +210,5 @@ struct ABSTRACTED_MSG{
     QString fun, com, dest, var_type, var_val, err_code, ack_res, ack_code,curr_time;
 
 };
-
 
 #endif // PC_H_INCLUDED

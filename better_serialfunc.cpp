@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QDebug>
 #include "tiempo.h"
+
 using namespace std;
 
 //Envia un mensaje ya armado por el puerto que se tiene abierto

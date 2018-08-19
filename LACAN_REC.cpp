@@ -1,6 +1,7 @@
 #include "LACAN_REC.h"
 
 int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen){
+
     //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
     uint16_t source=mje.ID&LACAN_IDENT_MASK;
     uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
@@ -18,8 +19,8 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	case LACAN_FUN_ACK:
         LACAN_ACK_Handler(mje.BYTE1, msg_ack);
 	break;
-	case LACAN_FUN_POST:
-        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);//no necesita ACK
+    case LACAN_FUN_POST:
+        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
 	break;
 	case LACAN_FUN_ERR:
 	//	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
@@ -41,6 +42,7 @@ void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
 //crear archivo para cada variable e ir guardando en bloc de notas
 }
 
+
 void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
     //Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
@@ -51,6 +53,7 @@ void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
         }
     }
 }
+
 
 void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con){
     //Cuando llega un HB, se identifica de que dispositivo proviene y luego se procede a renovar el estado como activo y reiniciar el timer
@@ -72,5 +75,6 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con){
         newdev.hb_timer.start(DEAD_HB_TIME);
         newdev.hb_status=ACTIVE;
         hb_con.push_back(&newdev);
+
     }
 }

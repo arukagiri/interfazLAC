@@ -37,7 +37,6 @@ SOURCES += \
     LACAN_REC.cpp \
     tiempo.cpp \
     LACAN_PRO.cpp \
-    clickablelabel.cpp \
     better_serialfunc.cpp
 
 HEADERS += \
@@ -53,7 +52,6 @@ HEADERS += \
     LACAN_PRO.h \
     pc.h \
     lacan_detect.h \
-    clickablelabel.h \
     better_serialfunc.h
 
 FORMS += \

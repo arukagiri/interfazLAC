@@ -17,6 +17,7 @@ class Enviar_Mensaje : public QDialog
 
 public:
     explicit Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t dest0,QWidget *parent);
+
     ~Enviar_Mensaje();
 
 private:

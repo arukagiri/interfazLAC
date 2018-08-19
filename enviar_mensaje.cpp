@@ -14,7 +14,9 @@ enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS,COUP,DECOUP,MAG,TRIP};
 enum ERRORES {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT_TRIP,EXT_TRIP};
 enum RESULTADOS{OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
 
+
 Enviar_Mensaje::Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t dest0,QWidget *parent) :
+
     QDialog(parent),
     ui(new Ui::Enviar_Mensaje)
 {
@@ -608,6 +610,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     uint16_t ack_cod = ui->text_CODIGO->text().toInt();
     int prevsize=msg_ack->size();
 
+
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
         LACAN_Do(*serial_port,dest,cmd,*code,*msg_ack,*msg_log);
@@ -633,9 +636,11 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         break;
     }
 
+
     if(msg_ack->size()>prevsize){
         connect(&(msg_ack->back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
+
 
     mw->agregar_log_sent(*msg_log);
 
