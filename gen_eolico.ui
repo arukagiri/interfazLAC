@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
-    <height>463</height>
+    <width>936</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,17 +16,17 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>971</width>
-     <height>461</height>
+     <x>10</x>
+     <y>10</y>
+     <width>901</width>
+     <height>521</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="imagenes.qrc">:/Imagenes/DB_GenEolico.png</pixmap>
+    <pixmap resource="imagenes.qrc">:/Imagenes/DB_GEN.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

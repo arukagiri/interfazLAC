@@ -2,7 +2,6 @@
 #include "ui_consultar.h"
 #include "LACAN_SEND.h"
 #include "PC.h"
-#include "serialib.h"
 #include <QDebug>
 #include <iostream>
 #include "mainwindow.h"

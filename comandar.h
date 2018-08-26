@@ -2,7 +2,6 @@
 #define COMANDAR_H
 
 #include <QDialog>
-#include "serialib.h"
 #include "mainwindow.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>

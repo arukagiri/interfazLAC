@@ -1,8 +1,6 @@
 #ifndef LACAN_SEND_H_INCLUDED
 #define LACAN_SEND_H_INCLUDED
 #include <vector>
-#include "serialib.h"
-#include "serialfunc.h"
 #include "PC.h"
 #include <iostream>
 #include <stdint.h>

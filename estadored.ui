@@ -155,14 +155,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QLabel" name="label_bust_v">
+       <widget class="QLabel" name="label_boost_v">
         <property name="text">
          <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_bust_i">
+       <widget class="QLabel" name="label_boost_i">
         <property name="text">
          <string>corriente </string>
         </property>

@@ -1,6 +1,5 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "serialib.h"
 
 #include <QMainWindow>
 #include <QTableWidget>
@@ -26,6 +25,8 @@ public:
 
      Ui::MainWindow *ui;
 
+     void change_ERflag(void);
+
      static void set_item(int,int, QString item);
 
      void agregar_log_sent(vector <LACAN_MSG> msg_log);
@@ -33,8 +34,14 @@ public:
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
 
+signals:
+     void postforER_arrived(LACAN_MSG msg);
 
 public slots:
+     //TEST ONLY
+     void t1_Handler();
+     //<---
+
      void verificarACK();
 
      void verificarHB();
@@ -66,7 +73,7 @@ private:
     int inlog_cont;
     bool do_log;
     vector <HB_CONTROL*> hb_con;
-
+    bool ERflag;
 
 };
 

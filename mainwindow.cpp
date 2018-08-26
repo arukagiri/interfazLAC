@@ -128,15 +128,20 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     serial_port=&serial_port0;
     do_log=FALSE;
+    ERflag= false;
     outlog_cont=0;
     inlog_cont=0;
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
+
+
+    QTimer *t1=new QTimer();
+    connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
+    t1->start(5000);
 
     //this->setLayout(ui->verticalLayout_7);
 
@@ -172,6 +177,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::t1_Handler(){
+    LACAN_MSG msg_test;
+    msg_test.ID=(LACAN_ID_BOOST | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg_test.BYTE1=LACAN_VAR_II;
+    msg_test.BYTE2=100;
+    emit postforER_arrived(msg_test);
+}
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
@@ -243,9 +255,11 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 
 void MainWindow::on_button_ESTADO_RED_clicked()
 {
-    EstadoRed *estwin = new EstadoRed(this);
+    EstadoRed *estwin = new EstadoRed(*serial_port,msg_ack,code,msg_log,do_log,this);
     estwin->setModal(true);
     estwin->show();
+    ERflag=true;
+    connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
 
 void MainWindow::agregar_log_sent(vector <LACAN_MSG> msg_log){
@@ -349,12 +363,24 @@ void MainWindow::handleRead(){
         msg=mensaje_recibido2(pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
-        result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen);
-        //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
-        if(hb_con.size()>prevsize){
-            connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
+        if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
+            emit postforER_arrived(msg);
+        }else{
+            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen);
+            //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
+            if(hb_con.size()>prevsize){
+                connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
+            }
         }
         this->agregar_log_rec(msg_log);
     }
+
 }
 
+void MainWindow::change_ERflag(){
+    if(ERflag){
+        ERflag=false;
+    }else{
+        ERflag=true;
+    }
+}

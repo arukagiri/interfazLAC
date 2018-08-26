@@ -1,6 +1,5 @@
 #ifndef CONSULTAR_H
 #define CONSULTAR_H
-#include "serialib.h"
 #include <QDialog>
 #include "PC.h"
 #include "LACAN_SEND.h"
