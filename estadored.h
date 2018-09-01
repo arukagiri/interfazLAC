@@ -18,6 +18,9 @@ public:
     explicit EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,QWidget *parent);
     ~EstadoRed();
 
+signals:
+    void postforGEN_arrived(LACAN_MSG msg);
+
 private slots:
     void ERpost_Handler(LACAN_MSG msg);
 
@@ -48,6 +51,9 @@ private:
 
     void refresh_values(void);
     void send_qry(void);
+
+
+
 };
 
 #endif // ESTADORED_H

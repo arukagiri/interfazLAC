@@ -180,7 +180,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::t1_Handler(){
     LACAN_MSG msg_test;
-    msg_test.ID=(LACAN_ID_BOOST | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg_test.ID=(LACAN_ID_GEN | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg_test.BYTE1=LACAN_VAR_IO;
     msg_test.BYTE2=cont++;
     emit postforER_arrived(msg_test);

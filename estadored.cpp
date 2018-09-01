@@ -70,6 +70,7 @@ void EstadoRed::on_button_gen_clicked()
     Gen_Eolico *gen_win = new Gen_Eolico();
     gen_win->setModal(true);
     gen_win->show();
+    connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
 
@@ -132,6 +133,7 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         }
         break;
     case LACAN_ID_GEN:
+        emit postforGEN_arrived(msg);
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
             gen_i=msg.BYTE2;
