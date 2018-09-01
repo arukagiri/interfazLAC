@@ -60,6 +60,7 @@ EstadoRed::EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uin
 EstadoRed::~EstadoRed()
 {
     mw->change_ERflag();
+    //delete time_2sec;
     delete ui;
 }
 
@@ -69,25 +70,10 @@ void EstadoRed::on_button_gen_clicked()
     Gen_Eolico *gen_win = new Gen_Eolico();
     gen_win->setModal(true);
     gen_win->show();
-
 }
 
 
 void EstadoRed::refresh_values(){
-
-  /*  int value = 7;
-    ui->label_gen_v->setText( QString::number( value ) );
-
-    const QString text = ui->label_gen_v->text();
-    bool ok = true;
-    int valuew = text.toInt( &ok );
-    if ( ok )
-    {
-        valuew++;
-    }
-    ui->label_gen_i->setText( QString::number( valuew ) );
-*/
-
 
 ui->label_gen_v->setText(QString::number(gen_v));
 ui->label_gen_i->setText(QString::number(gen_i));
@@ -98,39 +84,33 @@ ui->label_boost_i->setText(QString::number(boost_i));
 ui->label_vol_v->setText(QString::number(vol_v));
 ui->label_vol_i->setText(QString::number(vol_i));
 
-
 }
 
 void EstadoRed::send_qry(){
-    /*
+
     LACAN_Query(*serial_port,LACAN_ID_GEN,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);
     LACAN_Query(*serial_port,LACAN_ID_GEN,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);
 
     LACAN_Query(*serial_port,LACAN_ID_VOLANTE,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);
     LACAN_Query(*serial_port,LACAN_ID_VOLANTE,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);
 
     LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);
     LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
-    mw->agregar_log_sent(*msg_log);*/
+
+    qDebug()<<"Entro a qry";
+    mw->agregar_log_sent(*msg_log);
 }
 
 
 void EstadoRed::timer_handler(){
     refresh_values();
     send_qry();
-
 }
 
 
 void EstadoRed::var_changed(uint16_t var, uint16_t data){
     qDebug()<<var;
     qDebug()<<data;
-
 }
 
 
@@ -139,10 +119,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
     switch (source) {
     case LACAN_ID_BOOST:
         switch (msg.BYTE1) {
-        case LACAN_VAR_II://PUSE LAS DE ENTRADA PORQ NO TENGO NI PUTA IDEA CUALES VAN
+        case LACAN_VAR_IO:
             boost_i=msg.BYTE2;
             break;
-        case LACAN_VAR_VI:
+        case LACAN_VAR_VO:
             boost_v=msg.BYTE2;
             break;
         default:
@@ -153,10 +133,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         break;
     case LACAN_ID_GEN:
         switch (msg.BYTE1) {
-        case LACAN_VAR_II:
+        case LACAN_VAR_IO:
             gen_i=msg.BYTE2;
             break;
-        case LACAN_VAR_VI:
+        case LACAN_VAR_VO:
             gen_v=msg.BYTE2;
             break;
         default:
@@ -165,10 +145,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         break;
     case LACAN_ID_VOLANTE:
         switch (msg.BYTE1) {
-        case LACAN_VAR_II:
+        case LACAN_VAR_IO:
             vol_i=msg.BYTE2;
             break;
-        case LACAN_VAR_VI:
+        case LACAN_VAR_VO:
             vol_v=msg.BYTE2;
             break;
         default:

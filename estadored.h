@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "PC.h"
 #include "mainwindow.h"
+#include <QTime>
 
 namespace Ui {
 class EstadoRed;
@@ -36,7 +37,6 @@ private:
     vector <LACAN_MSG> *msg_log;
     bool do_log;
     MainWindow* mw ;
-
     QTimer *time_2sec;
 
     float gen_v;

@@ -19,6 +19,7 @@
 #include <QStandardPaths>
 #include "LACAN_REC.h"
 
+uint8_t cont=0;
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -180,8 +181,8 @@ MainWindow::~MainWindow()
 void MainWindow::t1_Handler(){
     LACAN_MSG msg_test;
     msg_test.ID=(LACAN_ID_BOOST | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
-    msg_test.BYTE1=LACAN_VAR_II;
-    msg_test.BYTE2=100;
+    msg_test.BYTE1=LACAN_VAR_IO;
+    msg_test.BYTE2=cont++;
     emit postforER_arrived(msg_test);
 }
 
@@ -363,6 +364,7 @@ void MainWindow::handleRead(){
         msg=mensaje_recibido2(pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
+
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
         }else{

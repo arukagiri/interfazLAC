@@ -7,5 +7,6 @@
         <file>Imagenes/PANEL.png</file>
         <file>Imagenes/PC.png</file>
         <file>Imagenes/VOL.png</file>
+        <file>Imagenes/DB_GEN.png</file>
     </qresource>
 </RCC>
