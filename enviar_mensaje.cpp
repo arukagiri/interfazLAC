@@ -15,7 +15,7 @@ enum ERRORES {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT
 enum RESULTADOS{OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
 
 
-Enviar_Mensaje::Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t dest0,QWidget *parent) :
+Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
     QDialog(parent),
     ui(new Ui::Enviar_Mensaje)
@@ -33,63 +33,56 @@ Enviar_Mensaje::Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &ms
     ui->list_MENSAJE->addItem("HEARTBEAT");
     ui->list_MENSAJE->addItem("ACKNOWLEDGE");
 
+    mw = qobject_cast<MainWindow*>(this->parent());
 
-        dest=dest0;
-        serial_port=&serial_port0;
-        code=&code0;
-        msg_ack=&msg_ack0;
-        msg_log=&msg_log0;
-        mw = qobject_cast<MainWindow*>(this->parent());
-        do_log=do_log0;
+    ui->list_DESTINO->addItem("Broadcast");
+    ui->list_DESTINO->addItem("Generador Eolico");
+    ui->list_DESTINO->addItem("Volante de Inercia");
+    ui->list_DESTINO->addItem("Boost");
 
-        ui->list_DESTINO->addItem("Broadcast");
-        ui->list_DESTINO->addItem("Generador Eolico");
-        ui->list_DESTINO->addItem("Volante de Inercia");
-        ui->list_DESTINO->addItem("Boost");
-
-        switch(dest){
-        case LACAN_ID_BROADCAST:
-            ui->list_DESTINO->setCurrentIndex(BROAD);
-            qDebug()<<"broad";
-            break;
-        case LACAN_ID_GEN:
-            ui->list_DESTINO->setCurrentIndex(GEN_EOL);
-            qDebug()<<"gen";
-            break;
-        case LACAN_ID_VOLANTE:
-            ui->list_DESTINO->setCurrentIndex(VOL);
-            break;
-        case LACAN_ID_BOOST:
-            ui->list_DESTINO->setCurrentIndex(BOOST);
-            break;
-}
+    switch(mw->dest){
+    case LACAN_ID_BROADCAST:
+        ui->list_DESTINO->setCurrentIndex(BROAD);
+        qDebug()<<"broad";
+        break;
+    case LACAN_ID_GEN:
+        ui->list_DESTINO->setCurrentIndex(GEN_EOL);
+        qDebug()<<"gen";
+        break;
+    case LACAN_ID_VOLANTE:
+        ui->list_DESTINO->setCurrentIndex(VOL);
+        break;
+    case LACAN_ID_BOOST:
+        ui->list_DESTINO->setCurrentIndex(BOOST);
+        break;
+    }
 
 
-        ui->list_VARIABLE->addItem("Corriente de Entrada");
-        ui->list_VARIABLE->addItem("Corriente de Salida");
-        ui->list_VARIABLE->addItem("Corriente de ISD");
-        ui->list_VARIABLE->addItem("Corriente Eficaz");
-        ui->list_VARIABLE->addItem("Potencia de Entrada");
-        ui->list_VARIABLE->addItem("Potencia de Salida");
-        ui->list_VARIABLE->addItem("Tension de Entrada");
-        ui->list_VARIABLE->addItem("Tension de Salida");
-        ui->list_VARIABLE->addItem("Velocidad Angular");
-        ui->list_VARIABLE->addItem("Modo");
+    ui->list_VARIABLE->addItem("Corriente de Entrada");
+    ui->list_VARIABLE->addItem("Corriente de Salida");
+    ui->list_VARIABLE->addItem("Corriente de ISD");
+    ui->list_VARIABLE->addItem("Corriente Eficaz");
+    ui->list_VARIABLE->addItem("Potencia de Entrada");
+    ui->list_VARIABLE->addItem("Potencia de Salida");
+    ui->list_VARIABLE->addItem("Tension de Entrada");
+    ui->list_VARIABLE->addItem("Tension de Salida");
+    ui->list_VARIABLE->addItem("Velocidad Angular");
+    ui->list_VARIABLE->addItem("Modo");
 
-       ui->list_TIPO->addItem("Maxima");
-       ui->list_TIPO->addItem("Minima");
-       ui->list_TIPO->addItem("Set Point");
+    ui->list_TIPO->addItem("Maxima");
+    ui->list_TIPO->addItem("Minima");
+    ui->list_TIPO->addItem("Set Point");
 
 
-        ui->list_COMANDO->addItem("Start");
-        ui->list_COMANDO->addItem("Stop");
-        ui->list_COMANDO->addItem("Reset");
-        ui->list_COMANDO->addItem("MPPT_Enable");
-        ui->list_COMANDO->addItem("MPPT_Disable");
-        ui->list_COMANDO->addItem("Acoplar");
-        ui->list_COMANDO->addItem("Desacoplar");
-        ui->list_COMANDO->addItem("Magnetizar");
-        ui->list_COMANDO->addItem("Trip");
+    ui->list_COMANDO->addItem("Start");
+    ui->list_COMANDO->addItem("Stop");
+    ui->list_COMANDO->addItem("Reset");
+    ui->list_COMANDO->addItem("MPPT_Enable");
+    ui->list_COMANDO->addItem("MPPT_Disable");
+    ui->list_COMANDO->addItem("Acoplar");
+    ui->list_COMANDO->addItem("Desacoplar");
+    ui->list_COMANDO->addItem("Magnetizar");
+    ui->list_COMANDO->addItem("Trip");
 
 
     ui->list_ERROR->addItem("Generic Error");
@@ -114,14 +107,14 @@ Enviar_Mensaje::Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &ms
     ui->list_RESULTADO->addItem("GENERIC_FAILURE");
 
 
-        connect(ui->list_MENSAJE,SIGNAL(currentTextChanged(QString)),this,SLOT(MENSAJE_changed()));
-        DO_selected();
-        connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(VAR_Changed()));
-        connect(ui->list_TIPO,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_Changed()));
-        connect(ui->list_COMANDO,SIGNAL(currentTextChanged(QString)),this,SLOT(CMD_Changed()));
-        connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
-        connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
-        connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
+    connect(ui->list_MENSAJE,SIGNAL(currentTextChanged(QString)),this,SLOT(MENSAJE_changed()));
+    DO_selected();
+    connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(VAR_Changed()));
+    connect(ui->list_TIPO,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_Changed()));
+    connect(ui->list_COMANDO,SIGNAL(currentTextChanged(QString)),this,SLOT(CMD_Changed()));
+    connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
+    connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
+    connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
 
 
 
@@ -513,16 +506,16 @@ void Enviar_Mensaje::DEST_Changed(){
 
     switch(ui->list_DESTINO->currentIndex()){
         case BROAD:
-            dest=LACAN_ID_BROADCAST;
+            mw->dest=LACAN_ID_BROADCAST;
             break;
         case GEN_EOL:
-            dest=LACAN_ID_GEN;
+            mw->dest=LACAN_ID_GEN;
             break;
         case VOL:
-            dest=LACAN_ID_VOLANTE;
+            mw->dest=LACAN_ID_VOLANTE;
             break;
         case BOOST:
-            dest=LACAN_ID_BOOST;
+            mw->dest=LACAN_ID_BOOST;
             break;
         default:
             break;
@@ -608,41 +601,40 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
     uint16_t data = ui->text_VALOR->text().toInt();
     uint16_t ack_cod = ui->text_CODIGO->text().toInt();
-    int prevsize=msg_ack->size();
+    int prevsize=mw->msg_ack.size();
 
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
-        LACAN_Do(*serial_port,dest,cmd,*code,*msg_ack,*msg_log);
+        LACAN_Do(mw, cmd);
         break;
     case SET:
-        LACAN_Set(*serial_port,dest,var,data,*code,*msg_ack,*msg_log);
+        LACAN_Set(mw,var,data);
         break;
     case QRY:
-        LACAN_Query(*serial_port,dest,var, *code, *msg_ack, *msg_log);
+        LACAN_Query(mw,var);
         break;
     case POST:
-        LACAN_Post(*serial_port,dest,var,data,*msg_log);
+        LACAN_Post(mw,var,data);
         break;
     case HB:
-        LACAN_Heartbeat(*serial_port,*msg_log);
+        LACAN_Heartbeat(mw);
         break;
     case ERR:
-        qDebug()<<"ERROR DENTRO DE ENVIARMENSAJE = "<<err_cod;
-        LACAN_Error(*serial_port,err_cod,*msg_log);
+        LACAN_Error(mw,err_cod);
         break;
     case ACK:
-        LACAN_Acknowledge(*serial_port,dest,0,ack_cod,res,*msg_log);      //ver req type
+        LACAN_Acknowledge(mw,0,ack_cod,res);      //ver req type
         break;
     }
 
 
-    if(msg_ack->size()>prevsize){
-        connect(&(msg_ack->back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    if(mw->msg_ack.size()>prevsize){
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
 
-    mw->agregar_log_sent(*msg_log);
+    mw->agregar_log_sent();
 
     this->close();
 }

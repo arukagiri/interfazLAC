@@ -16,22 +16,14 @@ class Enviar_Mensaje : public QDialog
     Q_OBJECT
 
 public:
-    explicit Enviar_Mensaje(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t dest0,QWidget *parent);
+    explicit Enviar_Mensaje(QWidget *parent);
 
     ~Enviar_Mensaje();
 
 private:
 
     Ui::Enviar_Mensaje *ui;
-
-    QSerialPort *serial_port;
-
-    uint16_t dest;
     MainWindow* mw ;
-    uint8_t *code;
-    vector <TIMED_MSG*> *msg_ack;
-    vector <LACAN_MSG> *msg_log;
-    bool do_log;
 
     //estos de aca abajo podrian hacerse en una sola variable y que se vayan pisando... pero alta paja
     uint16_t var;

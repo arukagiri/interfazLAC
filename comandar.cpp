@@ -14,8 +14,7 @@ enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS};
 
 
-Comandar::Comandar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t comdest0,QWidget *parent) :
-
+Comandar::Comandar(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Comandar)
 {
@@ -25,17 +24,11 @@ Comandar::Comandar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8
     this->setFixedSize(ui->verticalLayout_2->sizeHint());
     this->setLayout(ui->verticalLayout_2);
 
-    comdest=comdest0;
-    serial_port=&serial_port0;
-    code=&code0;
-    msg_ack=&msg_ack0;
-    msg_log=&msg_log0;
     mw = qobject_cast<MainWindow*>(this->parent());
-    do_log=do_log0;
 
     ui->list_COMANDO->setDisabled(true);
 
-    switch(comdest){
+    switch(mw->dest){
         case LACAN_ID_GEN:
             ui->label_DESTINO->setText("Generador Eolico");
 
@@ -98,20 +91,20 @@ void Comandar::on_button_ENVIAR_clicked()
     uint16_t data = ui->text_VALOR_COMANDO->text().toInt();
     //uint16_t data=ui->text_VALOR_COMANDO->text();
 
-    int prevsize= msg_ack->size();
+    int prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
-        LACAN_Do(*serial_port,comdest,cmd,*code,*msg_ack,*msg_log);
+        LACAN_Do(mw,cmd);
     }else if(ui->radio_SET->isChecked()){
-        LACAN_Set(*serial_port,comdest,var_set,data,*code,*msg_ack,*msg_log);
+        LACAN_Set(mw,var_set,data);
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }
-    if(msg_ack->size()>prevsize){
-        connect(&(msg_ack->back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    if(mw->msg_ack.size()>prevsize){
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
-    mw->agregar_log_sent(*msg_log);
+    mw->agregar_log_sent();
 
     this->close();
 }

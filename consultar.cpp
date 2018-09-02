@@ -12,7 +12,7 @@ enum TIPO_VAR {MAX,MIN,SETP,INST};
 enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 
 
-Consultar::Consultar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,uint16_t consdest0, QWidget *parent) :
+Consultar::Consultar(QWidget *parent) :
 
     QDialog(parent),
     ui(new Ui::Consultar)
@@ -22,16 +22,10 @@ Consultar::Consultar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uin
     this->setFixedSize(ui->verticalLayout_2->sizeHint());
     this->setLayout(ui->verticalLayout_2);
 
-    serial_port=&serial_port0;
-    consdest=consdest0;
-    code=&code0;
-    msg_ack=&msg_ack0;
-    msg_log=&msg_log0;
-    do_log=do_log0;
     mw = qobject_cast<MainWindow*>(this->parent());
 
 
-    switch(consdest){
+    switch(mw->dest){
     case LACAN_ID_GEN:
         ui->label_DESTINO_QRY->setText("Generador Eolico");
 
@@ -79,14 +73,14 @@ Consultar::~Consultar()
 void Consultar::on_button_ENVIAR_QRY_clicked()
 {
 
-    int prevsize=msg_ack->size();
-    LACAN_Query(*serial_port,consdest,consulta, *code, *msg_ack, *msg_log);
+    int prevsize=mw->msg_ack.size();
+    LACAN_Query(mw,consulta);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
-    if(msg_ack->size()>prevsize){
-        connect(&(msg_ack->back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    if(mw->msg_ack.size()>prevsize){
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
-    mw->agregar_log_sent(*msg_log);
+    mw->agregar_log_sent();
 
     this->close();
 }

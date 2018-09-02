@@ -8,18 +8,12 @@
 #include "PC.h"
 #include <QTimer>
 
-EstadoRed::EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,QWidget *parent) :
+EstadoRed::EstadoRed(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EstadoRed)
 {
     ui->setupUi(this);
-    mw = qobject_cast<MainWindow*>(this->parent());
 
-    serial_port=&serial_port0;
-    code=&code0;
-    msg_ack=&msg_ack0;
-    msg_log=&msg_log0;
-    do_log=do_log0;
     mw = qobject_cast<MainWindow*>(this->parent());
 
     time_2sec = new QTimer();
@@ -86,17 +80,18 @@ ui->label_vol_i->setText(QString::number(vol_i));
 
 void EstadoRed::send_qry(){
 
-    LACAN_Query(*serial_port,LACAN_ID_GEN,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    LACAN_Query(*serial_port,LACAN_ID_GEN,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
-
-    LACAN_Query(*serial_port,LACAN_ID_VOLANTE,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    LACAN_Query(*serial_port,LACAN_ID_VOLANTE,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
-
-    LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
-    LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
+    mw->dest=LACAN_ID_GEN;
+    LACAN_Query(mw,LACAN_VAR_VO);
+    LACAN_Query(mw,LACAN_VAR_IO);
+    mw->dest=LACAN_ID_VOLANTE;
+    LACAN_Query(mw,LACAN_VAR_VO);
+    LACAN_Query(mw,LACAN_VAR_IO);
+    mw->dest=LACAN_ID_BOOST;
+    LACAN_Query(mw,LACAN_VAR_VO);
+    LACAN_Query(mw,LACAN_VAR_IO);
 
     qDebug()<<"Entro a qry";
-    mw->agregar_log_sent(*msg_log);
+    mw->agregar_log_sent();
 }
 
 

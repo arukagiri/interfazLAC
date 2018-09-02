@@ -29,7 +29,7 @@ public:
 
      static void set_item(int,int, QString item);
 
-     void agregar_log_sent(vector <LACAN_MSG> msg_log);
+     void agregar_log_sent();
 
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
@@ -62,10 +62,10 @@ private slots:
 
     void on_button_STOP_clicked();
 
-private:
+public:
 
     QSerialPort *serial_port;
-
+    uint16_t dest;
     vector <LACAN_MSG> msg_log;
     uint8_t code=0;
     vector <TIMED_MSG*> msg_ack;
