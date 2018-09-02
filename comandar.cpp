@@ -96,7 +96,6 @@ Comandar::~Comandar()
 void Comandar::on_button_ENVIAR_clicked()
 {
     uint16_t data = ui->text_VALOR_COMANDO->text().toInt();
-    //uint16_t data=ui->text_VALOR_COMANDO->text();
 
     int prevsize= msg_ack->size();
 

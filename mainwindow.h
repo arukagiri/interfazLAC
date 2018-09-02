@@ -9,6 +9,7 @@
 #include <iostream>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QMap>
 
 using namespace std;
 
@@ -33,6 +34,7 @@ public:
 
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
+     void verificar_destino();
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
@@ -63,9 +65,8 @@ private slots:
     void on_button_STOP_clicked();
 
 private:
-
     QSerialPort *serial_port;
-
+    uint16_t dest;
     vector <LACAN_MSG> msg_log;
     uint8_t code=0;
     vector <TIMED_MSG*> msg_ack;
@@ -74,7 +75,7 @@ private:
     bool do_log;
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
-
+    QMap<QString, uint16_t> disp_map;
 };
 
 #endif // MAINWINDOW_H

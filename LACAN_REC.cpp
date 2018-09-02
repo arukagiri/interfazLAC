@@ -1,6 +1,8 @@
 #include "LACAN_REC.h"
+#include <QMessageBox>
+#include <QDebug>
 
-int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen){
+int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map){
 
     //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
     uint16_t source=mje.ID&LACAN_IDENT_MASK;
@@ -26,7 +28,7 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	//	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
 	break;
 	case LACAN_FUN_HB:
-        LACAN_HB_Handler(source, hb_con);
+        LACAN_HB_Handler(source, hb_con, disp_map);
         break;
 	default:
 		return LACAN_NO_SUCH_MSG;
@@ -55,26 +57,55 @@ void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
 }
 
 
-void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con){
+void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString,uint16_t> disp_map){
     //Cuando llega un HB, se identifica de que dispositivo proviene y luego se procede a renovar el estado como activo y reiniciar el timer
     /*VER no haría falta el switch, con el for y el if ya estaría, solamente habría que agregar un if en el caso de dispositivo
     nuevo*/
-    switch(source){
-    case LACAN_ID_GEN:
-        for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
-            if((*it_hb)->device==source){
-                (*it_hb)->hb_status=ACTIVE;
-                (*it_hb)->hb_timer.start(DEAD_HB_TIME);
-            }
+    static vector<int> ignored;
+    bool devfound=false;
+    bool stalkerfound=false;
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
+        if((*it_hb)->device==source){
+            (*it_hb)->hb_status=ACTIVE;
+            (*it_hb)->hb_timer.start(DEAD_HB_TIME);
+            devfound=true;
+            break;
         }
-    break;
-    default:
-        cout<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
-        HB_CONTROL newdev;
-        newdev.device=source;
-        newdev.hb_timer.start(DEAD_HB_TIME);
-        newdev.hb_status=ACTIVE;
-        hb_con.push_back(&newdev);
+    }
+    for(vector<int>::iterator it_ig=ignored.begin();it_ig<ignored.end();it_ig++){
+        if((*it_ig)==source){
+            stalkerfound=true;
+        }
+    }
+    if(!(devfound&&stalkerfound)){
+        QMessageBox::StandardButton reply = QMessageBox::question(0,
+                                       "Nuevo dispositivo encontrado", "Ha llegado un Heartbeat de un dispositivo"
+                                                                       "desconocido,¿Desea agregarlo a la red?\n"
+                                                                       "En caso afirmativo se le pedira que ingrese"
+                                                                       "un nombre para el mismo",
+                              QMessageBox::Yes | QMessageBox::No );
+        switch (reply) {
+        case (QMessageBox::Yes):
+        {
+            qDebug()<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
+            HB_CONTROL newdev;
+            QString newdev_name;
+            newdev.device=source;
+            newdev.hb_timer.start(DEAD_HB_TIME);
+            newdev.hb_status=ACTIVE;
+            hb_con.push_back(&newdev);
+            newdev_name = "Name";// AGREGAR VENTANA QUE PREGUNTE CUAL VA A SER EL NOMBRE
+            if(!disp_map.contains(newdev_name)){
+                disp_map[newdev_name]=source;
+            }
+            break;
+        }
+        case (QMessageBox::No):
+        {
+            ignored.push_back(source);
+            break;
+        }
+        }
 
     }
 }

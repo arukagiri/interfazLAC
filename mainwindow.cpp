@@ -130,15 +130,19 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 {
     ui->setupUi(this);
     serial_port=&serial_port0;
-    do_log=FALSE;
+    do_log=false;
     ERflag= false;
+    dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
-
+    disp_map["Broadcast"]=LACAN_ID_BROADCAST;
+    disp_map["Generador Eolico"]=LACAN_ID_GEN;
+    disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
+    disp_map["Boost"]=LACAN_ID_BOOST;
 
     QTimer *t1=new QTimer();
     connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
@@ -172,10 +176,13 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::verificar_destino(){
+    dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
 
 void MainWindow::t1_Handler(){
@@ -188,20 +195,7 @@ void MainWindow::t1_Handler(){
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
-    uint16_t dest=0xFF;
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
-
+    verificar_destino();
     Comandar *comwin = new Comandar(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
     comwin->setModal(true);
     comwin->show();
@@ -209,19 +203,7 @@ void MainWindow::on_button_COMANDAR_clicked()
 
 void MainWindow::on_button_CONSULTAR_clicked()
 {
-    uint16_t dest=0xFF;
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
+    verificar_destino();
     Consultar *conswin = new Consultar(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
     conswin->setModal(true);
     conswin->show();
@@ -233,25 +215,10 @@ void MainWindow::on_button_CONSULTAR_clicked()
 
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
-    uint16_t dest=0xFF;
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
-
+    verificar_destino();
     Enviar_Mensaje *envwin = new Enviar_Mensaje(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
-
     envwin->setModal(true);
     envwin->show();
-
 }
 
 void MainWindow::on_button_ESTADO_RED_clicked()
@@ -279,7 +246,6 @@ void MainWindow::agregar_log_sent(vector <LACAN_MSG> msg_log){
     }
     agregar_textlog(abs_msg,"Enviado");
 }
-
 
 void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     ABSTRACTED_MSG abs_msg;
@@ -318,7 +284,6 @@ void MainWindow::on_button_STOP_clicked()
 {
     do_log=FALSE;
 }
-
 
 void MainWindow::verificarHB(){
     //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
@@ -368,7 +333,7 @@ void MainWindow::handleRead(){
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
         }else{
-            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen);
+            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
