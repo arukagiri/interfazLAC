@@ -17,7 +17,8 @@ class EstadoRed : public QDialog
 public:
     explicit EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0,QWidget *parent);
     ~EstadoRed();
-
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
 signals:
     void postforGEN_arrived(LACAN_MSG msg);
 

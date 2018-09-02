@@ -46,7 +46,6 @@ EstadoRed::EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uin
 
     time_2sec->start(2000);
 
-
 //LA IDEA ES QUE CADA VEZ QUE LLEGA UN POST CON UNA DE LAS VARIABLES DECLARADAS EN EL .H SE VAYA ACTUALIZANDO EL VALOR (guardandolo en las variables genV y genI apenas llega)
 //SE SUPONE QUE ESA VARIABLE VA A LLEGAR ANTES DEL SEGUNDO LO DE LOS 2 SEGUNDOS QUE TARDAN EN LLAMARSE LAS FUNCIONES
 //ENTONCES CUANDO SE LLAMAN A LAS FUNCUINES, LAS VARIABLES GEN_V Y GEN_I CONTIENEN EL VALOR ACTUAL DEL PARAMETRO
@@ -59,8 +58,6 @@ EstadoRed::EstadoRed(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uin
 
 EstadoRed::~EstadoRed()
 {
-    mw->change_ERflag();
-    //delete time_2sec;
     delete ui;
 }
 
@@ -162,4 +159,11 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         break;
     }
 
+}
+
+void EstadoRed::closeEvent(QCloseEvent *e){
+    mw->change_ERflag();
+    time_2sec->stop();
+    delete time_2sec;
+    QDialog::closeEvent(e);
 }
