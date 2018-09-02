@@ -36,14 +36,9 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	return LACAN_SUCCESS;
 }
 
-
-
-
-
 void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
 //crear archivo para cada variable e ir guardando en bloc de notas
 }
-
 
 void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
     //Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
@@ -55,7 +50,6 @@ void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
         }
     }
 }
-
 
 void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString,uint16_t> disp_map){
     //Cuando llega un HB, se identifica de que dispositivo proviene y luego se procede a renovar el estado como activo y reiniciar el timer
@@ -105,6 +99,8 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString
             ignored.push_back(source);
             break;
         }
+        default:
+            break;
         }
 
     }
