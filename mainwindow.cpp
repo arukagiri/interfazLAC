@@ -188,7 +188,7 @@ void MainWindow::t1_Handler(){
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
-    uint16_t dest=0xFF;
+
     if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
         dest=LACAN_ID_BROADCAST;
     }
@@ -202,14 +202,13 @@ void MainWindow::on_button_COMANDAR_clicked()
         dest=LACAN_ID_BOOST;
     }
 
-    Comandar *comwin = new Comandar(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
+    Comandar *comwin = new Comandar(this);
     comwin->setModal(true);
     comwin->show();
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
 {
-    uint16_t dest=0xFF;
     if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
         dest=LACAN_ID_BROADCAST;
     }
@@ -222,7 +221,7 @@ void MainWindow::on_button_CONSULTAR_clicked()
     if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
         dest=LACAN_ID_BOOST;
     }
-    Consultar *conswin = new Consultar(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
+    Consultar *conswin = new Consultar(this);
     conswin->setModal(true);
     conswin->show();
 
@@ -233,7 +232,6 @@ void MainWindow::on_button_CONSULTAR_clicked()
 
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
-    uint16_t dest=0xFF;
     if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
         dest=LACAN_ID_BROADCAST;
     }
@@ -247,7 +245,7 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
         dest=LACAN_ID_BOOST;
     }
 
-    Enviar_Mensaje *envwin = new Enviar_Mensaje(*serial_port,msg_ack,code,msg_log,do_log,dest,this);
+    Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();
@@ -256,14 +254,14 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 
 void MainWindow::on_button_ESTADO_RED_clicked()
 {
-    EstadoRed *estwin = new EstadoRed(*serial_port,msg_ack,code,msg_log,do_log,this);
+    EstadoRed *estwin = new EstadoRed(this);
     estwin->setModal(true);
     estwin->show();
     ERflag=true;
     connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
 
-void MainWindow::agregar_log_sent(vector <LACAN_MSG> msg_log){
+void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log);
     if(do_log){

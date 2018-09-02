@@ -15,7 +15,7 @@ class Consultar : public QDialog
     Q_OBJECT
 
 public:
-    explicit Consultar(QSerialPort &serial_port0,vector <TIMED_MSG*> &msg_ack0,uint8_t &code0,vector <LACAN_MSG> &msg_log0, bool do_log0, uint16_t consdest0 = 0, QWidget *parent = 0);
+    explicit Consultar(QWidget *parent = 0);
 
 
     ~Consultar();
@@ -28,16 +28,8 @@ private slots:
 
 private:
     Ui::Consultar *ui;
-
-    QSerialPort *serial_port;
-
-    uint16_t consdest;
     uint16_t consulta;
-    uint8_t *code;
-    vector <TIMED_MSG*> *msg_ack;
-    vector <LACAN_MSG> *msg_log;
     MainWindow* mw ;
-    bool do_log;
     void set_TIPO_CONSULTA();
 };
 
