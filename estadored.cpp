@@ -95,7 +95,7 @@ void EstadoRed::send_qry(){
     LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_VO, *code, *msg_ack, *msg_log);
     LACAN_Query(*serial_port,LACAN_ID_BOOST,LACAN_VAR_IO, *code, *msg_ack, *msg_log);
 
-    qDebug()<<"Entro a qry";
+    //qDebug()<<"Entro a qry";
     mw->agregar_log_sent(*msg_log);
 }
 

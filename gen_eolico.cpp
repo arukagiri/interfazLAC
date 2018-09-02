@@ -50,11 +50,14 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->lineEdit_vdc->setInputMask("99999");
     ui->lineEdit_ibat->setInputMask("99999");
 
-    new_mode();     //para que queden en grises los que correspondan
+    new_mode();                 //para que queden en grises los que correspondan
+    set_lineEdit_click(false);  //todo desclickeado
+
 
 //TIMER
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
     time_2sec->start(2000);
+
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -63,23 +66,15 @@ Gen_Eolico::~Gen_Eolico()
 }
 
 void Gen_Eolico::mode_changed(){
-    QMessageBox::StandardButton reply;
-    QString str="Esta seguro que desea cambiar el modo a: ";
-    str.append(ui->combo_modo->currentText());
-    reply = QMessageBox::question(this,"Cambiar Modo",str, QMessageBox::Yes | QMessageBox::No );
-
-    if(reply==QMessageBox::Yes){
-    actual_mode = ui->combo_modo->currentIndex();
     new_mode();
+    set_lineEdit_click(false);
     refresh_values();
-    }
-    else{
-    ui->combo_modo->setCurrentIndex(actual_mode);
-    }
 }
 
+
+
 void Gen_Eolico::new_mode(){
-    switch (actual_mode) {
+    switch (ui->combo_modo->currentIndex()) {
     case 0:     //Velocidad
         ui->lineEdit_iconv->setDisabled(true);
         ui->lineEdit_isd_ref->setDisabled(true);
@@ -131,72 +126,43 @@ void Gen_Eolico::new_mode(){
     default:
         break;
     }
-
 }
 
 void Gen_Eolico::timer_handler(){
     refresh_values();
 }
 
+//se actualizan los valores de los lineEdits que no estan siendo editados en este momento
 void Gen_Eolico::refresh_values(){
-    //DEPENDE DEL MODO SE VAN A MOSTRAR LOS VALORES (EN GENERAL SE MUESTRAN LOS MISMOS QUE ARRIBA ESTAN DISABLE)
-    //en cada uno hay que poner la LACAN_VARIABLE que corresponda
-    switch (actual_mode) {
-    case 0:     //Velocidad
-        ui->lineEdit_iconv->setText(QString::number(iconv));
-        ui->lineEdit_isd_ref->setText(QString::number(isd_ref));
-        ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
-        ui->lineEdit_lim_ief->setText(QString::number(lim_ief));
-        ui->lineEdit_lim_vdc->setText(QString::number(lim_vdc));
+    if(!speed_ref_click)
+        ui->lineEdit_speed_ref->setText(QString::number(speed_ref));
+    if(!pot_ref_click)
         ui->lineEdit_pot_ref->setText(QString::number(pot_ref));
-        ui->lineEdit_torque_ref->setText(QString::number(torque_ref));
-        ui->lineEdit_vdc->setText(QString::number(vdc));
-        ui->lineEdit_ibat->setText(QString::number(ibat));
-        break;
-    case 1:     //Potencia
-        ui->lineEdit_iconv->setText(QString::number(iconv));
-        ui->lineEdit_isd_ref->setText(QString::number(isd_ref));
-        ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
-        ui->lineEdit_lim_ief->setText(QString::number(lim_ief));
+    if(!lim_vdc_click)
         ui->lineEdit_lim_vdc->setText(QString::number(lim_vdc));
-        ui->lineEdit_speed_ref->setText(QString::number(speed_ref));
-        ui->lineEdit_torque_ref->setText(QString::number(torque_ref));
+    if(!vdc_click)
         ui->lineEdit_vdc->setText(QString::number(vdc));
-        ui->lineEdit_ibat->setText(QString::number(ibat));
-        break;
-    case 2:     //Torque
+    if(!iconv_click)
         ui->lineEdit_iconv->setText(QString::number(iconv));
-        ui->lineEdit_isd_ref->setText(QString::number(isd_ref));
-        ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
+    if(!lim_ief_click)
         ui->lineEdit_lim_ief->setText(QString::number(lim_ief));
-        ui->lineEdit_lim_vdc->setText(QString::number(lim_vdc));
-        ui->lineEdit_pot_ref->setText(QString::number(pot_ref));
-        ui->lineEdit_speed_ref->setText(QString::number(speed_ref));
-        ui->lineEdit_vdc->setText(QString::number(vdc));
-        ui->lineEdit_ibat->setText(QString::number(ibat));
-        break;
-    case 3:     //Potencia
-        ui->lineEdit_iconv->setText(QString::number(iconv));
-        ui->lineEdit_isd_ref->setText(QString::number(isd_ref));
-        ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
-        ui->lineEdit_lim_ief->setText(QString::number(lim_ief));
-        ui->lineEdit_lim_vdc->setText(QString::number(lim_vdc));
-        ui->lineEdit_speed_ref->setText(QString::number(speed_ref));
+    if(!torque_ref_click)
         ui->lineEdit_torque_ref->setText(QString::number(torque_ref));
-        ui->lineEdit_vdc->setText(QString::number(vdc));
+    if(!isd_ref_click)
+        ui->lineEdit_isd_ref->setText(QString::number(isd_ref));
+    if(!lim_ibat_click)
+        ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
+    if(!ibat_click)
         ui->lineEdit_ibat->setText(QString::number(ibat));
-        break;
-    default:
-        break;
-    }
 }
+
 
 //VER CUAL CORRESPONDE A CADA VARIABLE.............
 void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         switch (msg.BYTE1) {
-        case LACAN_VAR_IO:  //esta cual es? IO esta de prueba
+        /*case LACAN_VAR_IO:  //esta cual es? IO esta de prueba
             iconv=msg.BYTE2;
-        break;
+        break;*/
         case LACAN_VAR_ISD_SETP:
             isd_ref=msg.BYTE2;
         break;
@@ -206,16 +172,16 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_IEF_MAX:
             lim_ief=msg.BYTE2;
         break;
-       /* case LACAN_VAR_IO:
+         /*case LACAN_VAR_IO:
             lim_vdc=msg.BYTE2;
         break;
-        case LACAN_VAR_IO:
+       case LACAN_VAR_IO:
             pot_ref=msg.BYTE2;
-        break;
+        break;*/
         case LACAN_VAR_IO:
             speed_ref=msg.BYTE2;
         break;
-        case LACAN_VAR_IO:
+        /*case LACAN_VAR_IO:
             torque_ref=msg.BYTE2;
         break;
         case LACAN_VAR_IO:
@@ -227,4 +193,95 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
     default:
         break;
     }
+}
+
+void Gen_Eolico::on_pushButton_apply_clicked(){
+    QMessageBox::StandardButton reply;
+    QString str="Esta seguro que desea aplicar los cambios?";
+    //str.append(ui->combo_modo->currentText());
+    reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
+    if(reply==QMessageBox::Yes){
+    actual_mode = ui->combo_modo->currentIndex();
+    }
+    else{
+    on_pushButton_cancel_clicked();
+    }
+}
+
+void Gen_Eolico::on_pushButton_cancel_clicked(){
+    ui->combo_modo->setCurrentIndex(actual_mode);
+    new_mode();
+    refresh_values();
+    set_lineEdit_click(false);
+}
+
+
+
+void Gen_Eolico::set_lineEdit_click(bool state){
+    speed_ref_click=state;
+    pot_ref_click=state;
+    lim_vdc_click=state;
+    vdc_click=state;
+    iconv_click=state;
+    lim_ief_click=state;
+    torque_ref_click=state;
+    isd_ref_click=state;
+    lim_ibat_click=state;
+    ibat_click=state;
+}
+
+void Gen_Eolico::on_lineEdit_speed_ref_cursorPositionChanged(int arg1, int arg2)
+{
+   // speed_ref_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_speed_ref_textEdited(const QString &arg1)
+{
+    speed_ref_click=true;
+}
+
+
+void Gen_Eolico::on_lineEdit_pot_ref_textChanged(const QString &arg1)
+{
+    pot_ref_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_lim_vdc_textChanged(const QString &arg1)
+{
+    lim_vdc_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_vdc_textChanged(const QString &arg1)
+{
+    vdc_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_iconv_textChanged(const QString &arg1)
+{
+    iconv_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_lim_ief_textChanged(const QString &arg1)
+{
+    lim_ief_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_torque_ref_textChanged(const QString &arg1)
+{
+    torque_ref_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_isd_ref_textChanged(const QString &arg1)
+{
+   isd_ref_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_lim_ibat_textChanged(const QString &arg1)
+{
+    lim_ibat_click=true;
+}
+
+void Gen_Eolico::on_lineEdit_ibat_textChanged(const QString &arg1)
+{
+    ibat_click=true;
 }

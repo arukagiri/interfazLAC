@@ -142,7 +142,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 
     QTimer *t1=new QTimer();
     connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
-    t1->start(5000);
+    t1->start(1000);
 
     //this->setLayout(ui->verticalLayout_7);
 
