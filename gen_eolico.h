@@ -5,6 +5,8 @@
 #include "stdint.h"
 #include <QTime>
 #include "PC.h"
+#include "comandar.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class Gen_Eolico;
@@ -27,6 +29,7 @@ private:
     void new_mode();
     void refresh_values();
 
+    //variables para guardar el valor a mostrar
     int16_t iconv;         //para insertar solo numeros
     int16_t isd_ref;
     int16_t lim_ibat;
@@ -38,6 +41,7 @@ private:
     int16_t vdc;
     int16_t ibat;
 
+    //cuando se edita un valor
     void set_lineEdit_click(bool state);
     bool speed_ref_click;
     bool pot_ref_click;
@@ -73,6 +77,7 @@ private slots:
     void on_lineEdit_isd_ref_textChanged(const QString &arg1);
     void on_lineEdit_lim_ibat_textChanged(const QString &arg1);
     void on_lineEdit_ibat_textChanged(const QString &arg1);
+    void on_pushButton_comandar_clicked();
 };
 
 #endif // GEN_EOLICO_H

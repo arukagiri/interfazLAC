@@ -18,7 +18,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->combo_modo->addItem("Velocidad (0)");
     ui->combo_modo->addItem("Potencia (1)");
     ui->combo_modo->addItem("Torque (2)");
-    ui->combo_modo->addItem("Potencia (3)");
+    ui->combo_modo->addItem("MPPT (3)");
     actual_mode=ui->combo_modo->currentIndex();
 
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(mode_changed()));
@@ -65,63 +65,47 @@ Gen_Eolico::~Gen_Eolico()
     delete ui;
 }
 
+void Gen_Eolico::on_pushButton_comandar_clicked()
+{
+   Comandar *comwin = new Comandar(this);
+   comwin->setModal(true);
+   comwin->show();
+}
+
 void Gen_Eolico::mode_changed(){
     new_mode();
     set_lineEdit_click(false);
     refresh_values();
 }
 
-
-
 void Gen_Eolico::new_mode(){
     switch (ui->combo_modo->currentIndex()) {
     case 0:     //Velocidad
-        ui->lineEdit_iconv->setDisabled(true);
-        ui->lineEdit_isd_ref->setDisabled(true);
-        ui->lineEdit_lim_ibat->setDisabled(true);
-        ui->lineEdit_lim_ief->setDisabled(true);
-        ui->lineEdit_lim_vdc->setDisabled(true);
         ui->lineEdit_pot_ref->setDisabled(true);
         ui->lineEdit_speed_ref->setEnabled(true);
         ui->lineEdit_torque_ref->setDisabled(true);
-        ui->lineEdit_vdc->setDisabled(true);
-        ui->lineEdit_ibat->setDisabled(true);
+        //ui->lineEdit_vdc->setDisabled(true);
+        //ui->lineEdit_ibat->setDisabled(true);
+        //ui->lineEdit_iconv->setDisabled(true);
+        //ui->lineEdit_isd_ref->setDisabled(true);
+        //ui->lineEdit_lim_ibat->setDisabled(true);S
+        //ui->lineEdit_lim_ief->setDisabled(true);
+        //ui->lineEdit_lim_vdc->setDisabled(true);
         break;
     case 1:     //Potencia
-        ui->lineEdit_iconv->setDisabled(true);
-        ui->lineEdit_isd_ref->setDisabled(true);
-        ui->lineEdit_lim_ibat->setDisabled(true);
-        ui->lineEdit_lim_ief->setDisabled(true);
-        ui->lineEdit_lim_vdc->setDisabled(true);
         ui->lineEdit_pot_ref->setEnabled(true);
         ui->lineEdit_speed_ref->setDisabled(true);
         ui->lineEdit_torque_ref->setDisabled(true);
-        ui->lineEdit_vdc->setDisabled(true);
-        ui->lineEdit_ibat->setDisabled(true);
         break;
     case 2:     //Torque
-        ui->lineEdit_iconv->setDisabled(true);
-        ui->lineEdit_isd_ref->setDisabled(true);
-        ui->lineEdit_lim_ibat->setDisabled(true);
-        ui->lineEdit_lim_ief->setDisabled(true);
-        ui->lineEdit_lim_vdc->setDisabled(true);
         ui->lineEdit_pot_ref->setDisabled(true);
         ui->lineEdit_speed_ref->setDisabled(true);
         ui->lineEdit_torque_ref->setEnabled(true);
-        ui->lineEdit_vdc->setDisabled(true);
-        ui->lineEdit_ibat->setDisabled(true);
         break;
     case 3:     //Potencia
-        ui->lineEdit_iconv->setDisabled(true);
-        ui->lineEdit_isd_ref->setDisabled(true);
-        ui->lineEdit_lim_ibat->setDisabled(true);
-        ui->lineEdit_lim_ief->setDisabled(true);
-        ui->lineEdit_lim_vdc->setDisabled(true);
-        ui->lineEdit_pot_ref->setEnabled(true);
+        ui->lineEdit_pot_ref->setDisabled(true);
         ui->lineEdit_speed_ref->setDisabled(true);
         ui->lineEdit_torque_ref->setDisabled(true);
-        ui->lineEdit_vdc->setDisabled(true);
-        ui->lineEdit_ibat->setDisabled(true);
         break;
     default:
         break;
@@ -285,3 +269,4 @@ void Gen_Eolico::on_lineEdit_ibat_textChanged(const QString &arg1)
 {
     ibat_click=true;
 }
+

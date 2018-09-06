@@ -59,14 +59,14 @@ void EstadoRed::on_button_gen_clicked()
 
 void EstadoRed::refresh_values(){
 
-ui->label_gen_v->setText(QString::number(gen_v));
-ui->label_gen_i->setText(QString::number(gen_i));
+    ui->label_gen_v->setText(QString::number(gen_v));
+    ui->label_gen_i->setText(QString::number(gen_i));
 
-ui->label_boost_v->setText(QString::number(boost_v));
-ui->label_boost_i->setText(QString::number(boost_i));
+    ui->label_boost_v->setText(QString::number(boost_v));
+    ui->label_boost_i->setText(QString::number(boost_i));
 
-ui->label_vol_v->setText(QString::number(vol_v));
-ui->label_vol_i->setText(QString::number(vol_i));
+    ui->label_vol_v->setText(QString::number(vol_v));
+    ui->label_vol_i->setText(QString::number(vol_i));
 
 }
 
@@ -109,13 +109,16 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
             boost_v=msg.BYTE2;
             break;
         default:
-            //VER QUE PASA SI LLEGA UN POST CON OTRAS VARIABLES, QUIZA PODRIAMOS PASARLO A LA
-            //VENTANA DEL DISPOSITIVO (SI ESTA ABIERTA) PARA MOSTRARLOS EN EL DB
             break;
         }
         break;
+
+
     case LACAN_ID_GEN:
+
+        //se la paso a la pantalla de gen, si esta abierta
         emit postforGEN_arrived(msg);
+
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
             gen_i=msg.BYTE2;
@@ -127,6 +130,8 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
             break;
         }
         break;
+
+
     case LACAN_ID_VOLANTE:
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
