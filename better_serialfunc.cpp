@@ -119,8 +119,6 @@ bool readport2(char* pila, QSerialPort& serial_port){
     //ver de poner un while, es posible perder datos de esta forma TESTEAR
     while((newdataflag=serial_port.read(pila+index_pila,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
 
-        qDebug()<<"INDIC: "<<index_pila;
-
         //qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
 
 

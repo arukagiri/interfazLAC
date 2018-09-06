@@ -140,9 +140,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->the_one_true_list_DESTINO->addItem("Boost");
 
 
-    QTimer *t1=new QTimer();
+    t1=new QTimer();
     connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
-    //t1->start(1000);
+    t1->start(1000);
 
     //this->setLayout(ui->verticalLayout_7);
 
@@ -335,17 +335,26 @@ void MainWindow::verificarACK(){
     //no llega luego de un periodo de tiempo(WAIT_ACK_TIME) se setea al mensaje con la condicion ACK_TIMEOUT para que otra
     //parte del programa realice las acciones correspondientes, además un mensaje que recibio su correspondiente acknowledge
     //se sigue almacenando dentro del vector por un tiempo determinado (DEAD_MSJ_ACK_TIME) antes de que sea borrado
+
+    qDebug()<<"slot";
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
         if((*it_ack)->ack_status==RECEIVED){
             if((*it_ack)->ack_timer.remainingTime()<=0){
+                qDebug()<<"entro al if RECEIVED";
+                disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
             }
         }
-        else
-        if((*it_ack)->ack_timer.remainingTime()<=0){
-            (*it_ack)->ack_status=ACK_TIMEOUT;
-            no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
-        }
+        else{
+             qDebug()<<"1";
+            if((*it_ack)->ack_timer.remainingTime()<=0){    //EN ESTA LINEA TIRA UN ERROR
+                qDebug()<<"3";
+                (*it_ack)->ack_status=ACK_TIMEOUT;
+                qDebug()<<"entro al if timeout";
+                no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
+                disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
+                msg_ack.erase(it_ack);
+            }}
     }
 }
 
