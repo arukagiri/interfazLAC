@@ -155,14 +155,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QLabel" name="label_boost_v">
+       <widget class="QLabel" name="label_boost_vo">
         <property name="text">
          <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_boost_i">
+       <widget class="QLabel" name="label_boost_io">
         <property name="text">
          <string>corriente </string>
         </property>
@@ -203,14 +203,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <widget class="QLabel" name="label_gen_v">
+       <widget class="QLabel" name="label_gen_vo">
         <property name="text">
          <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_gen_i">
+       <widget class="QLabel" name="label_gen_io">
         <property name="text">
          <string>corriente </string>
         </property>
@@ -251,14 +251,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label_vol_v">
+       <widget class="QLabel" name="label_vol_vo">
         <property name="text">
          <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_vol_i">
+       <widget class="QLabel" name="label_vol_io">
         <property name="text">
          <string>corriente </string>
         </property>
@@ -395,14 +395,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_12">
       <item>
-       <widget class="QLabel" name="label_boost_v_in">
+       <widget class="QLabel" name="label_boost_vi">
         <property name="text">
          <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_boost_i_in">
+       <widget class="QLabel" name="label_boost_ii">
         <property name="text">
          <string>corriente </string>
         </property>

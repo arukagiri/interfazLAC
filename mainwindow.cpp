@@ -339,7 +339,8 @@ void MainWindow::verificarACK(){
     qDebug()<<"slot";
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
         if((*it_ack)->ack_status==RECEIVED){
-            if((*it_ack)->ack_timer.remainingTime()<=0){
+            //if((*it_ack)->ack_timer.remainingTime()<=0){
+            if(!((*it_ack)->ack_timer.isActive())){
                 qDebug()<<"entro al if RECEIVED";
                 disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
@@ -347,7 +348,12 @@ void MainWindow::verificarACK(){
         }
         else{
              qDebug()<<"1";
-            if((*it_ack)->ack_timer.remainingTime()<=0){    //EN ESTA LINEA TIRA UN ERROR
+             //if((*it_ack)->ack_timer.remainingTime()<=0){    //EN ESTA LINEA TIRA UN ERROR
+             qDebug()<<"Remaining: "<<(*it_ack)->ack_timer.remainingTime();
+             qDebug()<<"Is active: "<<(*it_ack)->ack_timer.isActive();
+             qDebug()<<"Shoot: "<<(*it_ack)->ack_timer.isSingleShot();
+
+             if(!((*it_ack)->ack_timer.isActive())){    //EN ESTA LINEA TIRA UN ERROR
                 qDebug()<<"3";
                 (*it_ack)->ack_status=ACK_TIMEOUT;
                 qDebug()<<"entro al if timeout";

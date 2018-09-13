@@ -13,7 +13,7 @@ enum TIPO_VAR {MAX,MIN,SETP};
 enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS};
 
-
+//PARA LA MAIN WINDOWS
 Comandar::Comandar(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Comandar)
@@ -28,6 +28,7 @@ Comandar::Comandar(QWidget *parent) :
 
     ui->list_COMANDO->setDisabled(true);
 
+    qDebug()<<mw->dest;
     switch(mw->dest){
         case LACAN_ID_GEN:
             ui->label_DESTINO->setText("Generador Eolico");
@@ -65,8 +66,61 @@ Comandar::Comandar(QWidget *parent) :
     cmd=LACAN_CMD_START;
 
     ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
-
 }
+
+//PARA LAS VENTANAS DE CADA DISPOSITIVO
+/*Comandar::Comandar(uint16_t destino, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::Comandar)
+{
+    ui->setupUi(this);
+
+    this->setWindowTitle("Comandar");
+    this->setFixedSize(ui->verticalLayout_2->sizeHint());
+    this->setLayout(ui->verticalLayout_2);
+
+    ui->list_COMANDO->setDisabled(true);
+
+    switch(destino){
+        case LACAN_ID_GEN:
+            ui->label_DESTINO->setText("Generador Eolico");
+
+            ui->list_VARIABLE->addItem("Corriente de Entrada");
+            ui->list_VARIABLE->addItem("Corriente de Salida");
+            ui->list_VARIABLE->addItem("Corriente de ISD");
+            ui->list_VARIABLE->addItem("Corriente Eficaz");
+            ui->list_VARIABLE->addItem("Potencia de Entrada");
+            ui->list_VARIABLE->addItem("Potencia de Salida");
+            ui->list_VARIABLE->addItem("Tension de Entrada");
+            ui->list_VARIABLE->addItem("Tension de Salida");
+            ui->list_VARIABLE->addItem("Velocidad Angular");
+            ui->list_VARIABLE->addItem("Modo");
+
+            ui->list_TIPO_SET->addItem("Maxima");
+            ui->list_TIPO_SET->addItem("Minima");
+            ui->list_TIPO_SET->addItem("Set Point");
+
+
+            ui->list_COMANDO->addItem("Start");
+            ui->list_COMANDO->addItem("Stop");
+            ui->list_COMANDO->addItem("Reset");
+            ui->list_COMANDO->addItem("MPPT_Enable");
+            ui->list_COMANDO->addItem("MPPT_Disable");
+    }
+    connect(ui->radio_DO,SIGNAL(clicked(bool)),this,SLOT(DO_selected()));
+    connect(ui->radio_SET,SIGNAL(clicked(bool)),this,SLOT(SET_selected()));
+
+    connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(SET_VAR_Changed()));
+    connect(ui->list_TIPO_SET,SIGNAL(currentTextChanged(QString)),this,SLOT(SET_TIPO_Changed()));
+    connect(ui->list_COMANDO,SIGNAL(currentTextChanged(QString)),this,SLOT(DO_CMD_Changed()));
+
+    var_set=LACAN_VAR_II_MAX;
+    cmd=LACAN_CMD_START;
+
+    ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
+}
+*/
+
 void Comandar::DO_selected(){
     ui->list_VARIABLE->setDisabled(true);
     ui->text_VALOR_COMANDO->setDisabled(true);

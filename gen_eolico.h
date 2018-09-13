@@ -7,6 +7,7 @@
 #include "PC.h"
 #include "comandar.h"
 #include "mainwindow.h"
+#include <QString>
 
 namespace Ui {
 class Gen_Eolico;
@@ -20,14 +21,23 @@ public:
     explicit Gen_Eolico(QWidget *parent = 0);
     ~Gen_Eolico();
 
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
+
 private:
     Ui::Gen_Eolico *ui;
     uint16_t actual_mode;
+    MainWindow* mw ;
+
+    uint16_t cmd;
+    uint16_t val;
+    QString text_val;
 
     QTimer *time_2sec;
 
     void new_mode();
     void refresh_values();
+    void send_qry();
 
     //variables para guardar el valor a mostrar
     int16_t iconv;         //para insertar solo numeros
@@ -40,6 +50,9 @@ private:
     int16_t torque_ref;
     int16_t vdc;
     int16_t ibat;
+
+    float gen_vo;
+    float gen_io;
 
     //cuando se edita un valor
     void set_lineEdit_click(bool state);
@@ -78,6 +91,8 @@ private slots:
     void on_lineEdit_lim_ibat_textChanged(const QString &arg1);
     void on_lineEdit_ibat_textChanged(const QString &arg1);
     void on_pushButton_comandar_clicked();
+    void on_pushButton_start_clicked();
+    void on_pushButton_stop_clicked();
 };
 
 #endif // GEN_EOLICO_H

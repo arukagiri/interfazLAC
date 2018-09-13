@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>976</width>
+    <width>1155</width>
     <height>560</height>
    </rect>
   </property>
@@ -35,8 +35,8 @@
   <widget class="QTextEdit" name="textEdit">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>10</y>
+     <x>800</x>
+     <y>20</y>
      <width>321</width>
      <height>71</height>
     </rect>
@@ -58,6 +58,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2) El modo potencia y mppt que eran distintos que onda&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;3) Line Edit de 37*17&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;4) Ver el temita de los numeros negativos&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;quiero&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;que&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;cuando&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;abra&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;la&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;ventana&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;quede&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;seleccionado&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;por&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;defecto&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;el&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;boton&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;de&lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt; color:#008000;&quot;&gt;cancelar &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;eso&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;se&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;hacia&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;desde&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;la&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;gui&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;asignandole&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;el&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;orden&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;de&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;cuando&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;apretas&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;tabs,&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;pero&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;lo&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;tengo&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;que&lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#c0c0c0;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; font-size:8pt; color:#008000;&quot;&gt;ver&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
@@ -656,62 +659,60 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>450</y>
-     <width>160</width>
-     <height>55</height>
+     <x>550</x>
+     <y>20</y>
+     <width>121</width>
+     <height>16</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="text">
+    <string>Variables de Salida:</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>50</y>
+     <width>170</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_14">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <widget class="QLabel" name="label_modo">
+       <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Modo:</string>
+         <string>Tension de salida (V):</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combo_modo">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>115</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>115</width>
-          <height>16777215</height>
-         </size>
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Corriente de salida (A):</string>
         </property>
        </widget>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
+     <layout class="QVBoxLayout" name="verticalLayout_7">
       <item>
-       <widget class="QPushButton" name="pushButton_apply">
+       <widget class="QLabel" name="label_gen_vo">
         <property name="text">
-         <string>Apply</string>
+         <string>tension</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_cancel">
+       <widget class="QLabel" name="label_gen_io">
         <property name="text">
-         <string>Cancel</string>
+         <string>corriente </string>
         </property>
        </widget>
       </item>
@@ -719,57 +720,117 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="pushButton_start">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>370</y>
-     <width>75</width>
-     <height>23</height>
+     <width>162</width>
+     <height>175</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Start</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_stop">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>370</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Stop</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_mm">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>370</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>?</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_comandar">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>400</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Comandar</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QPushButton" name="pushButton_start">
+          <property name="text">
+           <string>Start</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_stop">
+          <property name="text">
+           <string>Stop</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_comandar">
+        <property name="text">
+         <string>Comandar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>10</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_modo">
+          <property name="text">
+           <string>Modo:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="combo_modo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>115</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>115</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QPushButton" name="pushButton_apply">
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_cancel">
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

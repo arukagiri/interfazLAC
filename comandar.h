@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include "stdint.h"
 
 namespace Ui {
 class Comandar;
@@ -16,6 +17,7 @@ class Comandar : public QDialog
 
 public:
     explicit Comandar(QWidget *parent);
+    //explicit Comandar(uint16_t destino, QWidget *parent);
     ~Comandar();
 
 private:

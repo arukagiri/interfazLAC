@@ -3,14 +3,23 @@
 #include <QMessageBox>
 #include <QtCore>
 #include <QtGui>
-#include <QString>
 #include <QTimer>
+#include "PC.h"
+#include "LACAN_SEND.h"
 
+
+//quiero que cuando se abra la ventana quede seleccionado por defecto el boton de cancelar
+//eso se hacia desde la gui asignandole el orden de cuando apretas tabs, pero lo tengo que ver
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gen_Eolico)
 {
     ui->setupUi(this);
+
+    mw = qobject_cast<MainWindow*>(this->parent());
+    //mw->dest=LACAN_ID_GEN; //2 es la ID del GEN. cuando debugueo me pone 3, en la funcion, no 2
+                             //si paras el timer que corre en la pantalla estado de red, esto anda perfecto
+                             //creo que cuando mandas los qys de estado de red te pisan este valor
 
     time_2sec = new QTimer();
 
@@ -39,6 +48,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->lineEdit_vdc->setText("00000");
     ui->lineEdit_ibat->setText("00000");
 
+    ui->label_gen_io->setText("----");
+    ui->label_gen_vo->setText("----");
+
     ui->lineEdit_iconv->setInputMask("99999");         //para insertar solo numeros
     ui->lineEdit_isd_ref->setInputMask("99999");
     ui->lineEdit_lim_ibat->setInputMask("99999");
@@ -57,7 +69,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 //TIMER
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
     time_2sec->start(2000);
-
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -65,12 +76,35 @@ Gen_Eolico::~Gen_Eolico()
     delete ui;
 }
 
+//VER SI ANDA EL TEMA DEL CODE (mw->code)
 void Gen_Eolico::on_pushButton_comandar_clicked()
 {
-   Comandar *comwin = new Comandar(this);
+   //Comandar *comwin = new Comandar(LACAN_ID_GEN,this);
+   //Comandar *comwin = new Comandar(LACAN_ID_GEN,mw);
+   mw->dest=LACAN_ID_GEN;
+   Comandar *comwin = new Comandar(mw);
    comwin->setModal(true);
    comwin->show();
 }
+
+
+//VER SI ANDA EL TEMA DEL CODE (mw->code)
+void Gen_Eolico::on_pushButton_start_clicked()
+{
+    cmd=LACAN_CMD_START;
+    mw->dest=LACAN_ID_GEN;
+    LACAN_Do(mw,cmd);
+    mw->agregar_log_sent();
+}
+
+void Gen_Eolico::on_pushButton_stop_clicked()
+{
+    cmd=LACAN_CMD_STOP;
+    mw->dest=LACAN_ID_GEN;
+    LACAN_Do(mw,cmd);
+    mw->agregar_log_sent();
+}
+
 
 void Gen_Eolico::mode_changed(){
     new_mode();
@@ -114,6 +148,14 @@ void Gen_Eolico::new_mode(){
 
 void Gen_Eolico::timer_handler(){
     refresh_values();
+    //send_qry();
+}
+
+void Gen_Eolico::send_qry(){
+    //lista de variables a consultar
+    LACAN_Query(mw,LACAN_VAR_VO);
+    LACAN_Query(mw,LACAN_VAR_IO);
+
 }
 
 //se actualizan los valores de los lineEdits que no estan siendo editados en este momento
@@ -138,6 +180,9 @@ void Gen_Eolico::refresh_values(){
         ui->lineEdit_lim_ibat->setText(QString::number(lim_ibat));
     if(!ibat_click)
         ui->lineEdit_ibat->setText(QString::number(ibat));
+
+    ui->label_gen_vo->setText(QString::number(gen_vo));
+    ui->label_gen_io->setText(QString::number(gen_io));
 }
 
 
@@ -164,6 +209,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         break;*/
         case LACAN_VAR_IO:
             speed_ref=msg.BYTE2;
+            gen_io=msg.BYTE2;
         break;
         /*case LACAN_VAR_IO:
             torque_ref=msg.BYTE2;
@@ -179,14 +225,42 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
     }
 }
 
+
+
 void Gen_Eolico::on_pushButton_apply_clicked(){
     QMessageBox::StandardButton reply;
     QString str="Esta seguro que desea aplicar los cambios?";
     //str.append(ui->combo_modo->currentText());
     reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
     if(reply==QMessageBox::Yes){
-    actual_mode = ui->combo_modo->currentIndex();
-    }
+        actual_mode = ui->combo_modo->currentIndex();
+        switch(actual_mode){
+                //verificart si el line edit no esta vacio
+                //se puede, pero no es necesario, verificar que haya habido un cambio en el valor del setpoint
+            case 3: //mppt
+                qDebug()<<"caso3";
+            break;
+            case 2: //torque
+                qDebug()<<"caso2";
+            break;
+            case 1: //potencia
+                qDebug()<<"caso1";
+            break;
+            case 0: //velocidad      //no me deja poner este primero..
+               text_val=ui->lineEdit_speed_ref->text();
+               bool ok = true;
+               val = text_val.toInt( &ok );
+               if ( ok )
+               {
+               LACAN_Set(mw,LACAN_VAR_IO,val);
+               mw->agregar_log_sent();
+               }
+               qDebug()<<"caso0";
+               qDebug()<<text_val;
+               qDebug()<<val;
+            break;
+                }
+        }
     else{
     on_pushButton_cancel_clicked();
     }
@@ -268,5 +342,11 @@ void Gen_Eolico::on_lineEdit_lim_ibat_textChanged(const QString &arg1)
 void Gen_Eolico::on_lineEdit_ibat_textChanged(const QString &arg1)
 {
     ibat_click=true;
+}
+
+void Gen_Eolico::closeEvent(QCloseEvent *e){
+    time_2sec->stop();
+    delete time_2sec;
+    QDialog::closeEvent(e);
 }
 

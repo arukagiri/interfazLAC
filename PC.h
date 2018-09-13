@@ -150,10 +150,10 @@
 #define FUN_MOV_FORSOURCE   5//movimiento para poder armar la ID con la source y la fun
 
 
-#define HB_TIME 5000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
+#define HB_TIME 3000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
 #define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
-#define WAIT_ACK_TIME 500            //tiempo de espera un ack
+#define WAIT_ACK_TIME 3000            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
 //que variables esta tomando como referencia para realizar el control (de esta manera se puede
@@ -187,11 +187,23 @@ typedef struct LACAN_MSG LACAN_MSG;
 struct  TIMED_MSG{
         LACAN_MSG msg;
         QTimer ack_timer;
-
         uint8_t ack_status;
 };
 
+
 typedef struct TIMED_MSG TIMED_MSG;
+
+
+//test
+struct  TIMED_MSG2{
+        LACAN_MSG msg;
+        QTimer* ack_timer;
+        uint8_t ack_status;
+};
+
+
+typedef struct TIMED_MSG TIMED_MSG;
+
 //Se procede con un una idea parecida al TIMED_MSG para controlar el estado de los nodos en la red, en este caso tenemos un
 //identificador de dispositivo en vez de un mensaje, el temporizador(ver LACAN_PRO.h) y el campo de estado(m s en
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones
