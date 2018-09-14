@@ -121,27 +121,13 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
         mw->code++;
 
     serialsend2(*(mw->serial_port),msg);
+    TIMED_MSG* new_msg=new TIMED_MSG();
+    new_msg->msg=msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.setSingleShot(true);
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
 
-    TIMED_MSG new_msg;
-    new_msg.msg=msg;
-    new_msg.ack_status=PENDACK;
-    //new_msg.ack_timer=new QTimer();
-    //new_msg.ack_timer.setSingleShot(true);  //para que no se reinicie periodicamente
-    qDebug()<<"DENTRO DE SEND, Shoot: "<<new_msg.ack_timer.isSingleShot();
-    new_msg.ack_timer.start(WAIT_ACK_TIME);
-    qDebug()<<"###################: "<<new_msg.ack_timer.remainingTime();
-    //new_msg.ack_timer.stop();
-    //qDebug()<<"###################: "<<new_msg.ack_timer.remainingTime();
-    //new_msg.ack_timer.start(WAIT_ACK_TIME);
-    //qDebug()<<"###################: "<<new_msg.ack_timer.remainingTime();
-
-    mw->code=168;
-    qDebug()<<"COD ADENTRO: "<<mw->code;
-
-    mw->msg_ack.push_back(&new_msg);
-    mw->msg_ack.push_back(&new_msg);
-    mw->msg_ack.push_back(&new_msg);
-
+    mw->msg_ack.push_back(new_msg);
     mw->msg_log.push_back(msg);
 
     return LACAN_SUCCESS;

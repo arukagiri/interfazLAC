@@ -336,7 +336,6 @@ void MainWindow::verificarACK(){
     //parte del programa realice las acciones correspondientes, además un mensaje que recibio su correspondiente acknowledge
     //se sigue almacenando dentro del vector por un tiempo determinado (DEAD_MSJ_ACK_TIME) antes de que sea borrado
 
-    qDebug()<<"slot";
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
         if((*it_ack)->ack_status==RECEIVED){
             //if((*it_ack)->ack_timer.remainingTime()<=0){
@@ -347,20 +346,14 @@ void MainWindow::verificarACK(){
             }
         }
         else{
-             qDebug()<<"1";
-             //if((*it_ack)->ack_timer.remainingTime()<=0){    //EN ESTA LINEA TIRA UN ERROR
-             qDebug()<<"Remaining: "<<(*it_ack)->ack_timer.remainingTime();
-             qDebug()<<"Is active: "<<(*it_ack)->ack_timer.isActive();
-             qDebug()<<"Shoot: "<<(*it_ack)->ack_timer.isSingleShot();
-
-             if(!((*it_ack)->ack_timer.isActive())){    //EN ESTA LINEA TIRA UN ERROR
-                qDebug()<<"3";
+             if(!((*it_ack)->ack_timer.isActive())){
                 (*it_ack)->ack_status=ACK_TIMEOUT;
                 qDebug()<<"entro al if timeout";
+                disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
                 no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
-                disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
                 msg_ack.erase(it_ack);
-            }}
+             }
+        }
     }
 }
 

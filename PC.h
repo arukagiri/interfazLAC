@@ -153,7 +153,7 @@
 #define HB_TIME 3000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
 #define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
-#define WAIT_ACK_TIME 3000            //tiempo de espera un ack
+#define WAIT_ACK_TIME 500            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
 //que variables esta tomando como referencia para realizar el control (de esta manera se puede
