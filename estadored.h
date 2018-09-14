@@ -36,12 +36,20 @@ private:
     MainWindow* mw ;
     QTimer *time_2sec;
 
-    float gen_v;
-    float gen_i;
-    float boost_v;
-    float boost_i;
-    float vol_v;
-    float vol_i;
+    float gen_vo;
+    float gen_io;
+    float gen_vel;
+    float gen_tor;
+
+    float boost_vo;
+    float boost_io;
+    float boost_vi;
+    float boost_ii;
+
+    float vol_vo;
+    float vol_io;
+    float vol_vel;
+    float vol_tor;
 
     void refresh_values(void);
     void send_qry(void);

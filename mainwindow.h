@@ -33,6 +33,8 @@ public:
 
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
+     QTimer *t1;
+
 
 signals:
      void postforER_arrived(LACAN_MSG msg);

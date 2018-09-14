@@ -75,12 +75,29 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
 
     int prevsize=mw->msg_ack.size();
     LACAN_Query(mw,consulta);
+    //QTimer *t1= new QTimer();
+    //t1->start(10000);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
+        qDebug()<<"entro al if";
+
+        qDebug()<<"COD ADENTRO: "<<mw->code;
+        qDebug()<<"******************** lo siguiente deberia ser 0 (PENDACK)";
+        qDebug()<<"********************"<<mw->msg_ack.back()->ack_status;
+        qDebug()<<"********************"<<mw->msg_ack[0]->ack_status;
+        qDebug()<<"********************"<<mw->msg_ack[1]->ack_status;
+        qDebug()<<"********************"<<mw->msg_ack[2]->ack_status;
+
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+       //connect(mw->t1,SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
+    qDebug()<<"conecto bien piola";
     mw->agregar_log_sent();
+  // qDebug()<<"QRY DSP DE ENVIAR Remaining: "<<mw->msg_ack.back()->ack_timer.remainingTime();
+ //  qDebug()<<"QRY DSP DE ENVIAR Is active: "<<mw->msg_ack.back()->ack_timer.isActive();
+  // qDebug()<<"QRY DSP DE ENVIAR Shoot: "<<mw->msg_ack.back()->ack_timer.isSingleShot();
 
     this->close();
 }

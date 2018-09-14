@@ -18,22 +18,29 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
     time_2sec = new QTimer();
 
-    gen_v=-9999999;
-    gen_i=-9999999;
-    boost_v=-9999999;
-    boost_i=-9999999;
-    vol_v=-9999999;
-    vol_i=-9999999;
+    gen_vo=-9999999;
+    gen_io=-9999999;
+    boost_vo=-9999999;
+    boost_io=-9999999;
+    vol_vo=-9999999;
+    vol_io=-9999999;
 
 
-    ui->label_gen_v->setText("----");
-    ui->label_gen_i->setText("----");
+    ui->label_gen_vo->setText("----");
+    ui->label_gen_io->setText("----");
+    ui->label_gen_velocidad->setText("----");
+    ui->label_gen_torque->setText("----");
 
-    ui->label_vol_v->setText("----");
-    ui->label_vol_i->setText("----");
+    ui->label_vol_vo->setText("----");
+    ui->label_vol_io->setText("----");
+    ui->label_boost_vi->setText("----");
+    ui->label_boost_ii->setText("----");
 
-    ui->label_boost_v->setText("----");
-    ui->label_boost_i->setText("----");
+    ui->label_boost_vo->setText("----");
+    ui->label_boost_io->setText("----");
+    ui->label_vol_velocidad->setText("----");
+    ui->label_vol_torque->setText("----");
+
 
     send_qry();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
@@ -50,7 +57,7 @@ EstadoRed::~EstadoRed()
 
 void EstadoRed::on_button_gen_clicked()
 {
-    Gen_Eolico *gen_win = new Gen_Eolico();
+    Gen_Eolico *gen_win = new Gen_Eolico(mw);
     gen_win->setModal(true);
     gen_win->show();
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
@@ -59,19 +66,25 @@ void EstadoRed::on_button_gen_clicked()
 
 void EstadoRed::refresh_values(){
 
-ui->label_gen_v->setText(QString::number(gen_v));
-ui->label_gen_i->setText(QString::number(gen_i));
+    ui->label_gen_vo->setText(QString::number(gen_vo));
+    ui->label_gen_io->setText(QString::number(gen_io));
+    ui->label_gen_velocidad->setText(QString::number(gen_vel));
+    ui->label_gen_torque->setText(QString::number(gen_tor));
 
-ui->label_boost_v->setText(QString::number(boost_v));
-ui->label_boost_i->setText(QString::number(boost_i));
+    ui->label_boost_vo->setText(QString::number(boost_vo));
+    ui->label_boost_io->setText(QString::number(boost_io));
+    ui->label_boost_vi->setText(QString::number(boost_vi));
+    ui->label_boost_ii->setText(QString::number(boost_io));
 
-ui->label_vol_v->setText(QString::number(vol_v));
-ui->label_vol_i->setText(QString::number(vol_i));
+    ui->label_vol_vo->setText(QString::number(vol_vo));
+    ui->label_vol_io->setText(QString::number(vol_io));
+    ui->label_vol_velocidad->setText(QString::number(vol_vel));
+    ui->label_vol_torque->setText(QString::number(vol_tor));
 
 }
 
 void EstadoRed::send_qry(){
-
+/*
     mw->dest=LACAN_ID_GEN;
     LACAN_Query(mw,LACAN_VAR_VO);
     LACAN_Query(mw,LACAN_VAR_IO);
@@ -81,7 +94,7 @@ void EstadoRed::send_qry(){
     mw->dest=LACAN_ID_BOOST;
     LACAN_Query(mw,LACAN_VAR_VO);
     LACAN_Query(mw,LACAN_VAR_IO);
-
+*/
 }
 
 
@@ -103,37 +116,42 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
     case LACAN_ID_BOOST:
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
-            boost_i=msg.BYTE2;
+            boost_io=msg.BYTE2;
             break;
         case LACAN_VAR_VO:
-            boost_v=msg.BYTE2;
+            boost_vo=msg.BYTE2;
             break;
         default:
-            //VER QUE PASA SI LLEGA UN POST CON OTRAS VARIABLES, QUIZA PODRIAMOS PASARLO A LA
-            //VENTANA DEL DISPOSITIVO (SI ESTA ABIERTA) PARA MOSTRARLOS EN EL DB
             break;
         }
         break;
+
+
     case LACAN_ID_GEN:
+
+        //se la paso a la pantalla de gen, si esta abierta
         emit postforGEN_arrived(msg);
+
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
-            gen_i=msg.BYTE2;
+            gen_io=msg.BYTE2;
             break;
         case LACAN_VAR_VO:
-            gen_v=msg.BYTE2;
+            gen_vo=msg.BYTE2;
             break;
         default:
             break;
         }
         break;
+
+
     case LACAN_ID_VOLANTE:
         switch (msg.BYTE1) {
         case LACAN_VAR_IO:
-            vol_i=msg.BYTE2;
+            vol_io=msg.BYTE2;
             break;
         case LACAN_VAR_VO:
-            vol_v=msg.BYTE2;
+            vol_vo=msg.BYTE2;
             break;
         default:
             break;

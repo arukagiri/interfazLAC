@@ -61,7 +61,7 @@ void sendinit2(QSerialPort& serial_port,uint8_t bdr){
     //3er byte ??
     //4to byte Baud rate, ver opciones
     //5to byte modo ID: standard(0x02 extended)
-    //6to y 7mo byte: filtro ID y mask ID 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    //6to y 7mo byte: filtro ID y mask ID 0,0,0,0,0,70,0,0,0,0,0,0,0,0,0,0,0
 
     QByteArray msg_hexa;
     msg_hexa.append(0xAA);
@@ -118,10 +118,13 @@ bool readport2(char* pila, QSerialPort& serial_port){
     static uint16_t dlc=0;
     //ver de poner un while, es posible perder datos de esta forma TESTEAR
     while((newdataflag=serial_port.read(pila+index_pila,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
+
+        //qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
+
+
         index_pila++;
-        qDebug()<<"algo se puede leer\n";
-        /*if(index_pila==1){
-            if(pila[0]&0xAA)
+        if(index_pila==1){
+            if((pila[0]&0xFF)==0xAA)
                 qDebug()<<"\nLlego AA\n";
                 //timeout.start();
             else
@@ -129,7 +132,7 @@ bool readport2(char* pila, QSerialPort& serial_port){
                 //conterror++;
         }
         if(index_pila==2){
-            if((pila[1]>>4)&0xC){
+            if(((pila[1]&0xFF)>>4)==0xC){
                 qDebug()<<"Llego b2\n";
                 dlc=pila[1]&15;
                 //conterror=0;
@@ -138,16 +141,19 @@ bool readport2(char* pila, QSerialPort& serial_port){
                 index_pila=0;
                 //conterror++;
             }
-    }else{
+
         if(newdataflag==-1){//si es 0 no pasa es pq no hay dato; si es -1 hay un error
             qDebug()<<"\nError en la lectura\n";
-            index_pila=0;
+            //index_pila=0;
         }
-    }
-    if((index_pila>=(dlc+5))&&(pila[dlc+4]&0x55)){//comprobamos que el mensaje llego entero
+
+    if((index_pila>=(dlc+5))&&(((pila[dlc+4])&0xFF)==0x55)){//comprobamos que el mensaje llego entero
         index_pila=0; //reseteamos variables para volverlas a usar en el proximo mensaje
         dlc=0;
-        return newmsgflag=true;*/
+        qDebug()<<"ENTRO";
+        return newmsgflag=true;
+
+    }
     }
     return newmsgflag=false;
 }
@@ -163,35 +169,35 @@ void openport2(uint8_t bdr, QSerialPort* serial_port){
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
 
         serial_port->setPort(info);
-        serial_port->setBaudRate(QSerialPort::Baud9600);
+        serial_port->setBaudRate(QSerialPort::Baud115200);
         serial_port->setDataBits(QSerialPort::Data8);
         serial_port->setParity(QSerialPort::NoParity);
         serial_port->setStopBits(QSerialPort::OneStop);
         serial_port->setFlowControl(QSerialPort::NoFlowControl);
         retval = serial_port->open(QSerialPort::ReadWrite); // abrimos el puerto com señalado, retval=1 si hay algo conectado y lo pudo abrir
-        /*if(!retval){            //si no devuelve 1 es porque no se puede abrir=>aumentamos el nro de com y pasamos al siguiente
+        if(!retval){            //si no devuelve 1 es porque no se puede abrir=>aumentamos el nro de com y pasamos al siguiente
              cout<<"error abriendo el puerto\n";
-             qDebug()<<serial_port.portName();
-             serial_port.close();
+             qDebug()<<serial_port->portName();
+             serial_port->close();
         }
         else{                                               //si devuelve 1 es porque esta conectado
             qDebug()<<"debug 2";
-            sendinit2(serial_port,bdr); // enviamos secuencia de iniciacion segun un baudrate(CAN) elegido
+            sendinit2(*serial_port,bdr); // enviamos secuencia de iniciacion segun un baudrate(CAN) elegido
             wait_portinit.start(); //se inicializa un timer para esperar una respuesta
             while(wait_portinit.getime()<6000000){ //leemos el puerto y verificamos que el comienzo del mensaje es valido VER
                 //se compara el tamaño en bytes del mensaje con el que deberia tener,
-                if(readport2(pila,serial_port)){
+                if(readport2(pila,*serial_port)){
                     if((pila[4]>>LACAN_BYTE0_RESERVED)==LACAN_ID_BROADCAST){//verificamos que el destino sea broadcast (estamos buscando un HB)
                         LACAN_MSG mje=mensaje_recibido2(pila);//armamos el mensaje
                         if((mje.ID>>LACAN_IDENT_BITS)==LACAN_FUN_HB){//si resulta que el mensaje recibido es un HB, se considera que encontramos el puerto correcto
-                            qDebug()<<"\nesta en el com "<<serial_port.portName()<<"\n";
+                            qDebug()<<"\nesta en el com "<<serial_port->portName()<<"\n";
                             com_detected=TRUE;
                             break; //salgo de while
                         }
 
                     }
                 }
-            }*/
+            }
 
             //if(com_detected)
             if(1){
@@ -204,4 +210,4 @@ void openport2(uint8_t bdr, QSerialPort* serial_port){
         }
     }
 
-//}
+}
