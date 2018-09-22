@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QString>
 #include <stdint.h>
+#include <QMap>
 
 #ifndef PC_H_INCLUDED
 #define PC_H_INCLUDED
@@ -95,6 +96,16 @@
 #define LACAN_VAR_MOD_VEL       0x65
 #define LACAN_VAR_MOD_TORQ      0x66
 
+#define LACAN_VAR_TORQI_MAX     0x0
+#define LACAN_VAR_TORQI_MIN       0x0
+#define LACAN_VAR_TORQI            0x0
+#define LACAN_VAR_TORQI_SETP       0x0
+#define LACAN_VAR_TORQO_MAX        0x0
+#define LACAN_VAR_TORQO_MIN         0x0
+#define LACAN_VAR_TORQO             0x0
+#define LACAN_VAR_TORQO_SETP        0x0
+
+
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
 #define LACAN_RES_OK                0x00
 #define LACAN_RES_MISSING_PREREQ    0x01
@@ -153,7 +164,7 @@
 #define HB_TIME 3000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
 #define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
-#define WAIT_ACK_TIME 3000            //tiempo de espera un ack
+#define WAIT_ACK_TIME 500            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
 //que variables esta tomando como referencia para realizar el control (de esta manera se puede
@@ -162,6 +173,12 @@ union LACAN_32b_DATA{
     uint32_t uint_32b;
     int32_t int_32b;
     float float_32b;
+};
+
+union data_can{
+    float    var_float;
+    char     var_char[4];
+    uint32_t var_int;
 };
 
 //Estructura a base de bits para armar el mensaje con el formato CAN standard
@@ -223,4 +240,11 @@ struct ABSTRACTED_MSG{
 
 };
 
+struct variable {
+  QString tipo;
+  uint16_t id;
+};
+
 #endif // PC_H_INCLUDED
+
+

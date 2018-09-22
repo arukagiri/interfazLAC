@@ -80,7 +80,7 @@ Gen_Eolico::~Gen_Eolico()
 void Gen_Eolico::on_pushButton_comandar_clicked()
 {
    //Comandar *comwin = new Comandar(LACAN_ID_GEN,this);
-   //Comandar *comwin = new Comandar(LACAN_ID_GEN,mw);
+   //Comandar *comwin = new Comandar(LACAN_ID_GEN,mw);+
    mw->dest=LACAN_ID_GEN;
    Comandar *comwin = new Comandar(mw);
    comwin->setModal(true);
@@ -147,8 +147,18 @@ void Gen_Eolico::new_mode(){
 }
 
 void Gen_Eolico::timer_handler(){
-    refresh_values();
-    //send_qry();
+    if(mw->gen_connected){
+        refresh_values();
+        //send_qry();
+    }
+    else{
+        //QMessageBox win_war = QMessageBox::warning(this,"Gen Lost","El generador se ha desconectado de la red");
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::warning(this,"Gen Lost","El generador se ha desconectado de la red");
+        if(reply){
+            this->close();
+        }
+    }
 }
 
 void Gen_Eolico::send_qry(){
@@ -203,23 +213,28 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         break;
          /*case LACAN_VAR_IO:
             lim_vdc=msg.BYTE2;
-        break;
-       case LACAN_VAR_IO:
-            pot_ref=msg.BYTE2;
         break;*/
-        case LACAN_VAR_IO:
-            speed_ref=msg.BYTE2;
-            gen_io=msg.BYTE2;
+       case LACAN_VAR_PI_SETP:
+            pot_ref=msg.BYTE2;
         break;
-        /*case LACAN_VAR_IO:
+        case LACAN_VAR_W_SETP:
+            speed_ref=msg.BYTE2;
+        break;
+        case LACAN_VAR_TORQI_SETP:
             torque_ref=msg.BYTE2;
         break;
-        case LACAN_VAR_IO:
+        /*case LACAN_VAR_IO:
             vdc=msg.BYTE2;
-        break;
-        case LACAN_VAR_IO:
+        break;*/
+       /* case LACAN_VAR_BAT_I: //o la de setpoint
             ibat=msg.BYTE2;
         break;*/
+       case LACAN_VAR_IO:
+            gen_io=msg.BYTE2;
+        break;
+        case LACAN_VAR_VO:
+            gen_vo=msg.BYTE2;
+        break;
     default:
         break;
     }

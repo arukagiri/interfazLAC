@@ -9,6 +9,7 @@
 #include <iostream>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QMap>
 
 using namespace std;
 
@@ -76,6 +77,13 @@ public:
     bool do_log;
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
+
+    //bool gen_connected=0;
+    bool gen_connected=1;
+    bool vol_connected=0;
+    bool boost_connected=0;
+
+    QMap <QString,variable> varmap;
 
 };
 
