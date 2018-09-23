@@ -18,8 +18,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include "LACAN_REC.h"
-
-uint8_t cont=0;
+#include "addnewdevdialog.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -144,10 +143,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
 
-    QTimer *t1=new QTimer();
-    connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
-    t1->start(5000);
-
     //this->setLayout(ui->verticalLayout_7);
 
     QStringList TableHeader;
@@ -185,13 +180,6 @@ void MainWindow::verificar_destino(){
     dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
 
-void MainWindow::t1_Handler(){
-    LACAN_MSG msg_test;
-    msg_test.ID=(LACAN_ID_GEN | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
-    msg_test.BYTE1=LACAN_VAR_IO;
-    msg_test.BYTE2=cont++;
-    emit postforER_arrived(msg_test);
-}
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
@@ -282,7 +270,8 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-    do_log=FALSE;
+    //do_log=FALSE;
+    LACAN_HB_Handler(6,hb_con,this);
 }
 
 void MainWindow::verificarHB(){
@@ -333,7 +322,7 @@ void MainWindow::handleRead(){
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
         }else{
-            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map);
+            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
@@ -350,4 +339,27 @@ void MainWindow::change_ERflag(){
     }else{
         ERflag=true;
     }
+}
+
+void MainWindow::add_new_device(uint16_t source){
+
+    qDebug()<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
+
+    newdev.device=source;
+    newdev.hb_timer.start(DEAD_HB_TIME);
+    newdev.hb_status=ACTIVE;
+    hb_con.push_back(&newdev);
+
+    AddNewDevDialog *diag=new AddNewDevDialog(this);
+    diag->setModal(true);
+    connect(diag, SIGNAL(dev_name_set(QString)), this, SLOT(add_dev_name(QString)));
+    diag->show();
+
+}
+
+void MainWindow::add_dev_name(QString newdevname){
+    if(!disp_map.contains(newdevname)){
+        disp_map[newdevname]=newdev.device;
+    }
+    ui->the_one_true_list_DESTINO->addItem(newdevname);
 }

@@ -21,10 +21,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(QSerialPort &serial_port0,QWidget *parent = 0);
+    explicit MainWindow(QSerialPort &serial_port0,QWidget *parent = nullptr);
     ~MainWindow();
 
      Ui::MainWindow *ui;
+
+     void add_new_device(uint16_t source);
 
      void change_ERflag(void);
 
@@ -40,9 +42,8 @@ signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
-     //TEST ONLY
-     void t1_Handler();
-     //<---
+
+     void add_dev_name(QString);
 
      void verificarACK();
 
@@ -76,6 +77,7 @@ private:
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
     QMap<QString, uint16_t> disp_map;
+    HB_CONTROL newdev;
 };
 
 #endif // MAINWINDOW_H

@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map){
+int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw){
 
     //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
     uint16_t source=mje.ID&LACAN_IDENT_MASK;
@@ -28,7 +28,7 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	//	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
 	break;
 	case LACAN_FUN_HB:
-        LACAN_HB_Handler(source, hb_con, disp_map);
+        LACAN_HB_Handler(source, hb_con, mw);
         break;
 	default:
 		return LACAN_NO_SUCH_MSG;
@@ -51,7 +51,7 @@ void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
     }
 }
 
-void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString,uint16_t> disp_map){
+void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, MainWindow *mw){
     //Cuando llega un HB, se identifica de que dispositivo proviene y luego se procede a renovar el estado como activo y reiniciar el timer
     /*VER no haría falta el switch, con el for y el if ya estaría, solamente habría que agregar un if en el caso de dispositivo
     nuevo*/
@@ -69,29 +69,26 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString
     for(vector<int>::iterator it_ig=ignored.begin();it_ig<ignored.end();it_ig++){
         if((*it_ig)==source){
             stalkerfound=true;
+            break;
         }
     }
-    if(!(devfound&&stalkerfound)){
-        QMessageBox::StandardButton reply = QMessageBox::question(0,
-                                       "Nuevo dispositivo encontrado", "Ha llegado un Heartbeat de un dispositivo"
-                                                                       "desconocido,¿Desea agregarlo a la red?\n"
-                                                                       "En caso afirmativo se le pedira que ingrese"
-                                                                       "un nombre para el mismo",
-                              QMessageBox::Yes | QMessageBox::No );
+    if(!(devfound||stalkerfound)){
+        QMessageBox *addnewdev= new QMessageBox();
+        addnewdev->setParent(mw);
+        addnewdev->setIcon(QMessageBox::Question);
+        addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        addnewdev->setDefaultButton(QMessageBox::Yes);
+        addnewdev->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        addnewdev->setText("Ha llegado un Heartbeat de un dispositivo"
+                           "desconocido,\n¿Desea agregarlo a la red?\n"
+                           "En caso afirmativo se le pedira que ingrese"
+                           "un nombre para el mismo");
+        addnewdev->setWindowTitle("Nuevo dispositivo encontrado");
+        int reply = addnewdev->exec();
         switch (reply) {
         case (QMessageBox::Yes):
         {
-            qDebug()<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
-            HB_CONTROL newdev;
-            QString newdev_name;
-            newdev.device=source;
-            newdev.hb_timer.start(DEAD_HB_TIME);
-            newdev.hb_status=ACTIVE;
-            hb_con.push_back(&newdev);
-            newdev_name = "Name";// AGREGAR VENTANA QUE PREGUNTE CUAL VA A SER EL NOMBRE
-            if(!disp_map.contains(newdev_name)){
-                disp_map[newdev_name]=source;
-            }
+            mw->add_new_device(source);
             break;
         }
         case (QMessageBox::No):
@@ -99,9 +96,6 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, QMap<QString
             ignored.push_back(source);
             break;
         }
-        default:
-            break;
         }
-
     }
 }

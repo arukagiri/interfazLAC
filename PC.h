@@ -197,9 +197,8 @@ typedef struct TIMED_MSG TIMED_MSG;
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones
 struct  HB_CONTROL{
         QTimer hb_timer;
-
         bool hb_status;
-        uint8_t device;
+        uint16_t device;
 };
 
 typedef struct HB_CONTROL HB_CONTROL;
