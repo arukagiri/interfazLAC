@@ -19,7 +19,7 @@ AddNewDevDialog::~AddNewDevDialog()
 
 void AddNewDevDialog::on_ok_button_clicked()
 {
-    devname=ui->devnameEdit->selectedText();
+    devname=ui->devnameEdit->text();
     emit dev_name_set(devname);
     this->close();
 }
