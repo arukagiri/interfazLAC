@@ -9,10 +9,13 @@
 
 using namespace std;
 
-int16_t LACAN_Set(MainWindow *mw, uint16_t variable, uint16_t data);
-int16_t LACAN_Do(MainWindow *mw, uint16_t cmd);
-int16_t LACAN_Post(MainWindow *mw, uint16_t variable, uint16_t data);
+
+//int16_t LACAN_Set(MainWindow *mw, uint16_t variable, uint16_t data);
+int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data);
+//int16_t LACAN_Post(MainWindow *mw, uint16_t variable, uint16_t data);
 int16_t LACAN_Post(MainWindow *mw, uint16_t variable, data_can data);
+
+int16_t LACAN_Do(MainWindow *mw, uint16_t cmd);
 int16_t LACAN_Query(MainWindow *mw, uint16_t variable);
 int16_t LACAN_Heartbeat(MainWindow *mw);
 int16_t LACAN_Error(MainWindow* mw, uint16_t errCode);

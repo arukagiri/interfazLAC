@@ -599,10 +599,32 @@ void Enviar_Mensaje::ERR_Changed(){
 
 void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
-    uint16_t data = ui->text_VALOR->text().toInt();
+    //Verifico si el valor que se va a mandar es un entero o un float
+   /* data_can data;
+    uint32_t data_int = ui->text_VALOR->text().toInt();
+    float data_float = ui->text_VALOR->text().toFloat();
+    if(data_int == data_float)
+        data.var_int = data_int;
+    else
+        data.var_float = data_float;*/
+
+    data_can data;
+    uint32_t data_int = ui->text_VALOR->text().toInt();
+    float data_float = ui->text_VALOR->text().toFloat();
+    if(data_int == data_float){
+        //si entra aca es porque es in int, lo caesteamo a float
+        data.var_float =float(data_int);
+    }
+    else
+        data.var_float = data_float;    //si no, es un float y lo gaurdamo como esta
+    float probando=data.var_float;
+    qDebug()<<"=============";
+    qDebug()<<probando;
+    qDebug()<<"=============";
+
+
     uint16_t ack_cod = ui->text_CODIGO->text().toInt();
     int prevsize=mw->msg_ack.size();
-
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:

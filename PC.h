@@ -95,6 +95,7 @@
 #define LACAN_VAR_MOD_POT       0x64 // ver si lo usamos al final
 #define LACAN_VAR_MOD_VEL       0x65
 #define LACAN_VAR_MOD_TORQ      0x66
+#define LACAN_VAR_MOD_MPPT      0x67
 
 #define LACAN_VAR_TORQI_MAX     0x0
 #define LACAN_VAR_TORQI_MIN       0x0

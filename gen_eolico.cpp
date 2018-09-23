@@ -51,7 +51,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->label_gen_io->setText("----");
     ui->label_gen_vo->setText("----");
 
-    ui->lineEdit_iconv->setInputMask("99999");         //para insertar solo numeros
+   /* ui->lineEdit_iconv->setInputMask("99999");         //para insertar solo numeros
     ui->lineEdit_isd_ref->setInputMask("99999");
     ui->lineEdit_lim_ibat->setInputMask("99999");
     ui->lineEdit_lim_ief->setInputMask("99999");
@@ -60,7 +60,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->lineEdit_speed_ref->setInputMask("99999");
     ui->lineEdit_torque_ref->setInputMask("99999");
     ui->lineEdit_vdc->setInputMask("99999");
-    ui->lineEdit_ibat->setInputMask("99999");
+    ui->lineEdit_ibat->setInputMask("99999");*/
 
     new_mode();                 //para que queden en grises los que correspondan
     set_lineEdit_click(false);  //todo desclickeado
@@ -254,25 +254,28 @@ void Gen_Eolico::on_pushButton_apply_clicked(){
                 //se puede, pero no es necesario, verificar que haya habido un cambio en el valor del setpoint
             case 3: //mppt
                 qDebug()<<"caso3";
+                //LACAN_Set(mw,LACAN_VAR_MOD_MPPT,true);
             break;
             case 2: //torque
                 qDebug()<<"caso2";
+                //LACAN_Set(mw,LACAN_VAR_MOD_TORQ,true);
             break;
             case 1: //potencia
                 qDebug()<<"caso1";
+                //LACAN_Set(mw,LACAN_VAR_MOD_POT,true);
             break;
             case 0: //velocidad      //no me deja poner este primero..
-               text_val=ui->lineEdit_speed_ref->text();
-               bool ok = true;
-               val = text_val.toInt( &ok );
-               if ( ok )
-               {
+               //LACAN_Set(mw,LACAN_VAR_MOD_VEL,true);
+               uint32_t data_int = ui->lineEdit_speed_ref->text().toInt();
+               float data_float = ui->lineEdit_speed_ref->text().toFloat();
+               if(data_int == data_float)
+                   val.var_int = data_int;
+               else
+                   val.var_float = data_float;
                LACAN_Set(mw,LACAN_VAR_IO,val);
+               qDebug()<<"Se mando el set";
                mw->agregar_log_sent();
-               }
-               qDebug()<<"caso0";
-               qDebug()<<text_val;
-               qDebug()<<val;
+
             break;
                 }
         }

@@ -120,6 +120,8 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         mostrar.var_char[3]=msg_log.back().BYTE5;
         float muestra;
         muestra = mostrar.var_float;
+        //int muestra;
+        //muestra = mostrar.var_int;
         abs_msg.var_val=QString::number(muestra);
 
         break;
