@@ -30,7 +30,7 @@ private:
     MainWindow* mw ;
 
     uint16_t cmd;
-    uint16_t val;
+    data_can val;
     QString text_val;
 
     QTimer *time_2sec;

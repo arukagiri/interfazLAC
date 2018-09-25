@@ -111,7 +111,19 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
-        abs_msg.var_val=QString::number(msg_log.back().BYTE2);
+        // abs_msg.var_val=QString::number(msg_log.back().BYTE2);
+
+        data_can mostrar;
+        mostrar.var_char[0]=msg_log.back().BYTE2;
+        mostrar.var_char[1]=msg_log.back().BYTE3;
+        mostrar.var_char[2]=msg_log.back().BYTE4;
+        mostrar.var_char[3]=msg_log.back().BYTE5;
+        float muestra;
+        muestra = mostrar.var_float;
+        //int muestra;
+        //muestra = mostrar.var_int;
+        abs_msg.var_val=QString::number(muestra);
+
         break;
 
     case LACAN_FUN_HB:
@@ -124,21 +136,81 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     return abs_msg;
 }
 
+/*MainWindow::init_varmap(){
+
+varmap["Corriente de Salida Instantanea"].id=LACAN_VAR_IO;
+varmap["Tension"].tipo="int";
+varmap["Vector de Estados"].id=LACAN_VAR_STATUS;
+varmap["Vector de Estados"].tipo="Nada";
+varmap[.id=LACAN_VAR_II_MAX;
+].id=LACAN_VAR_II_MIN ;
+varmap["Corriente de Entrada Instantanea"].id=LACAN_VAR_II;
+varmap["Corriente de Entrada Instantanea"].tipo="float";  ;
+].id=LACAN_VAR_II_SETP;
+].id=LACAN_VAR_IO_MAX ;
+].id=LACAN_VAR_IO_MIN ;
+varmap["Corriente de Salida Instantanea"].id=LACAN_VAR_IO;
+varmap["Corriente de Salida Instantanea"].tipo="float";
+].id=LACAN_VAR_IO_SETP;
+].id=LACAN_VAR_ISD_MAX;
+].id=LACAN_VAR_ISD_MIN;
+].id=LACAN_VAR_ISD    ;
+].id=LACAN_VAR_ISD_SETP;
+].id=LACAN_VAR_IEF_MAX ;
+].id=LACAN_VAR_IEF_MIN ;
+].id=LACAN_VAR_IEF     ;
+].id=LACAN_VAR_IEF_SETP;
+].id=LACAN_VAR_PI_MAX  ;
+].id=LACAN_VAR_PI_MIN  ;
+].id=LACAN_VAR_PI      ;
+].id=LACAN_VAR_PI_SETP ;
+].id=LACAN_VAR_PO_MAX  ;
+].id=LACAN_VAR_PO_MIN  ;
+].id=LACAN_VAR_PO      ;
+].id=LACAN_VAR_PO_SETP ;
+].id=LACAN_VAR_VI_MAX  ;
+].id=LACAN_VAR_VI_MIN  ;
+].id=LACAN_VAR_VI      ;
+].id=LACAN_VAR_VI_SETP ;
+].id=LACAN_VAR_VO_MAX  ;
+].id=LACAN_VAR_VO_MIN  ;
+varmap["Tension de Salida Instantanea"].id=LACAN_VAR_VO;
+varmap["Tension de Salida Instantanea"].tipo="float";
+].id=LACAN_VAR_VO_SETP ;
+].id=LACAN_VAR_W_MAX   ;
+].id=LACAN_VAR_W_MIN   ;
+].id=LACAN_VAR_W       ;
+].id=LACAN_VAR_W_SETP  ;
+].id=LACAN_VAR_BAT_IMAX;
+].id=LACAN_VAR_BAT_IMIN;
+\].id=LACAN_VAR_BAT_I  ;
+].id=LACAN_VAR_BAT_I_SETP;
+].id=LACAN_VAR_BAT_VMAX  ;
+].id=LACAN_VAR_BAT_VMIN  ;
+].id=LACAN_VAR_BAT_V     ;
+].id=LACAN_VAR_BAT_V_SETP;
+].id=LACAN_VAR_MOD_POT   ;
+].id=LACAN_VAR_MOD_VEL  ;
+].id=LACAN_VAR_MOD_TORQ ;
+}*/
+
 MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     serial_port=&serial_port0;
     do_log=FALSE;
     ERflag= false;
     outlog_cont=0;
     inlog_cont=0;
+
+
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
-
 
     t1=new QTimer();
     connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
@@ -314,7 +386,16 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-    do_log=FALSE;
+    //do_log=FALSE;
+    this->dest=LACAN_ID_GEN;
+    data_can datos;
+    //datos.var_float = 1.5;
+     datos.var_int = 12e5;
+
+    LACAN_Post(this,LACAN_VAR_IO,datos);
+    this->agregar_log_sent();
+   /* LACAN_Heartbeat(this);
+    this->agregar_log_sent();*/
 }
 
 

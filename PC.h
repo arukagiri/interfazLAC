@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QString>
 #include <stdint.h>
+#include <QMap>
 
 #ifndef PC_H_INCLUDED
 #define PC_H_INCLUDED
@@ -94,6 +95,17 @@
 #define LACAN_VAR_MOD_POT       0x64 // ver si lo usamos al final
 #define LACAN_VAR_MOD_VEL       0x65
 #define LACAN_VAR_MOD_TORQ      0x66
+#define LACAN_VAR_MOD_MPPT      0x67
+
+#define LACAN_VAR_TORQI_MAX     0x0
+#define LACAN_VAR_TORQI_MIN       0x0
+#define LACAN_VAR_TORQI            0x0
+#define LACAN_VAR_TORQI_SETP       0x0
+#define LACAN_VAR_TORQO_MAX        0x0
+#define LACAN_VAR_TORQO_MIN         0x0
+#define LACAN_VAR_TORQO             0x0
+#define LACAN_VAR_TORQO_SETP        0x0
+
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
 #define LACAN_RES_OK                0x00
@@ -164,6 +176,12 @@ union LACAN_32b_DATA{
     float float_32b;
 };
 
+union data_can{
+    float    var_float;
+    char     var_char[4];
+    uint32_t var_int;
+};
+
 //Estructura a base de bits para armar el mensaje con el formato CAN standard
 struct LACAN_MSG{
    uint16_t SENTIDO:1;
@@ -223,4 +241,11 @@ struct ABSTRACTED_MSG{
 
 };
 
+struct variable {
+  QString tipo;
+  uint16_t id;
+};
+
 #endif // PC_H_INCLUDED
+
+

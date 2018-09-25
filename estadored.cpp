@@ -57,44 +57,82 @@ EstadoRed::~EstadoRed()
 
 void EstadoRed::on_button_gen_clicked()
 {
+    if(mw->gen_connected){
     Gen_Eolico *gen_win = new Gen_Eolico(mw);
     gen_win->setModal(true);
     gen_win->show();
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
+    }
 }
 
 
 void EstadoRed::refresh_values(){
 
-    ui->label_gen_vo->setText(QString::number(gen_vo));
-    ui->label_gen_io->setText(QString::number(gen_io));
-    ui->label_gen_velocidad->setText(QString::number(gen_vel));
-    ui->label_gen_torque->setText(QString::number(gen_tor));
+    if(mw->gen_connected){
+        ui->label_gen_vo->setText(QString::number(gen_vo));
+        ui->label_gen_io->setText(QString::number(gen_io));
+        ui->label_gen_velocidad->setText(QString::number(gen_vel));
+        ui->label_gen_torque->setText(QString::number(gen_tor));
+    }
+    else{
+        ui->label_gen_vo->setText("----");
+        ui->label_gen_io->setText("----");
+        ui->label_gen_velocidad->setText("----");
+        ui->label_gen_torque->setText("----");
+    }
 
-    ui->label_boost_vo->setText(QString::number(boost_vo));
-    ui->label_boost_io->setText(QString::number(boost_io));
-    ui->label_boost_vi->setText(QString::number(boost_vi));
-    ui->label_boost_ii->setText(QString::number(boost_io));
+    if(mw->boost_connected){
+        ui->label_boost_vo->setText(QString::number(boost_vo));
+        ui->label_boost_io->setText(QString::number(boost_io));
+        ui->label_boost_vi->setText(QString::number(boost_vi));
+        ui->label_boost_ii->setText(QString::number(boost_io));
+    }
+    else{
+        ui->label_vol_vo->setText("----");
+        ui->label_vol_io->setText("----");
+        ui->label_boost_vi->setText("----");
+        ui->label_boost_ii->setText("----");
+    }
 
-    ui->label_vol_vo->setText(QString::number(vol_vo));
-    ui->label_vol_io->setText(QString::number(vol_io));
-    ui->label_vol_velocidad->setText(QString::number(vol_vel));
-    ui->label_vol_torque->setText(QString::number(vol_tor));
+    if(mw->vol_connected){
+        ui->label_vol_vo->setText(QString::number(vol_vo));
+        ui->label_vol_io->setText(QString::number(vol_io));
+        ui->label_vol_velocidad->setText(QString::number(vol_vel));
+        ui->label_vol_torque->setText(QString::number(vol_tor));
+    }
+    else{
+        ui->label_boost_vo->setText("----");
+        ui->label_boost_io->setText("----");
+        ui->label_vol_velocidad->setText("----");
+        ui->label_vol_torque->setText("----");
+    }
 
 }
 
 void EstadoRed::send_qry(){
-/*
-    mw->dest=LACAN_ID_GEN;
-    LACAN_Query(mw,LACAN_VAR_VO);
-    LACAN_Query(mw,LACAN_VAR_IO);
-    mw->dest=LACAN_ID_VOLANTE;
-    LACAN_Query(mw,LACAN_VAR_VO);
-    LACAN_Query(mw,LACAN_VAR_IO);
-    mw->dest=LACAN_ID_BOOST;
-    LACAN_Query(mw,LACAN_VAR_VO);
-    LACAN_Query(mw,LACAN_VAR_IO);
-*/
+
+    if(mw->gen_connected){
+        mw->dest=LACAN_ID_GEN;
+        LACAN_Query(mw,LACAN_VAR_VO);
+        LACAN_Query(mw,LACAN_VAR_IO);
+        LACAN_Query(mw,LACAN_VAR_W);
+        LACAN_Query(mw,LACAN_VAR_MOD_TORQ);
+    }
+    if(mw->vol_connected){
+        mw->dest=LACAN_ID_VOLANTE;
+        LACAN_Query(mw,LACAN_VAR_VO);
+        LACAN_Query(mw,LACAN_VAR_IO);
+        LACAN_Query(mw,LACAN_VAR_W);
+        LACAN_Query(mw,LACAN_VAR_MOD_TORQ);;
+    }
+    if(mw->boost_connected){
+        mw->dest=LACAN_ID_BOOST;
+        LACAN_Query(mw,LACAN_VAR_VO);
+        LACAN_Query(mw,LACAN_VAR_IO);
+        LACAN_Query(mw,LACAN_VAR_II);
+        LACAN_Query(mw,LACAN_VAR_VI);
+    }
+
 }
 
 

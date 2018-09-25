@@ -65,7 +65,7 @@ Comandar::Comandar(QWidget *parent) :
     var_set=LACAN_VAR_II_MAX;
     cmd=LACAN_CMD_START;
 
-    ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
+    //ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
 }
 
 //PARA LAS VENTANAS DE CADA DISPOSITIVO
@@ -142,8 +142,14 @@ Comandar::~Comandar()
 
 void Comandar::on_button_ENVIAR_clicked()
 {
-    uint16_t data = ui->text_VALOR_COMANDO->text().toInt();
-    //uint16_t data=ui->text_VALOR_COMANDO->text();
+    data_can data;
+    uint32_t data_int = ui->text_VALOR_COMANDO->text().toInt();
+    float data_float = ui->text_VALOR_COMANDO->text().toFloat();
+    if(data_int == data_float)
+        data.var_int = data_int;
+    else
+        data.var_float = data_float;
+
 
     int prevsize= mw->msg_ack.size();
 
