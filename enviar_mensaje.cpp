@@ -600,15 +600,17 @@ void Enviar_Mensaje::ERR_Changed(){
 void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
     //Verifico si el valor que se va a mandar es un entero o un float
-   /* data_can data;
+   /*data_can data;
     uint32_t data_int = ui->text_VALOR->text().toInt();
     float data_float = ui->text_VALOR->text().toFloat();
-    if(data_int == data_float)
-        data.var_int = data_int;
-    else
-        data.var_float = data_float;*/
+    if(data_int == data_float){
+        qDebug()<<"Son iguales";
+        data.var_int = data_int;}
+    else{
+        qDebug()<<"Son distintos";
+        data.var_float = data_float;}*/
 
-    data_can data;
+ /*   data_can data;
     uint32_t data_int = ui->text_VALOR->text().toInt();
     float data_float = ui->text_VALOR->text().toFloat();
     if(data_int == data_float){
@@ -616,7 +618,12 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         data.var_float =float(data_int);
     }
     else
-        data.var_float = data_float;    //si no, es un float y lo gaurdamo como esta
+        data.var_float = data_float;    //si no, es un float y lo gaurdamo como esta*/
+
+    data_can data;
+    float data_float = ui->text_VALOR->text().toFloat();
+    data.var_float =float(data_float);
+
     float probando=data.var_float;
     qDebug()<<"=============";
     qDebug()<<probando;

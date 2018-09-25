@@ -145,12 +145,12 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
 
     serialsend2(*(mw->serial_port),msg);
 
-    TIMED_MSG new_msg;
-    new_msg.msg=msg;
-    new_msg.ack_status=PENDACK;
-    new_msg.ack_timer.start(WAIT_ACK_TIME);
+    TIMED_MSG* new_msg= new TIMED_MSG;
+    new_msg->msg=msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
 
-    mw->msg_ack.push_back(&new_msg);
+    mw->msg_ack.push_back(new_msg);
 
     mw->msg_log.push_back(msg);
 
@@ -203,11 +203,11 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
 
     serialsend2(*(mw->serial_port),msg);
 
-    TIMED_MSG new_msg;
-    new_msg.msg=msg;
-    new_msg.ack_status=PENDACK;
-    new_msg.ack_timer.start(WAIT_ACK_TIME);
-    (mw->msg_ack).push_back(&new_msg);
+    TIMED_MSG* new_msg= new TIMED_MSG;
+    new_msg->msg=msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
+    mw->msg_ack.push_back(new_msg);
 
     (mw->msg_log).push_back(msg);
 
