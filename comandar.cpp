@@ -150,7 +150,6 @@ void Comandar::on_button_ENVIAR_clicked()
     else
         data.var_float = data_float;
 
-
     int prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){

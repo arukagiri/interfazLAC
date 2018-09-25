@@ -18,8 +18,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include "LACAN_REC.h"
-
-uint8_t cont=0;
+#include "addnewdevdialog.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -201,8 +200,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->setupUi(this);
 
     serial_port=&serial_port0;
-    do_log=FALSE;
+    do_log=false;
     ERflag= false;
+    dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
 
@@ -212,9 +212,10 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
 
-    t1=new QTimer();
-    connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
-    t1->start(1000);
+    disp_map["Broadcast"]=LACAN_ID_BROADCAST;
+    disp_map["Generador Eolico"]=LACAN_ID_GEN;
+    disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
+    disp_map["Boost"]=LACAN_ID_BOOST;
 
     //this->setLayout(ui->verticalLayout_7);
 
@@ -244,55 +245,30 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::t1_Handler(){
-    LACAN_MSG msg_test;
-    msg_test.ID=(LACAN_ID_GEN | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
-    msg_test.BYTE1=LACAN_VAR_IO;
-    msg_test.BYTE2=cont++;
-    emit postforER_arrived(msg_test);
+void MainWindow::verificar_destino(){
+    dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
+
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
 
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
-
+    verificar_destino();
     Comandar *comwin = new Comandar(this);
+
     comwin->setModal(true);
     comwin->show();
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
 {
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
+
+    verificar_destino();
     Consultar *conswin = new Consultar(this);
     conswin->setModal(true);
     conswin->show();
@@ -304,24 +280,12 @@ void MainWindow::on_button_CONSULTAR_clicked()
 
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
 
+    verificar_destino();
     Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();
-
 }
 
 void MainWindow::on_button_ESTADO_RED_clicked()
@@ -349,7 +313,6 @@ void MainWindow::agregar_log_sent(){
     }
     agregar_textlog(abs_msg,"Enviado");
 }
-
 
 void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     ABSTRACTED_MSG abs_msg;
@@ -386,6 +349,7 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
+
     //do_log=FALSE;
     this->dest=LACAN_ID_GEN;
     data_can datos;
@@ -396,8 +360,9 @@ void MainWindow::on_button_STOP_clicked()
     this->agregar_log_sent();
    /* LACAN_Heartbeat(this);
     this->agregar_log_sent();*/
-}
 
+    LACAN_HB_Handler(7,hb_con,this);
+}
 
 void MainWindow::verificarHB(){
     //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
@@ -422,7 +387,6 @@ void MainWindow::verificarACK(){
             //if((*it_ack)->ack_timer.remainingTime()<=0){
             if(!((*it_ack)->ack_timer.isActive())){
                 qDebug()<<"entro al if RECEIVED";
-                disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
             }
         }
@@ -455,7 +419,7 @@ void MainWindow::handleRead(){
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
         }else{
-            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen);
+            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
@@ -472,4 +436,27 @@ void MainWindow::change_ERflag(){
     }else{
         ERflag=true;
     }
+}
+
+void MainWindow::add_new_device(uint16_t source){
+
+    qDebug()<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
+
+    newdev.device=source;
+    newdev.hb_timer.start(DEAD_HB_TIME);
+    newdev.hb_status=ACTIVE;
+    hb_con.push_back(&newdev);
+
+    AddNewDevDialog *diag=new AddNewDevDialog(this);
+    diag->setModal(true);
+    connect(diag, SIGNAL(dev_name_set(QString)), this, SLOT(add_dev_name(QString)));
+    diag->show();
+
+}
+
+void MainWindow::add_dev_name(QString newdevname){
+    if(!disp_map.contains(newdevname)){
+        disp_map[newdevname]=newdev.device;
+    }
+    ui->the_one_true_list_DESTINO->addItem(newdevname);
 }
