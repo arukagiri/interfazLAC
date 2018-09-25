@@ -74,15 +74,14 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, MainWindow *
     }
     if(!(devfound||stalkerfound)){
         QMessageBox *addnewdev= new QMessageBox();
-        addnewdev->setParent(mw);
         addnewdev->setIcon(QMessageBox::Question);
         addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         addnewdev->setDefaultButton(QMessageBox::Yes);
-        addnewdev->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        //addnewdev->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
         addnewdev->setText("Ha llegado un Heartbeat de un dispositivo"
-                           "desconocido,\n¿Desea agregarlo a la red?\n"
+                           " desconocido,\nDesea agregarlo a la red?\n"
                            "En caso afirmativo se le pedira que ingrese"
-                           "un nombre para el mismo");
+                           " un nombre para el mismo.");
         addnewdev->setWindowTitle("Nuevo dispositivo encontrado");
         int reply = addnewdev->exec();
         switch (reply) {
