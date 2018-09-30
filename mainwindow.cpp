@@ -52,6 +52,8 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     QString format_date="dd.MM.yyyy";
     QDateTime curr_date_time=QDateTime::currentDateTime();
     ABSTRACTED_MSG abs_msg={"","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
+    float val_float;
+    data_can val_union;
 
     //DESTINO
     switch((msg_log.back().BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
@@ -90,9 +92,17 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
     case LACAN_FUN_SET:
         abs_msg.fun="Set";
-        abs_msg.var_val=QString::number(msg_log.back().BYTE3);
         abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
+
+        val_union.var_char[0]=char(msg_log.back().BYTE3);
+        val_union.var_char[1]=char(msg_log.back().BYTE4);
+        val_union.var_char[2]=char(msg_log.back().BYTE5);
+        val_union.var_char[3]=char(msg_log.back().BYTE6);
+
+        val_float = val_union.var_float;
+        abs_msg.var_val=QString::number(double(val_float));
+
         break;
 
     case LACAN_FUN_QRY:
@@ -110,18 +120,14 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
-        // abs_msg.var_val=QString::number(msg_log.back().BYTE2);
 
-        data_can mostrar;
-        mostrar.var_char[0]=msg_log.back().BYTE2;
-        mostrar.var_char[1]=msg_log.back().BYTE3;
-        mostrar.var_char[2]=msg_log.back().BYTE4;
-        mostrar.var_char[3]=msg_log.back().BYTE5;
-        float muestra;
-        muestra = mostrar.var_float;
-        //int muestra;
-        //muestra = mostrar.var_int;
-        abs_msg.var_val=QString::number(muestra);
+        val_union.var_char[0]=char(msg_log.back().BYTE2);
+        val_union.var_char[1]=char(msg_log.back().BYTE3);
+        val_union.var_char[2]=char(msg_log.back().BYTE4);
+        val_union.var_char[3]=char(msg_log.back().BYTE5);
+
+        val_float = val_union.var_float;
+        abs_msg.var_val=QString::number(double(val_float));
 
         break;
 

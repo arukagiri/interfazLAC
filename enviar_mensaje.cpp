@@ -630,8 +630,8 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     qDebug()<<"=============";
 
 
-    uint16_t ack_cod = ui->text_CODIGO->text().toInt();
-    int prevsize=mw->msg_ack.size();
+    uint16_t ack_cod = uint16_t(ui->text_CODIGO->text().toInt());
+    uint prevsize=mw->msg_ack.size();
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
