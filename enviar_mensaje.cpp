@@ -35,14 +35,15 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
     mw = qobject_cast<MainWindow*>(this->parent());
 
-    ui->list_DESTINO->addItem("Broadcast");
-    ui->list_DESTINO->addItem("Generador Eolico");
-    ui->list_DESTINO->addItem("Volante de Inercia");
-    ui->list_DESTINO->addItem("Boost");
+    ui->list_DESTINO->addItem("Broadcast",QVariant(LACAN_ID_BROADCAST));
+    ui->list_DESTINO->addItem("Generador Eolico",QVariant(LACAN_ID_GEN));
+    ui->list_DESTINO->addItem("Volante de Inercia",QVariant(LACAN_ID_VOLANTE));
+    ui->list_DESTINO->addItem("Boost",QVariant(LACAN_ID_BOOST));
 
+
+  //  ui->list_DESTINO->setCurrentIndex(mw->dest);
     switch(mw->dest){
     case LACAN_ID_BROADCAST:
-        ui->list_DESTINO->setCurrentIndex(BROAD);
         qDebug()<<"broad";
         break;
     case LACAN_ID_GEN:
@@ -112,7 +113,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(VAR_Changed()));
     connect(ui->list_TIPO,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_Changed()));
     connect(ui->list_COMANDO,SIGNAL(currentTextChanged(QString)),this,SLOT(CMD_Changed()));
-    connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
+    //connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
     connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
     connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
 
@@ -502,7 +503,7 @@ void Enviar_Mensaje::CMD_Changed(){
     }
 }
 
-void Enviar_Mensaje::DEST_Changed(){
+/*void Enviar_Mensaje::DEST_Changed(){
 
     switch(ui->list_DESTINO->currentIndex()){
         case BROAD:
@@ -521,7 +522,7 @@ void Enviar_Mensaje::DEST_Changed(){
             break;
 
 }
-}
+}*/
 
 void Enviar_Mensaje::RESULT_Changed(){
     switch(ui->list_RESULTADO->currentIndex()){
@@ -673,4 +674,9 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 Enviar_Mensaje::~Enviar_Mensaje()
 {
     delete ui;
+}
+
+void Enviar_Mensaje::on_list_DESTINO_currentIndexChanged(int index)
+{
+    mw->dest=ui->list_DESTINO->itemData(index).toInt();
 }

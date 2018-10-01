@@ -48,11 +48,12 @@ private slots:
     void VAR_Changed();
     void TIPO_Changed();
     void CMD_Changed();
-    void DEST_Changed();
+    //void DEST_Changed();
     void ERR_Changed();
     void RESULT_Changed();
 
     void on_button_ENVIAR_MENSAJE_clicked();
+    void on_list_DESTINO_currentIndexChanged(int index);
 };
 
 #endif // ENVIAR_MENSAJE_H
