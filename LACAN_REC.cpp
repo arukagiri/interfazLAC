@@ -1,6 +1,8 @@
 #include "LACAN_REC.h"
+#include <QMessageBox>
+#include <QDebug>
 
-int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen){
+int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw){
 
     //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
     uint16_t source=mje.ID&LACAN_IDENT_MASK;
@@ -26,7 +28,7 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	//	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
 	break;
 	case LACAN_FUN_HB:
-        LACAN_HB_Handler(source, hb_con);
+        LACAN_HB_Handler(source, hb_con, mw);
         break;
 	default:
 		return LACAN_NO_SUCH_MSG;
@@ -34,14 +36,9 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
 	return LACAN_SUCCESS;
 }
 
-
-
-
-
 void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
 //crear archivo para cada variable e ir guardando en bloc de notas
 }
-
 
 void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
     //Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
@@ -54,27 +51,50 @@ void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){
     }
 }
 
-
-void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con){
+void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, MainWindow *mw){
     //Cuando llega un HB, se identifica de que dispositivo proviene y luego se procede a renovar el estado como activo y reiniciar el timer
     /*VER no haría falta el switch, con el for y el if ya estaría, solamente habría que agregar un if en el caso de dispositivo
     nuevo*/
-    switch(source){
-    case LACAN_ID_GEN:
-        for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
-            if((*it_hb)->device==source){
-                (*it_hb)->hb_status=ACTIVE;
-                (*it_hb)->hb_timer.start(DEAD_HB_TIME);
-            }
+    static vector<int> ignored;
+    bool devfound=false;
+    bool stalkerfound=false;
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
+        if((*it_hb)->device==source){
+            (*it_hb)->hb_status=ACTIVE;
+            (*it_hb)->hb_timer.start(DEAD_HB_TIME);
+            devfound=true;
+            break;
         }
-    break;
-    default:
-        cout<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
-        HB_CONTROL newdev;
-        newdev.device=source;
-        newdev.hb_timer.start(DEAD_HB_TIME);
-        newdev.hb_status=ACTIVE;
-        hb_con.push_back(&newdev);
-
+    }
+    for(vector<int>::iterator it_ig=ignored.begin();it_ig<ignored.end();it_ig++){
+        if((*it_ig)==source){
+            stalkerfound=true;
+            break;
+        }
+    }
+    if(!(devfound||stalkerfound)){
+        QMessageBox *addnewdev= new QMessageBox();
+        addnewdev->setIcon(QMessageBox::Question);
+        addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        addnewdev->setDefaultButton(QMessageBox::Yes);
+        //addnewdev->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        addnewdev->setText("Ha llegado un Heartbeat de un dispositivo"
+                           " desconocido,\nDesea agregarlo a la red?\n"
+                           "En caso afirmativo se le pedira que ingrese"
+                           " un nombre para el mismo.");
+        addnewdev->setWindowTitle("Nuevo dispositivo encontrado");
+        int reply = addnewdev->exec();
+        switch (reply) {
+        case (QMessageBox::Yes):
+        {
+            mw->add_new_device(source);
+            break;
+        }
+        case (QMessageBox::No):
+        {
+            ignored.push_back(source);
+            break;
+        }
+        }
     }
 }

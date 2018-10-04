@@ -10,6 +10,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMap>
+#include "better_serialfunc.h"
 
 using namespace std;
 
@@ -26,6 +27,8 @@ public:
 
      Ui::MainWindow *ui;
 
+     void add_new_device(uint16_t source);
+
      void change_ERflag(void);
 
      static void set_item(int,int, QString item);
@@ -34,20 +37,21 @@ public:
 
      void agregar_log_rec(vector <LACAN_MSG> msg_log);
 
-     QTimer *t1;
-
+     void verificar_destino();
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
-     //TEST ONLY
-     void t1_Handler();
-     //<---
+
+     void add_dev_name(QString);
 
      void verificarACK();
 
      void verificarHB();
+
+     void no_ACK_Handler(void); //FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
+
 
 private slots:
 
@@ -85,6 +89,8 @@ public:
 
     QMap <QString,variable> varmap;
 
+    QMap<QString, uint16_t> disp_map;
+    HB_CONTROL newdev;
 };
 
 #endif // MAINWINDOW_H

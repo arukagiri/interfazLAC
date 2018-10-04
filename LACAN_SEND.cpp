@@ -47,7 +47,7 @@ int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t object,
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_ACK<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=3;
-    msg.BYTE0=(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
     msg.BYTE1=object;
     msg.BYTE2=result;
 
@@ -109,14 +109,19 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=6;
-    msg.BYTE0=mw->dest << LACAN_BYTE0_RESERVED;
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=variable;
-    msg.BYTE2=data.var_char[0];
-    msg.BYTE3=data.var_char[1];
-    msg.BYTE4=data.var_char[2];
-    msg.BYTE5=data.var_char[3];
+    msg.BYTE2=uint16_t(data.var_char[0]);
+    msg.BYTE3=uint16_t(data.var_char[1]);
+    msg.BYTE4=uint16_t(data.var_char[2]);
+    msg.BYTE5=uint16_t(data.var_char[3]);
 
     serialsend2(*(mw->serial_port),msg);
+
+    qDebug()<<"POST";
+    qDebug()<<"valor: "<<data.var_float;
+    qDebug()<<"variable: "<<msg.BYTE1;
+    qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
 
     mw->msg_log.push_back(msg);
 
@@ -130,13 +135,14 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_SET<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=7;
-    msg.BYTE0=(mw->dest) << LACAN_BYTE0_RESERVED;
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=mw->code;	//se implementa un codigo en los mensajes que requieren un ack, asi de esta manera poder identificar a que mensaje hacen referencia
     msg.BYTE2=variable;
-    msg.BYTE3=data.var_char[0];
-    msg.BYTE4=data.var_char[1];
-    msg.BYTE5=data.var_char[2];
-    msg.BYTE6=data.var_char[3];
+    msg.BYTE3=uint16_t(data.var_char[0]);
+    msg.BYTE4=uint16_t(data.var_char[1]);
+    msg.BYTE5=uint16_t(data.var_char[2]);
+    msg.BYTE6=uint16_t(data.var_char[3]);
+
     //se considera que no se acumularan nunca 250 mensajes en espera de acknowledge
     if(mw->code>=250)
         mw->code=0;
@@ -149,8 +155,14 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->retries = RETRIES;
 
     mw->msg_ack.push_back(new_msg);
+
+    qDebug()<<"SET";
+    qDebug()<<"valor: "<<data.var_float;
+    qDebug()<<"variable: "<<msg.BYTE2;
+    qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
 
     mw->msg_log.push_back(msg);
 
@@ -163,7 +175,7 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_QRY<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=3;
-    msg.BYTE0=(mw->dest) << LACAN_BYTE0_RESERVED;
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=mw->code;
     msg.BYTE2=variable;
 
@@ -178,6 +190,7 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.setSingleShot(true);
     new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->retries = RETRIES;
 
     mw->msg_ack.push_back(new_msg);
     mw->msg_log.push_back(msg);
@@ -192,7 +205,7 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_DO<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=3;
-    msg.BYTE0=(mw->dest)<< LACAN_BYTE0_RESERVED;
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=mw->code;
     msg.BYTE2=cmd;
 
@@ -208,6 +221,7 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.start(WAIT_ACK_TIME);
     mw->msg_ack.push_back(new_msg);
+    new_msg->retries = RETRIES;
 
     (mw->msg_log).push_back(msg);
 

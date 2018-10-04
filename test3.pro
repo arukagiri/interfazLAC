@@ -37,7 +37,8 @@ SOURCES += \
     LACAN_REC.cpp \
     tiempo.cpp \
     LACAN_PRO.cpp \
-    better_serialfunc.cpp
+    better_serialfunc.cpp \
+    addnewdevdialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +53,8 @@ HEADERS += \
     LACAN_PRO.h \
     pc.h \
     lacan_detect.h \
-    better_serialfunc.h
+    better_serialfunc.h \
+    addnewdevdialog.h
 
 FORMS += \
         mainwindow.ui \
@@ -60,7 +62,8 @@ FORMS += \
     consultar.ui \
     enviar_mensaje.ui \
     estadored.ui \
-    gen_eolico.ui
+    gen_eolico.ui \
+    addnewdevdialog.ui
 
 RESOURCES += \
     imagenes.qrc

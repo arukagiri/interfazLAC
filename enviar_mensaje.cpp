@@ -4,15 +4,17 @@
 #include <QtGui>
 #include "LACAN_SEND.h"
 #include <QDebug>
+#include <QMap>
 
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
+
 enum DESTINOS {BROAD,GEN_EOL,VOL,BOOST};
 enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
 enum TIPO_VAR {MAX,MIN,SETP,INST};
 enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS,COUP,DECOUP,MAG,TRIP};
-enum ERRORES {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT_TRIP,EXT_TRIP};
-enum RESULTADOS{OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
+enum ERRORES  {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT_TRIP,EXT_TRIP};
+enum RESULTADOS {OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
 
 
 Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
@@ -106,6 +108,9 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_RESULTADO->addItem("BUSY");
     ui->list_RESULTADO->addItem("DENIED");
     ui->list_RESULTADO->addItem("GENERIC_FAILURE");
+
+   // QMap <uint16_t,string> msgmap;
+    //msgmap[lacan_]
 
 
     connect(ui->list_MENSAJE,SIGNAL(currentTextChanged(QString)),this,SLOT(MENSAJE_changed()));
@@ -631,8 +636,8 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     qDebug()<<"=============";
 
 
-    uint16_t ack_cod = ui->text_CODIGO->text().toInt();
-    int prevsize=mw->msg_ack.size();
+    uint16_t ack_cod = uint16_t(ui->text_CODIGO->text().toInt());
+    uint prevsize=mw->msg_ack.size();
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:

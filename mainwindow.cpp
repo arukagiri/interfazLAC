@@ -18,8 +18,8 @@
 #include <QFile>
 #include <QStandardPaths>
 #include "LACAN_REC.h"
+#include "addnewdevdialog.h"
 
-uint8_t cont=0;
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -53,7 +53,10 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     QString format_date="dd.MM.yyyy";
     QDateTime curr_date_time=QDateTime::currentDateTime();
     ABSTRACTED_MSG abs_msg={"","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
+    float val_float;
+    data_can val_union;
 
+    qDebug()<<"ENTRO A ABSTRACT MSG";
     //DESTINO
     switch((msg_log.back().BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
     case LACAN_ID_BOOST:
@@ -73,8 +76,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         break;
     }
 
-
-
     //FUNCION
     switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
     case LACAN_FUN_ERR:
@@ -91,9 +92,17 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
     case LACAN_FUN_SET:
         abs_msg.fun="Set";
-        abs_msg.var_val=QString::number(msg_log.back().BYTE3);
         abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
+
+        val_union.var_char[0]=char(msg_log.back().BYTE3);
+        val_union.var_char[1]=char(msg_log.back().BYTE4);
+        val_union.var_char[2]=char(msg_log.back().BYTE5);
+        val_union.var_char[3]=char(msg_log.back().BYTE6);
+
+        val_float = val_union.var_float;
+        abs_msg.var_val=QString::number(double(val_float));
+
         break;
 
     case LACAN_FUN_QRY:
@@ -111,18 +120,14 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
-        // abs_msg.var_val=QString::number(msg_log.back().BYTE2);
 
-        data_can mostrar;
-        mostrar.var_char[0]=msg_log.back().BYTE2;
-        mostrar.var_char[1]=msg_log.back().BYTE3;
-        mostrar.var_char[2]=msg_log.back().BYTE4;
-        mostrar.var_char[3]=msg_log.back().BYTE5;
-        float muestra;
-        muestra = mostrar.var_float;
-        //int muestra;
-        //muestra = mostrar.var_int;
-        abs_msg.var_val=QString::number(muestra);
+        val_union.var_char[0]=char(msg_log.back().BYTE2);
+        val_union.var_char[1]=char(msg_log.back().BYTE3);
+        val_union.var_char[2]=char(msg_log.back().BYTE4);
+        val_union.var_char[3]=char(msg_log.back().BYTE5);
+
+        val_float = val_union.var_float;
+        abs_msg.var_val=QString::number(double(val_float));
 
         break;
 
@@ -201,8 +206,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->setupUi(this);
 
     serial_port=&serial_port0;
-    do_log=FALSE;
+    do_log=false;
     ERflag= false;
+    dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
 
@@ -212,9 +218,10 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
 
-    t1=new QTimer();
-    connect(t1,SIGNAL(timeout()),this,SLOT(t1_Handler()));
-    t1->start(1000);
+    disp_map["Broadcast"]=LACAN_ID_BROADCAST;
+    disp_map["Generador Eolico"]=LACAN_ID_GEN;
+    disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
+    disp_map["Boost"]=LACAN_ID_BOOST;
 
     //this->setLayout(ui->verticalLayout_7);
 
@@ -244,55 +251,30 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::t1_Handler(){
-    LACAN_MSG msg_test;
-    msg_test.ID=(LACAN_ID_GEN | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
-    msg_test.BYTE1=LACAN_VAR_IO;
-    msg_test.BYTE2=cont++;
-    emit postforER_arrived(msg_test);
+void MainWindow::verificar_destino(){
+    dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
+
 
 void MainWindow::on_button_COMANDAR_clicked()
 {
 
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
-
+    verificar_destino();
     Comandar *comwin = new Comandar(this);
+
     comwin->setModal(true);
     comwin->show();
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
 {
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
+
+    verificar_destino();
     Consultar *conswin = new Consultar(this);
     conswin->setModal(true);
     conswin->show();
@@ -304,24 +286,12 @@ void MainWindow::on_button_CONSULTAR_clicked()
 
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Broadcast"){
-        dest=LACAN_ID_BROADCAST;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Generador Eolico"){
-        dest=LACAN_ID_GEN;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Volante de Inercia"){
-        dest=LACAN_ID_VOLANTE;
-    }
-    if((ui->the_one_true_list_DESTINO->currentItem()->text())=="Boost"){
-        dest=LACAN_ID_BOOST;
-    }
 
+    verificar_destino();
     Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();
-
 }
 
 void MainWindow::on_button_ESTADO_RED_clicked()
@@ -349,7 +319,6 @@ void MainWindow::agregar_log_sent(){
     }
     agregar_textlog(abs_msg,"Enviado");
 }
-
 
 void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     ABSTRACTED_MSG abs_msg;
@@ -386,6 +355,7 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
+
     //do_log=FALSE;
     this->dest=LACAN_ID_GEN;
     data_can datos;
@@ -396,8 +366,9 @@ void MainWindow::on_button_STOP_clicked()
     this->agregar_log_sent();
    /* LACAN_Heartbeat(this);
     this->agregar_log_sent();*/
-}
 
+    LACAN_HB_Handler(7,hb_con,this);
+}
 
 void MainWindow::verificarHB(){
     //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
@@ -418,25 +389,40 @@ void MainWindow::verificarACK(){
     //se sigue almacenando dentro del vector por un tiempo determinado (DEAD_MSJ_ACK_TIME) antes de que sea borrado
 
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
-        if((*it_ack)->ack_status==RECEIVED){
+        if((*it_ack)->ack_status==RECEIVED){        //si llego el ack..
             //if((*it_ack)->ack_timer.remainingTime()<=0){
             if(!((*it_ack)->ack_timer.isActive())){
                 qDebug()<<"entro al if RECEIVED";
-                disconnect(t1,SIGNAL(timeout()), this, SLOT(verificarACK()));
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
             }
         }
         else{
-             if(!((*it_ack)->ack_timer.isActive())){
+             if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack..
                 (*it_ack)->ack_status=ACK_TIMEOUT;
                 qDebug()<<"entro al if timeout";
-                disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
-                no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
-                msg_ack.erase(it_ack);
+                if((*it_ack)->retries<=0){  // si no quedan reintentos
+                    qDebug()<<"entro al tosio";
+                    disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
+                    no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
+                    msg_ack.erase(it_ack);
+                }
+                else{   //si quedan reintentos, vuelve a enviar el mensaje y descuenta reintentos
+
+                    qDebug()<<"entro al reenviar";
+                    serialsend2(*(this->serial_port),(*it_ack)->msg);
+                    (*it_ack)->ack_status=PENDACK;
+                    (*it_ack)->ack_timer.setSingleShot(true);
+                    (*it_ack)->ack_timer.start(WAIT_ACK_TIME);
+                    (*it_ack)->retries--;
+                    this->msg_log.push_back((*it_ack)->msg);
+                    this->agregar_log_sent();
+                }
              }
         }
     }
 }
+
+void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
     bool newmsgflag=0;
@@ -455,7 +441,7 @@ void MainWindow::handleRead(){
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
         }else{
-            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen);
+            result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
@@ -473,3 +459,28 @@ void MainWindow::change_ERflag(){
         ERflag=true;
     }
 }
+
+void MainWindow::add_new_device(uint16_t source){
+
+    qDebug()<<"\nAgregando nuevo dispositivo\n";//Evaluar la posibildad de q llegue un heartbeat de un dispositivo que no existe (corrupcion del source durante el envio)
+
+    newdev.device=source;
+    newdev.hb_timer.start(DEAD_HB_TIME);
+    newdev.hb_status=ACTIVE;
+    hb_con.push_back(&newdev);
+
+    AddNewDevDialog *diag=new AddNewDevDialog(this);
+    diag->setModal(true);
+    connect(diag, SIGNAL(dev_name_set(QString)), this, SLOT(add_dev_name(QString)));
+    diag->show();
+
+}
+
+void MainWindow::add_dev_name(QString newdevname){
+    if(!disp_map.contains(newdevname)){
+        disp_map[newdevname]=newdev.device;
+    }
+    ui->the_one_true_list_DESTINO->addItem(newdevname);
+}
+
+

@@ -46,4 +46,4 @@ void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& not
 
 
 //Implementacion de las acciones a tomar en caso de que no llegue el ack de un mensaje en el tiempo limite. EN PROCESO
-void no_ACK_Handler(void){}
+

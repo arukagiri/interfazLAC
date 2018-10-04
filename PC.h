@@ -146,11 +146,15 @@
 #define PENDACK         0
 #define RECEIVED        1
 #define ACK_TIMEOUT     2
+//Numero de reintentos de ack
+#define RETRIES 2
 
 //Estados de los dispositivos segun heartbeat
 
 #define ACTIVE      true
 #define INACTIVE    false
+
+
 
 
 //Mascaras y corrimientos
@@ -206,6 +210,7 @@ struct  TIMED_MSG{
         LACAN_MSG msg;
         QTimer ack_timer;
         uint8_t ack_status;
+        uint8_t retries;
 };
 
 
@@ -217,6 +222,7 @@ struct  TIMED_MSG2{
         LACAN_MSG msg;
         QTimer* ack_timer;
         uint8_t ack_status;
+        uint8_t retries;
 };
 
 
@@ -227,9 +233,8 @@ typedef struct TIMED_MSG TIMED_MSG;
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones
 struct  HB_CONTROL{
         QTimer hb_timer;
-
         bool hb_status;
-        uint8_t device;
+        uint16_t device;
 };
 
 typedef struct HB_CONTROL HB_CONTROL;
