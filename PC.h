@@ -217,17 +217,6 @@ struct  TIMED_MSG{
 typedef struct TIMED_MSG TIMED_MSG;
 
 
-//test
-struct  TIMED_MSG2{
-        LACAN_MSG msg;
-        QTimer* ack_timer;
-        uint8_t ack_status;
-        uint8_t retries;
-};
-
-
-typedef struct TIMED_MSG TIMED_MSG;
-
 //Se procede con un una idea parecida al TIMED_MSG para controlar el estado de los nodos en la red, en este caso tenemos un
 //identificador de dispositivo en vez de un mensaje, el temporizador(ver LACAN_PRO.h) y el campo de estado(m s en
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones

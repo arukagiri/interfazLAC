@@ -271,7 +271,10 @@ void Enviar_Mensaje::VAR_Changed(){
 }
 
 void Enviar_Mensaje::TIPO_Changed(){
-    switch(ui->list_VARIABLE->currentIndex()){
+    QString var_selectedstr;
+    var_selectedstr=ui->list_VARIABLE->currentText()+" "+ui->list_TIPO->currentText();
+    var=mw->varmap[var_selectedstr];
+    /*switch(ui->list_VARIABLE->currentIndex()){
         case II:
             switch (ui->list_TIPO->currentIndex()) {
                 case MAX:
@@ -430,7 +433,8 @@ void Enviar_Mensaje::TIPO_Changed(){
                     break;
         }
         break;
-    }
+    }*/
+
 }
 
 
