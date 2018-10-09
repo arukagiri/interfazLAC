@@ -11,6 +11,7 @@ int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_
     switch(fun){
 	case LACAN_FUN_DO:
         LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen);
+       // LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t code, uint16_t result)
 	break;
 	case LACAN_FUN_SET:
         LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen);

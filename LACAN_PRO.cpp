@@ -40,8 +40,9 @@ void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& not
     //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
     //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
     notsup_count++;
-    if(source&LACAN_ID_GEN)
+    if(source&LACAN_ID_GEN){
         notsup_gen++;
+    }
 }
 
 
