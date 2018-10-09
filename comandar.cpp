@@ -7,6 +7,7 @@
 #include "PC.h"
 #include <QDebug>
 #include <QWidget>
+#include <QMap>
 
 enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
 enum TIPO_VAR {MAX,MIN,SETP};
@@ -67,6 +68,7 @@ Comandar::Comandar(QWidget *parent) :
 
     //ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
 }
+
 
 //PARA LAS VENTANAS DE CADA DISPOSITIVO
 /*Comandar::Comandar(uint16_t destino, QWidget *parent) :
@@ -143,14 +145,14 @@ Comandar::~Comandar()
 void Comandar::on_button_ENVIAR_clicked()
 {
     data_can data;
-    uint32_t data_int = ui->text_VALOR_COMANDO->text().toInt();
+    uint32_t data_int = uint32_t(ui->text_VALOR_COMANDO->text().toInt());
     float data_float = ui->text_VALOR_COMANDO->text().toFloat();
     if(data_int == data_float)
         data.var_int = data_int;
     else
         data.var_float = data_float;
 
-    int prevsize= mw->msg_ack.size();
+    uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
         LACAN_Do(mw,cmd);
@@ -173,139 +175,143 @@ void Comandar::SET_VAR_Changed(){
     SET_TIPO_Changed();
 }
 void Comandar::SET_TIPO_Changed(){
-    switch(ui->list_VARIABLE->currentIndex()){
-        case II:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_II_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_II_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_II_SETP;
-                    break;
-                   }
-            break;
-        case IO:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_IO_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_IO_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_IO_SETP;
-                    break;
-                   }
-            break;
-        case ISD:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_ISD_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_ISD_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_ISD_SETP;
-                    break;
-                   }
-            break;
-        case IEF:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_IEF_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_IEF_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_IEF_SETP;
-                    break;
-                   }
-            break;
-        case PI:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_PI_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_PI_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_PI_SETP;
-                    break;
-                   }
-            break;
-        case PO:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_PO_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_PO_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_PO_SETP;
-                    break;
-                   }
-            break;
-        case VI:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_VI_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_VI_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_VI_SETP;
-                    break;
-                   }
-            break;
-        case VO:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_VO_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_VO_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_VO_SETP;
-                    break;
-                   }
-            break;
-        case W:
-            switch (ui->list_TIPO_SET->currentIndex()) {
-                case MAX:
-                    var_set=LACAN_VAR_W_MAX;
-                    break;
-                case MIN:
-                    var_set=LACAN_VAR_W_MIN;
-                    break;
-                case SETP:
-                    var_set=LACAN_VAR_W_SETP;
-                    break;
-        }
-        break;
-        case MOD:
-            switch (ui->list_TIPO_SET->currentIndex()){
+    QString var_selectedstr;
+    var_selectedstr=ui->list_VARIABLE->currentText()+" "+ui->list_TIPO_SET->currentText();
+    qDebug()<<var_selectedstr;
+    var_set=mw->varmap[var_selectedstr];
+//    switch(ui->list_VARIABLE->currentIndex()){
+//        case II:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_II_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_II_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_II_SETP;
+//                    break;
+//                   }
+//            break;
+//        case IO:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_IO_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_IO_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_IO_SETP;
+//                    break;
+//                   }
+//            break;
+//        case ISD:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_ISD_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_ISD_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_ISD_SETP;
+//                    break;
+//                   }
+//            break;
+//        case IEF:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_IEF_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_IEF_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_IEF_SETP;
+//                    break;
+//                   }
+//            break;
+//        case PI:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_PI_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_PI_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_PI_SETP;
+//                    break;
+//                   }
+//            break;
+//        case PO:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_PO_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_PO_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_PO_SETP;
+//                    break;
+//                   }
+//            break;
+//        case VI:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_VI_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_VI_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_VI_SETP;
+//                    break;
+//                   }
+//            break;
+//        case VO:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_VO_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_VO_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_VO_SETP;
+//                    break;
+//                   }
+//            break;
+//        case W:
+//            switch (ui->list_TIPO_SET->currentIndex()) {
+//                case MAX:
+//                    var_set=LACAN_VAR_W_MAX;
+//                    break;
+//                case MIN:
+//                    var_set=LACAN_VAR_W_MIN;
+//                    break;
+//                case SETP:
+//                    var_set=LACAN_VAR_W_SETP;
+//                    break;
+//        }
+//        break;
+//        case MOD:
+//            switch (ui->list_TIPO_SET->currentIndex()){
 
-                case MOD_P:
-                    var_set=LACAN_VAR_MOD_POT;
-                    break;
-                case MOD_V:
-                    var_set=LACAN_VAR_MOD_VEL;
-                    break;
-                case MOD_T:
-                    var_set=LACAN_VAR_MOD_TORQ;
-                    break;
-        }
-        break;
-    }
+//                case MOD_P:
+//                    var_set=LACAN_VAR_MOD_POT;
+//                    break;
+//                case MOD_V:
+//                    var_set=LACAN_VAR_MOD_VEL;
+//                    break;
+//                case MOD_T:
+//                    var_set=LACAN_VAR_MOD_TORQ;
+//                    break;
+//        }
+//        break;
+//    }
 }
 
 void Comandar::DO_CMD_Changed(){

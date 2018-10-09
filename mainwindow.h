@@ -87,7 +87,7 @@ public:
     bool vol_connected=0;
     bool boost_connected=0;
 
-    QMap <QString,variable> varmap;
+    QMap <QString,uint16_t> varmap;
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;

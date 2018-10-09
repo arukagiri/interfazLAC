@@ -6,6 +6,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include "stdint.h"
+#include <QString>
 
 namespace Ui {
 class Comandar;
@@ -24,8 +25,7 @@ private:
     Ui::Comandar *ui;
     uint16_t var_set;
     uint16_t cmd;
-    MainWindow* mw ;
-
+    MainWindow* mw;
     void set_tipo();
 
 private slots:

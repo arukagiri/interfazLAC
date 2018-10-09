@@ -94,163 +94,167 @@ void Consultar::VARIABLE_CONSULTA_Changed(){
 }
 
 void Consultar::TIPO_CONSULTA_Changed(){
-    switch(ui->list_VARIABLE_QRY->currentIndex()){
-        case II:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_II_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_II_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_II_SETP;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_II;
-                    break;
-            }
-            break;
-        case IO:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_IO_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_IO_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_IO_SETP;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_IO;
-                    break;
-                   }
-            break;
-        case ISD:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_ISD_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_ISD_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_ISD_SETP;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_ISD;
-                    break;
-                   }
-            break;
-        case IEF:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_IEF_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_IEF_MIN;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_IEF;
-                    break;
-                   }
-            break;
-        case PI:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_PI_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_PI_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_PI_SETP;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_PI;
-                    break;
-                   }
-            break;
-        case PO:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_PO_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_PO_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_PO_SETP;
-                    break;
-                case INST:
-                    consulta=LACAN_VAR_PO;
-                    break;
-                       }
-            break;
-        case VI:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_VI_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_VI_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_VI_SETP;
-                    break;
-            case INST:
-                consulta=LACAN_VAR_VI;
-                break;
-                   }
-            break;
-        case VO:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_VO_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_VO_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_VO_SETP;
-                    break;
-            case INST:
-                consulta=LACAN_VAR_VO;
-                break;
-                   }
-            break;
-        case W:
-            switch (ui->list_TIPO_QRY->currentIndex()) {
-                case MAX:
-                    consulta=LACAN_VAR_W_MAX;
-                    break;
-                case MIN:
-                    consulta=LACAN_VAR_W_MIN;
-                    break;
-                case SETP:
-                    consulta=LACAN_VAR_W_SETP;
-                    break;
-            case INST:
-                consulta=LACAN_VAR_W;
-                break;
-            }
-        break;
-        case MOD:
-            switch (ui->list_TIPO_QRY->currentIndex()){
+    QString var_selectedstr;
+    var_selectedstr=ui->list_VARIABLE_QRY->currentText()+" "+ui->list_TIPO_QRY->currentText();
+    qDebug()<<var_selectedstr;
+    consulta=mw->varmap[var_selectedstr];
+//    switch(ui->list_VARIABLE_QRY->currentIndex()){
+//        case II:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_II_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_II_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_II_SETP;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_II;
+//                    break;
+//            }
+//            break;
+//        case IO:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_IO_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_IO_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_IO_SETP;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_IO;
+//                    break;
+//                   }
+//            break;
+//        case ISD:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_ISD_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_ISD_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_ISD_SETP;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_ISD;
+//                    break;
+//                   }
+//            break;
+//        case IEF:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_IEF_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_IEF_MIN;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_IEF;
+//                    break;
+//                   }
+//            break;
+//        case PI:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_PI_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_PI_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_PI_SETP;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_PI;
+//                    break;
+//                   }
+//            break;
+//        case PO:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_PO_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_PO_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_PO_SETP;
+//                    break;
+//                case INST:
+//                    consulta=LACAN_VAR_PO;
+//                    break;
+//                       }
+//            break;
+//        case VI:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_VI_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_VI_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_VI_SETP;
+//                    break;
+//            case INST:
+//                consulta=LACAN_VAR_VI;
+//                break;
+//                   }
+//            break;
+//        case VO:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_VO_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_VO_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_VO_SETP;
+//                    break;
+//            case INST:
+//                consulta=LACAN_VAR_VO;
+//                break;
+//                   }
+//            break;
+//        case W:
+//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//                case MAX:
+//                    consulta=LACAN_VAR_W_MAX;
+//                    break;
+//                case MIN:
+//                    consulta=LACAN_VAR_W_MIN;
+//                    break;
+//                case SETP:
+//                    consulta=LACAN_VAR_W_SETP;
+//                    break;
+//            case INST:
+//                consulta=LACAN_VAR_W;
+//                break;
+//            }
+//        break;
+//        case MOD:
+//            switch (ui->list_TIPO_QRY->currentIndex()){
 
-                case MOD_P:
-                    consulta=LACAN_VAR_MOD_POT;
-                    break;
-                case MOD_V:
-                    consulta=LACAN_VAR_MOD_VEL;
-                    break;
-                case MOD_T:
-                    consulta=LACAN_VAR_MOD_TORQ;
-                    break;
-        }
-        break;
-    }
+//                case MOD_P:
+//                    consulta=LACAN_VAR_MOD_POT;
+//                    break;
+//                case MOD_V:
+//                    consulta=LACAN_VAR_MOD_VEL;
+//                    break;
+//                case MOD_T:
+//                    consulta=LACAN_VAR_MOD_TORQ;
+//                    break;
+//        }
+//        break;
+//    }
 }
 
 void Consultar::set_TIPO_CONSULTA(){

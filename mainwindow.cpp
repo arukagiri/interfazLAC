@@ -141,63 +141,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     return abs_msg;
 }
 
-/*MainWindow::init_varmap(){
-
-varmap["Corriente de Salida Instantanea"].id=LACAN_VAR_IO;
-varmap["Tension"].tipo="int";
-varmap["Vector de Estados"].id=LACAN_VAR_STATUS;
-varmap["Vector de Estados"].tipo="Nada";
-varmap[.id=LACAN_VAR_II_MAX;
-].id=LACAN_VAR_II_MIN ;
-varmap["Corriente de Entrada Instantanea"].id=LACAN_VAR_II;
-varmap["Corriente de Entrada Instantanea"].tipo="float";  ;
-].id=LACAN_VAR_II_SETP;
-].id=LACAN_VAR_IO_MAX ;
-].id=LACAN_VAR_IO_MIN ;
-varmap["Corriente de Salida Instantanea"].id=LACAN_VAR_IO;
-varmap["Corriente de Salida Instantanea"].tipo="float";
-].id=LACAN_VAR_IO_SETP;
-].id=LACAN_VAR_ISD_MAX;
-].id=LACAN_VAR_ISD_MIN;
-].id=LACAN_VAR_ISD    ;
-].id=LACAN_VAR_ISD_SETP;
-].id=LACAN_VAR_IEF_MAX ;
-].id=LACAN_VAR_IEF_MIN ;
-].id=LACAN_VAR_IEF     ;
-].id=LACAN_VAR_IEF_SETP;
-].id=LACAN_VAR_PI_MAX  ;
-].id=LACAN_VAR_PI_MIN  ;
-].id=LACAN_VAR_PI      ;
-].id=LACAN_VAR_PI_SETP ;
-].id=LACAN_VAR_PO_MAX  ;
-].id=LACAN_VAR_PO_MIN  ;
-].id=LACAN_VAR_PO      ;
-].id=LACAN_VAR_PO_SETP ;
-].id=LACAN_VAR_VI_MAX  ;
-].id=LACAN_VAR_VI_MIN  ;
-].id=LACAN_VAR_VI      ;
-].id=LACAN_VAR_VI_SETP ;
-].id=LACAN_VAR_VO_MAX  ;
-].id=LACAN_VAR_VO_MIN  ;
-varmap["Tension de Salida Instantanea"].id=LACAN_VAR_VO;
-varmap["Tension de Salida Instantanea"].tipo="float";
-].id=LACAN_VAR_VO_SETP ;
-].id=LACAN_VAR_W_MAX   ;
-].id=LACAN_VAR_W_MIN   ;
-].id=LACAN_VAR_W       ;
-].id=LACAN_VAR_W_SETP  ;
-].id=LACAN_VAR_BAT_IMAX;
-].id=LACAN_VAR_BAT_IMIN;
-\].id=LACAN_VAR_BAT_I  ;
-].id=LACAN_VAR_BAT_I_SETP;
-].id=LACAN_VAR_BAT_VMAX  ;
-].id=LACAN_VAR_BAT_VMIN  ;
-].id=LACAN_VAR_BAT_V     ;
-].id=LACAN_VAR_BAT_V_SETP;
-].id=LACAN_VAR_MOD_POT   ;
-].id=LACAN_VAR_MOD_VEL  ;
-].id=LACAN_VAR_MOD_TORQ ;
-}*/
 
 MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QMainWindow(parent),
@@ -247,6 +190,46 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
+
+    varmap["Corriente de Entrada Instantanea"]=LACAN_VAR_II;
+    varmap["Corriente de Entrada Maxima"]=LACAN_VAR_II_MAX;
+    varmap["Corriente de Entrada Minima"]=LACAN_VAR_II_MIN;
+    varmap["Corriente de Entrada Set Point"]=LACAN_VAR_II_SETP;
+    varmap["Corriente de Salida Instantanea"]=LACAN_VAR_IO;
+    varmap["Corriente de Salida Maxima"]=LACAN_VAR_IO_MAX;
+    varmap["Corriente de Salida Minima"]=LACAN_VAR_IO_MIN;
+    varmap["Corriente de Salida Set Point"]=LACAN_VAR_IO_SETP;
+    varmap["Corriente de ISD Instantanea"]=LACAN_VAR_ISD;
+    varmap["Corriente de ISD Maxima"]=LACAN_VAR_ISD_MAX;
+    varmap["Corriente de ISD Minima"]=LACAN_VAR_ISD_MIN;
+    varmap["Corriente de ISD Set Point"]=LACAN_VAR_ISD_SETP;
+    varmap["Corriente Eficaz Instantanea"]=LACAN_VAR_IEF;
+    varmap["Corriente Eficaz Maxima"]=LACAN_VAR_IEF_MAX;
+    varmap["Corriente Eficaz Minima"]=LACAN_VAR_IEF_MIN;
+    varmap["Corriente Eficaz Set Point"]=LACAN_VAR_IEF_SETP;
+    varmap["Potencia de Entrada Instantanea"]=LACAN_VAR_PI;
+    varmap["Potencia de Entrada Maxima"]=LACAN_VAR_PI_MAX;
+    varmap["Potencia de Entrada Minima"]=LACAN_VAR_PI_MIN;
+    varmap["Potencia de Entrada Set Point"]=LACAN_VAR_PI_SETP;
+    varmap["Potencia de Salida Instantanea"]=LACAN_VAR_PO;
+    varmap["Potencia de Salida Maxima"]=LACAN_VAR_PO_MAX;
+    varmap["Potencia de Salida Minima"]=LACAN_VAR_PO_MIN;
+    varmap["Potencia de Salida Set Point"]=LACAN_VAR_PO_SETP;
+    varmap["Tension de Entrada Instantanea"]=LACAN_VAR_VI;
+    varmap["Tension de Entrada Maxima"]=LACAN_VAR_VI_MAX;
+    varmap["Tension de Entrada Minima"]=LACAN_VAR_VI_MIN;
+    varmap["Tension de Entrada Set Point"]=LACAN_VAR_VI_SETP;
+    varmap["Tension de Salida Instantanea"]=LACAN_VAR_VO;
+    varmap["Tension de Salida Maxima"]=LACAN_VAR_VO_MAX;
+    varmap["Tension de Salida Minima"]=LACAN_VAR_VO_MIN;
+    varmap["Tension de Salida Set Point"]=LACAN_VAR_VO_SETP;
+    varmap["Velocidad Angular Instantanea"]=LACAN_VAR_W;
+    varmap["Velocidad Angular Maxima"]=LACAN_VAR_W_MAX;
+    varmap["Velocidad Angular Minima"]=LACAN_VAR_W_MIN;
+    varmap["Velocidad Angular Set Point"]=LACAN_VAR_W_SETP;
+    varmap["Modo Potencia"]=LACAN_VAR_MOD_POT;
+    varmap["Modo Velocidad"]=LACAN_VAR_MOD_VEL;
+    varmap["Modo Torque"]=LACAN_VAR_MOD_TORQ;
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }
