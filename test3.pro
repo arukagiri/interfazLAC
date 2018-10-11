@@ -54,7 +54,9 @@ HEADERS += \
     pc.h \
     lacan_detect.h \
     better_serialfunc.h \
-    addnewdevdialog.h
+    addnewdevdialog.h \
+    limtes.h \
+    limites.h
 
 FORMS += \
         mainwindow.ui \

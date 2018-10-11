@@ -42,7 +42,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_vol_torque->setText("----");
 
 
-    send_qry();
+    //send_qry();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
 
     time_2sec->start(2000);
@@ -114,23 +114,35 @@ void EstadoRed::send_qry(){
     if(mw->gen_connected){
         mw->dest=LACAN_ID_GEN;
         LACAN_Query(mw,LACAN_VAR_VO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_IO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_W);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_MOD_TORQ);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
     if(mw->vol_connected){
         mw->dest=LACAN_ID_VOLANTE;
         LACAN_Query(mw,LACAN_VAR_VO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_IO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_W);
-        LACAN_Query(mw,LACAN_VAR_MOD_TORQ);;
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        LACAN_Query(mw,LACAN_VAR_MOD_TORQ);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
     if(mw->boost_connected){
         mw->dest=LACAN_ID_BOOST;
         LACAN_Query(mw,LACAN_VAR_VO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_IO);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_II);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_VI);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
 }
@@ -138,7 +150,7 @@ void EstadoRed::send_qry(){
 
 void EstadoRed::timer_handler(){
     refresh_values();
-    send_qry();
+    //send_qry();
 }
 
 

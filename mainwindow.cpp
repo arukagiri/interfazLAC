@@ -56,7 +56,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     float val_float;
     data_can val_union;
 
-    qDebug()<<"ENTRO A ABSTRACT MSG";
     //DESTINO
     switch((msg_log.back().BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
     case LACAN_ID_BOOST:
@@ -80,7 +79,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
     case LACAN_FUN_ERR:
         abs_msg.fun="Error";
-        qDebug()<<"ERROR DENTRO DE ABS, MSG = "<<msg_log.back().BYTE1;
         abs_msg.err_code=detect_err(msg_log.back().BYTE1);
         break;
 
@@ -171,7 +169,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QStringList TableHeader;
     TableHeader<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
 
-    ui->tableWidget_received->setRowCount(10);
+    ui->tableWidget_received->setRowCount(250);
     ui->tableWidget_received->setColumnCount(8);
     ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
@@ -181,7 +179,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setShowGrid(false);
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    ui->tableWidget_sent->setRowCount(10);
+    ui->tableWidget_sent->setRowCount(250);
     ui->tableWidget_sent->setColumnCount(8);
     ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
@@ -372,26 +370,25 @@ void MainWindow::verificarACK(){
     //se sigue almacenando dentro del vector por un tiempo determinado (DEAD_MSJ_ACK_TIME) antes de que sea borrado
 
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
+
         if((*it_ack)->ack_status==RECEIVED){        //si llego el ack..
             //if((*it_ack)->ack_timer.remainingTime()<=0){
             if(!((*it_ack)->ack_timer.isActive())){
-                qDebug()<<"entro al if RECEIVED";
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
             }
         }
         else{
-             if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack..
+             if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack y se vencion el timer
                 (*it_ack)->ack_status=ACK_TIMEOUT;
-                qDebug()<<"entro al if timeout";
                 if((*it_ack)->retries<=0){  // si no quedan reintentos
-                    qDebug()<<"entro al tosio";
+                    //if(ERflag==0){
+                    //    QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
+                    //}
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
-                    no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
+                    no_ACK_Handler();
                     msg_ack.erase(it_ack);
                 }
                 else{   //si quedan reintentos, vuelve a enviar el mensaje y descuenta reintentos
-
-                    qDebug()<<"entro al reenviar";
                     serialsend2(*(this->serial_port),(*it_ack)->msg);
                     (*it_ack)->ack_status=PENDACK;
                     (*it_ack)->ack_timer.setSingleShot(true);
@@ -432,7 +429,6 @@ void MainWindow::handleRead(){
         }
         this->agregar_log_rec(msg_log);
     }
-    qDebug()<<pila;
 }
 
 void MainWindow::change_ERflag(){
