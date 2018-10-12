@@ -8,5 +8,9 @@
         <file>Imagenes/PC.png</file>
         <file>Imagenes/VOL.png</file>
         <file>Imagenes/DB_GEN.png</file>
+        <file>Imagenes/BUS_off.png</file>
+        <file>Imagenes/GEN_off.png</file>
+        <file>Imagenes/PANEL_off.png</file>
+        <file>Imagenes/VOL_off.png</file>
     </qresource>
 </RCC>

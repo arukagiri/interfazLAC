@@ -220,3 +220,22 @@ void EstadoRed::closeEvent(QCloseEvent *e){
     delete time_2sec;
     QDialog::closeEvent(e);
 }
+
+void EstadoRed::on_pushButton_clicked()
+{
+    if(ui->button_gen->isEnabled())
+        ui->button_gen->setDisabled(true);
+    else
+        ui->button_gen->setEnabled(true);
+
+    if(ui->button_bust->isEnabled())
+        ui->button_bust->setDisabled(true);
+    else
+        ui->button_bust->setEnabled(true);
+
+
+    if(ui->button_vol->isEnabled())
+        ui->button_vol->setDisabled(true);
+    else
+        ui->button_vol->setEnabled(true);
+}

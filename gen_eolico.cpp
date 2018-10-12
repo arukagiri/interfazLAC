@@ -6,6 +6,8 @@
 #include <QTimer>
 #include "PC.h"
 #include "LACAN_SEND.h"
+#include "lacan_limits.h"
+
 
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
@@ -44,11 +46,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->spin_lim_ief->setValue(0);
     ui->spin_lim_vdc->setValue(0);
     ui->spin_pot_ref->setValue(0);
-//*****************************validar los spin*********************************
-//    ui->spin_ibat->setMaximum();
-//    ui->spin_ibat->setMinimum();
-//    ui->spin_ibat->setDecimals();
-//*****************************validar los spin*********************************
+
+    set_limits_gen();
+
     new_mode();                 //para que queden en grises los que correspondan
     set_spin_click(false);  //todo desclickeado
 
@@ -240,9 +240,6 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_TORQI_SETP:
             torque_ref=recibed_val.var_float;
         break;
-        /*case LACAN_VAR_IO:
-            vdc=recibed_val.var_float;
-        break;*/
        /* case LACAN_VAR_BAT_I: //o la de setpoint
             ibat=recibed_val.var_float;
         break;*/
@@ -418,59 +415,45 @@ void Gen_Eolico::on_spin_isd_ref_valueChanged(double arg1)
 }
 
 
-/*
-void Gen_Eolico::on_spin_speed_ref_cursorPositionChanged(int arg1, int arg2)
-{
-    //speed_ref_click=true;
+void Gen_Eolico::set_limits_gen(){
+    ui->spin_ibat->setMaximum(LACAN_VAR_GEN_BAT_I_SETP_LIM_MAX);
+    ui->spin_ibat->setMinimum(LACAN_VAR_GEN_BAT_I_SETP_LIM_MIN);
+    ui->spin_ibat->setDecimals(3);
+
+    ui->spin_lim_ibat->setMaximum(LACAN_VAR_GEN_BAT_IMAX_LIM_MAX);
+    ui->spin_lim_ibat->setMinimum(LACAN_VAR_GEN_BAT_IMAX_LIM_MIN);
+    ui->spin_lim_ibat->setDecimals(3);
+
+    //ui->spin_vdc->setMaximum();
+    //ui->spin_vdc->setMinimum();
+    ui->spin_vdc->setDecimals(3);
+
+    //ui->spin_lim_vdc->setMaximum();
+   // ui->spin_lim_vdc->setMinimum();
+    ui->spin_lim_vdc->setDecimals(3);
+
+    ui->spin_speed_ref->setMaximum(LACAN_VAR_GEN_W_SETP_LIM_MAX);
+    ui->spin_speed_ref->setMinimum(LACAN_VAR_GEN_W_SETP_LIM_MIN);
+    ui->spin_speed_ref->setDecimals(3);
+
+    ui->spin_pot_ref->setMaximum(LACAN_VAR_GEN_PO_SETP_LIM_MAX);
+    ui->spin_pot_ref->setMinimum(LACAN_VAR_GEN_PO_SETP_LIM_MIN);
+    ui->spin_pot_ref->setDecimals(3);
+
+    ui->spin_torque_ref->setMaximum(LACAN_VAR_GEN_TORQI_SETP_LIM_MAX);
+    ui->spin_torque_ref->setMinimum(LACAN_VAR_GEN_TORQI_SETP_LIM_MIN);
+    ui->spin_torque_ref->setDecimals(3);
+
+    ui->spin_lim_ief->setMaximum(LACAN_VAR_GEN_IEF_MAX_LIM_MAX);
+    ui->spin_lim_ief->setMinimum(LACAN_VAR_GEN_IEF_MAX_LIM_MIN);
+    ui->spin_lim_ief->setDecimals(3);
+
+    //ui->spin_iconv->setMaximum();
+    //ui->spin_iconv->setMinimum();
+    ui->spin_iconv->setDecimals(3);
+
+    ui->spin_isd_ref->setMaximum(LACAN_VAR_GEN_ISD_SETP_LIM_MAX);
+    ui->spin_isd_ref->setMinimum(LACAN_VAR_GEN_ISD_SETP_LIM_MIN);
+    ui->spin_isd_ref->setDecimals(3);
+
 }
-
-void Gen_Eolico::on_spin_speed_ref_textEdited(const QString &arg1)
-{
-    speed_ref_click=true;
-}
-
-
-void Gen_Eolico::on_spin_pot_ref_textChanged(const QString &arg1)
-{
-    pot_ref_click=true;
-}
-
-void Gen_Eolico::on_spin_lim_vdc_textChanged(const QString &arg1)
-{
-    lim_vdc_click=true;
-}
-
-void Gen_Eolico::on_spin_vdc_textChanged(const QString &arg1)
-{
-    vdc_click=true;
-}
-
-void Gen_Eolico::on_spin_iconv_textChanged(const QString &arg1)
-{
-    iconv_click=true;
-}
-
-void Gen_Eolico::on_spin_lim_ief_textChanged(const QString &arg1)
-{
-    lim_ief_click=true;
-}
-
-void Gen_Eolico::on_spin_torque_ref_textChanged(const QString &arg1)
-{
-    torque_ref_click=true;
-}
-
-void Gen_Eolico::on_spin_isd_ref_textChanged(const QString &arg1)
-{
-   isd_ref_click=true;
-}
-
-void Gen_Eolico::on_spin_lim_ibat_textChanged(const QString &arg1)
-{
-    lim_ibat_click=true;
-}
-
-void Gen_Eolico::on_spin_ibat_textChanged(const QString &arg1)
-{
-    ibat_click=true;
-}*/

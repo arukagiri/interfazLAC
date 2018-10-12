@@ -31,6 +31,8 @@ private slots:
 
     void var_changed(uint16_t var,uint16_t data);
 
+    void on_pushButton_clicked();
+
 private:
     Ui::EstadoRed *ui;
     MainWindow* mw ;

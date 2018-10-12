@@ -70,6 +70,8 @@ private:
     bool lim_ibat_click;
     bool ibat_click;
 
+    void set_limits_gen();
+
 
 
 private slots:

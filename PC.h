@@ -3,7 +3,6 @@
 #include <QString>
 #include <stdint.h>
 #include <QMap>
-#include "limites.h"
 
 #ifndef PC_H_INCLUDED
 #define PC_H_INCLUDED

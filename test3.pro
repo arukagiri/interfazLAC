@@ -38,7 +38,8 @@ SOURCES += \
     tiempo.cpp \
     LACAN_PRO.cpp \
     better_serialfunc.cpp \
-    addnewdevdialog.cpp
+    addnewdevdialog.cpp \
+    lacan_limits.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,7 +57,8 @@ HEADERS += \
     better_serialfunc.h \
     addnewdevdialog.h \
     limtes.h \
-    limites.h
+    lacan_limits_gen.h \
+    lacan_limits.h
 
 FORMS += \
         mainwindow.ui \

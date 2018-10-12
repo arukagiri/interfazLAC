@@ -73,7 +73,8 @@
    </property>
    <property name="icon">
     <iconset resource="imagenes.qrc">
-     <normaloff>:/Imagenes/PANEL.png</normaloff>:/Imagenes/PANEL.png</iconset>
+     <normaloff>:/Imagenes/PANEL.png</normaloff>
+     <disabledoff>:/Imagenes/PANEL_off.png</disabledoff>:/Imagenes/PANEL.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -96,7 +97,8 @@
    </property>
    <property name="icon">
     <iconset resource="imagenes.qrc">
-     <normaloff>:/Imagenes/GEN.png</normaloff>:/Imagenes/GEN.png</iconset>
+     <normaloff>:/Imagenes/GEN.png</normaloff>
+     <disabledoff>:/Imagenes/GEN_off.png</disabledoff>:/Imagenes/GEN.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -411,6 +413,19 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>380</y>
+     <width>91</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>PRUEBA</string>
+   </property>
   </widget>
  </widget>
  <resources>
