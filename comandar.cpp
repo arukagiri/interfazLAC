@@ -29,7 +29,6 @@ Comandar::Comandar(QWidget *parent) :
 
     ui->list_COMANDO->setDisabled(true);
 
-    qDebug()<<mw->dest;
     switch(mw->dest){
         case LACAN_ID_GEN:
             ui->label_DESTINO->setText("Generador Eolico");
@@ -49,7 +48,6 @@ Comandar::Comandar(QWidget *parent) :
             ui->list_TIPO_SET->addItem("Minima");
             ui->list_TIPO_SET->addItem("Set Point");
 
-
             ui->list_COMANDO->addItem("Start");
             ui->list_COMANDO->addItem("Stop");
             ui->list_COMANDO->addItem("Reset");
@@ -66,7 +64,7 @@ Comandar::Comandar(QWidget *parent) :
     var_set=LACAN_VAR_II_MAX;
     cmd=LACAN_CMD_START;
 
-    //ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
+    //ui->spin_valor->setInputMask("99999");    //para insertar solo numeros
 }
 
 
@@ -119,13 +117,13 @@ Comandar::Comandar(QWidget *parent) :
     var_set=LACAN_VAR_II_MAX;
     cmd=LACAN_CMD_START;
 
-    ui->text_VALOR_COMANDO->setInputMask("99999");    //para insertar solo numeros
+    ui->spin_valor->setInputMask("99999");    //para insertar solo numeros
 }
 */
 
 void Comandar::DO_selected(){
     ui->list_VARIABLE->setDisabled(true);
-    ui->text_VALOR_COMANDO->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_COMANDO->setEnabled(true);
 
 }
@@ -133,7 +131,7 @@ void Comandar::DO_selected(){
 void Comandar::SET_selected(){
     ui->list_COMANDO->setDisabled(true);
     ui->list_VARIABLE->setEnabled(true);
-    ui->text_VALOR_COMANDO->setEnabled(true);
+    ui->spin_valor->setEnabled(true);
 }
 
 
@@ -144,20 +142,22 @@ Comandar::~Comandar()
 
 void Comandar::on_button_ENVIAR_clicked()
 {
-    data_can data;
-    uint32_t data_int = uint32_t(ui->text_VALOR_COMANDO->text().toInt());
-    float data_float = ui->text_VALOR_COMANDO->text().toFloat();
-    if(data_int == data_float)
-        data.var_int = data_int;
-    else
-        data.var_float = data_float;
-
-    uint prevsize= mw->msg_ack.size();
+     uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
         LACAN_Do(mw,cmd);
     }else if(ui->radio_SET->isChecked()){
+        data_can data;
+        /*uint32_t data_int = uint32_t(ui->spin_valor->value());
+        float data_float = ui->spin_valor->value();
+        if(data_int == data_float)
+            data.var_int = data_int;
+        else
+            data.var_float = data_float;*/
+
+        data.var_float=ui->spin_valor->value();
         LACAN_Set(mw,var_set,data);
+
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }

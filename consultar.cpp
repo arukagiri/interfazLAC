@@ -45,6 +45,8 @@ Consultar::Consultar(QWidget *parent) :
         ui->list_TIPO_QRY->addItem("Set Point");
         ui->list_TIPO_QRY->addItem("Instantanea");
 
+        consulta=LACAN_VAR_II_MAX;
+
         connect(ui->list_VARIABLE_QRY,SIGNAL(currentTextChanged(QString)),this,SLOT(VARIABLE_CONSULTA_Changed()));
         connect(ui->list_TIPO_QRY,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_CONSULTA_Changed()));
         break;

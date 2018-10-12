@@ -164,11 +164,11 @@ void Enviar_Mensaje::HB_selected(){
 
     ui->list_VARIABLE->setDisabled(true);
     ui->list_TIPO->setDisabled(true);
-    ui->text_VALOR->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_COMANDO->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 void Enviar_Mensaje::SET_selected(){
@@ -178,12 +178,12 @@ void Enviar_Mensaje::SET_selected(){
     ui->list_VARIABLE->setEnabled(true);
     ui->list_TIPO->setEnabled(true);
 
-    ui->text_VALOR->setEnabled(true);
+    ui->spin_valor->setEnabled(true);
 
     ui->list_COMANDO->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 
@@ -195,10 +195,10 @@ void Enviar_Mensaje::DO_selected(){
 
     ui->list_VARIABLE->setDisabled(true);
     ui->list_TIPO->setDisabled(true);
-    ui->text_VALOR->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 
@@ -209,11 +209,11 @@ void Enviar_Mensaje::QRY_selected(){
     ui->list_VARIABLE->setEnabled(true);
     ui->list_TIPO->setEnabled(true);
 
-    ui->text_VALOR->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_COMANDO->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 
@@ -224,12 +224,12 @@ void Enviar_Mensaje::POST_selected(){
     ui->list_VARIABLE->setEnabled(true);
     ui->list_TIPO->setEnabled(true);
 
-    ui->text_VALOR->setEnabled(true);
+    ui->spin_valor->setEnabled(true);
 
     ui->list_COMANDO->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 
@@ -238,11 +238,11 @@ void Enviar_Mensaje::ACK_selected(){
     ui->list_DESTINO->setEnabled(true);
 
     ui->list_RESULTADO->setEnabled(true);
-    ui->text_CODIGO->setEnabled(true);
+    ui->spin_codigo->setEnabled(true);
 
     ui->list_VARIABLE->setDisabled(true);
     ui->list_TIPO->setDisabled(true);
-    ui->text_VALOR->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_COMANDO->setDisabled(true);
     ui->list_ERROR->setDisabled(true);
 }
@@ -256,10 +256,10 @@ void Enviar_Mensaje::ERR_selected(){
 
     ui->list_VARIABLE->setDisabled(true);
     ui->list_TIPO->setDisabled(true);
-    ui->text_VALOR->setDisabled(true);
+    ui->spin_valor->setDisabled(true);
     ui->list_COMANDO->setDisabled(true);
     ui->list_RESULTADO->setDisabled(true);
-    ui->text_CODIGO->setDisabled(true);
+    ui->spin_codigo->setDisabled(true);
 }
 
 
@@ -443,7 +443,7 @@ void Enviar_Mensaje::TIPO_Changed(){
 void Enviar_Mensaje::set_TIPO_VAR(){
     switch (ui->list_VARIABLE->currentIndex()) {
     case MOD:
-        ui->text_VALOR->setDisabled(true);
+        ui->spin_valor->setDisabled(true);
         ui->list_TIPO->clear();
         ui->list_TIPO->addItem("Potencia");
         ui->list_TIPO->addItem("Velocidad");
@@ -452,14 +452,14 @@ void Enviar_Mensaje::set_TIPO_VAR(){
     default:
         switch (ui->list_MENSAJE->currentIndex()) {
         case SET:
-            ui->text_VALOR->setEnabled(true);
+            ui->spin_valor->setEnabled(true);
             ui->list_TIPO->clear();
             ui->list_TIPO->addItem("Maxima");
             ui->list_TIPO->addItem("Minima");
             ui->list_TIPO->addItem("Set Point");
             break;
         case POST:
-            ui->text_VALOR->setEnabled(true);
+            ui->spin_valor->setEnabled(true);
             ui->list_TIPO->clear();
             ui->list_TIPO->addItem("Maxima");
             ui->list_TIPO->addItem("Minima");
@@ -467,7 +467,7 @@ void Enviar_Mensaje::set_TIPO_VAR(){
             ui->list_TIPO->addItem("Instantanea");
             break;
         case QRY:
-            ui->text_VALOR->setDisabled(true);
+            ui->spin_valor->setDisabled(true);
             ui->list_TIPO->clear();
             ui->list_TIPO->addItem("Maxima");
             ui->list_TIPO->addItem("Minima");
@@ -611,8 +611,8 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
     //Verifico si el valor que se va a mandar es un entero o un float
    /*data_can data;
-    uint32_t data_int = ui->text_VALOR->text().toInt();
-    float data_float = ui->text_VALOR->text().toFloat();
+    uint32_t data_int = ui->spin_valor->text().toInt();
+    float data_float = ui->spin_valor->text().toFloat();
     if(data_int == data_float){
         qDebug()<<"Son iguales";
         data.var_int = data_int;}
@@ -621,8 +621,8 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         data.var_float = data_float;}*/
 
  /*   data_can data;
-    uint32_t data_int = ui->text_VALOR->text().toInt();
-    float data_float = ui->text_VALOR->text().toFloat();
+    uint32_t data_int = ui->spin_valor->text().toInt();
+    float data_float = ui->spin_valor->text().toFloat();
     if(data_int == data_float){
         //si entra aca es porque es in int, lo caesteamo a float
         data.var_float =float(data_int);
@@ -631,8 +631,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         data.var_float = data_float;    //si no, es un float y lo gaurdamo como esta*/
 
     data_can data;
-    float data_float = ui->text_VALOR->text().toFloat();
-    data.var_float =float(data_float);
+    data.var_float = ui->spin_valor->value();
 
     float probando=data.var_float;
     qDebug()<<"=============";
@@ -640,7 +639,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     qDebug()<<"=============";
 
 
-    uint16_t ack_cod = uint16_t(ui->text_CODIGO->text().toInt());
+    uint16_t ack_cod = ui->spin_codigo->value();
     uint prevsize=mw->msg_ack.size();
 
     switch(ui->list_MENSAJE->currentIndex()){
