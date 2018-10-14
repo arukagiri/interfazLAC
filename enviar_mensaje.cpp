@@ -662,7 +662,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         LACAN_Error(mw,err_cod);
         break;
     case ACK:
-        LACAN_Acknowledge(mw,0,ack_cod,res);      //ver req type
+        LACAN_Acknowledge(mw,ack_cod,res);      //ver req type
         break;
     }
 

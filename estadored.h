@@ -33,6 +33,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_button_vol_clicked();
+
 private:
     Ui::EstadoRed *ui;
     MainWindow* mw ;
@@ -55,6 +57,7 @@ private:
 
     void refresh_values(void);
     void send_qry(void);
+    void set_states(void);
 
 };
 

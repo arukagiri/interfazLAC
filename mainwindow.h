@@ -39,6 +39,10 @@ public:
 
      void verificar_destino();
 
+     void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code);
+
+     int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw);
+
 signals:
      void postforER_arrived(LACAN_MSG msg);
 
@@ -68,6 +72,7 @@ private slots:
     void on_button_START_clicked();
 
     void on_button_STOP_clicked();
+
 
 public:
 

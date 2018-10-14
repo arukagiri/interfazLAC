@@ -42,12 +42,13 @@ int16_t LACAN_Heartbeat(MainWindow* mw){
 RequestType: si es un do, qry set... en principio no lo vamos a usar porque tenemos un object/code para todos
 Object: es el codigo
 Resultado: xD*/
-int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t code, uint16_t result){
+int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t code, uint16_t result){
     LACAN_MSG msg;
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_ACK<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=3;
-    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
+    //msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=code;
     msg.BYTE2=result;
 

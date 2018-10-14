@@ -59,7 +59,7 @@
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="button_bust">
+  <widget class="QPushButton" name="button_boost">
    <property name="geometry">
     <rect>
      <x>491</x>

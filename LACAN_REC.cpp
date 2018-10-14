@@ -2,40 +2,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw){
 
-    //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
-    uint16_t source=mje.ID&LACAN_IDENT_MASK;
-    uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
-
-    switch(fun){
-	case LACAN_FUN_DO:
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen);
-       // LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t code, uint16_t result)
-	break;
-	case LACAN_FUN_SET:
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen);
-	break;
-    case LACAN_FUN_QRY:
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen);
-	break;
-	case LACAN_FUN_ACK:
-        LACAN_ACK_Handler(mje.BYTE1, msg_ack);
-	break;
-    case LACAN_FUN_POST:
-        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
-	break;
-	case LACAN_FUN_ERR:
-	//	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
-	break;
-	case LACAN_FUN_HB:
-        LACAN_HB_Handler(source, hb_con, mw);
-        break;
-	default:
-		return LACAN_NO_SUCH_MSG;
-	}
-	return LACAN_SUCCESS;
-}
 
 void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
 //crear archivo para cada variable e ir guardando en bloc de notas

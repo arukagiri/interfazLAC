@@ -143,7 +143,7 @@ void Gen_Eolico::timer_handler(){
     }
     else{
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::warning(this,"Gen Lost","El generador se ha desconectado de la red");
+        reply = QMessageBox::warning(this,"Conexion perdida","El generador se ha desconectado de la red. Esta ventana se cerrara inmediatamente");
         if(reply){
             this->close();
         }

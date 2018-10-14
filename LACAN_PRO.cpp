@@ -1,4 +1,5 @@
 #include "LACAN_PRO.h"
+#include "LACAN_SEND.h"
 
 
 /*void verificarHB(vector<HB_CONTROL*>& hb_con){
@@ -36,14 +37,7 @@ void verificarACK(vector<TIMED_MSG*>& msg_ack){
 }*/
 
 
-void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen){
-    //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
-    //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
-    notsup_count++;
-    if(source&LACAN_ID_GEN){
-        notsup_gen++;
-    }
-}
+
 
 
 //Implementacion de las acciones a tomar en caso de que no llegue el ack de un mensaje en el tiempo limite. EN PROCESO
