@@ -8,6 +8,7 @@
 #include "comandar.h"
 #include "mainwindow.h"
 #include <QString>
+#include <QDoubleSpinBox>
 
 namespace Ui {
 class Gen_Eolico;
@@ -40,22 +41,24 @@ private:
     void send_qry();
 
     //variables para guardar el valor a mostrar
-    int16_t iconv;         //para insertar solo numeros
-    int16_t isd_ref;
-    int16_t lim_ibat;
-    int16_t lim_ief;
-    int16_t lim_vdc;
-    int16_t pot_ref;
-    int16_t speed_ref;
-    int16_t torque_ref;
-    int16_t vdc;
-    int16_t ibat;
+
+    data_can recibed_val;
+    float iconv;         //para insertar solo numeros
+    float isd_ref;
+    float lim_ibat;
+    float lim_ief;
+    float lim_vdc;
+    float pot_ref;
+    float speed_ref;
+    float torque_ref;
+    float vdc;
+    float ibat;
 
     float gen_vo;
     float gen_io;
 
     //cuando se edita un valor
-    void set_lineEdit_click(bool state);
+    void set_spin_click(bool state);
     bool speed_ref_click;
     bool pot_ref_click;
     bool lim_vdc_click;
@@ -67,6 +70,8 @@ private:
     bool lim_ibat_click;
     bool ibat_click;
 
+    void set_limits_gen();
+
 
 
 private slots:
@@ -77,22 +82,23 @@ private slots:
 
     void GENpost_Handler(LACAN_MSG msg);
 
+    void enviar_variables_generales();
+
     void on_pushButton_apply_clicked();
     void on_pushButton_cancel_clicked();
-    void on_lineEdit_speed_ref_textEdited(const QString &arg1);
-    void on_lineEdit_speed_ref_cursorPositionChanged(int arg1, int arg2);
-    void on_lineEdit_pot_ref_textChanged(const QString &arg1);
-    void on_lineEdit_lim_vdc_textChanged(const QString &arg1);
-    void on_lineEdit_vdc_textChanged(const QString &arg1);
-    void on_lineEdit_iconv_textChanged(const QString &arg1);
-    void on_lineEdit_lim_ief_textChanged(const QString &arg1);
-    void on_lineEdit_torque_ref_textChanged(const QString &arg1);
-    void on_lineEdit_isd_ref_textChanged(const QString &arg1);
-    void on_lineEdit_lim_ibat_textChanged(const QString &arg1);
-    void on_lineEdit_ibat_textChanged(const QString &arg1);
     void on_pushButton_comandar_clicked();
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
+    void on_spin_ibat_valueChanged(double arg1);
+    void on_spin_lim_ibat_valueChanged(double arg1);
+    void on_spin_lim_vdc_valueChanged(double arg1);
+    void on_spin_speed_ref_valueChanged(double arg1);
+    void on_spin_vdc_valueChanged(double arg1);
+    void on_spin_pot_ref_valueChanged(double arg1);
+    void on_spin_iconv_valueChanged(double arg1);
+    void on_spin_lim_ief_valueChanged(double arg1);
+    void on_spin_torque_ref_valueChanged(double arg1);
+    void on_spin_isd_ref_valueChanged(double arg1);
 };
 
 #endif // GEN_EOLICO_H

@@ -19,6 +19,7 @@
 #include <QStandardPaths>
 #include "LACAN_REC.h"
 #include "addnewdevdialog.h"
+#include <QColor>
 
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
@@ -56,7 +57,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     float val_float;
     data_can val_union;
 
-    qDebug()<<"ENTRO A ABSTRACT MSG";
     //DESTINO
     switch((msg_log.back().BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
     case LACAN_ID_BOOST:
@@ -80,7 +80,6 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
     case LACAN_FUN_ERR:
         abs_msg.fun="Error";
-        qDebug()<<"ERROR DENTRO DE ABS, MSG = "<<msg_log.back().BYTE1;
         abs_msg.err_code=detect_err(msg_log.back().BYTE1);
         break;
 
@@ -189,7 +188,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QStringList TableHeader;
     TableHeader<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
 
-    ui->tableWidget_received->setRowCount(10);
+    ui->tableWidget_received->setRowCount(250);
     ui->tableWidget_received->setColumnCount(8);
     ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
@@ -199,7 +198,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setShowGrid(false);
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    ui->tableWidget_sent->setRowCount(10);
+    ui->tableWidget_sent->setRowCount(250);
     ui->tableWidget_sent->setColumnCount(8);
     ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
@@ -369,6 +368,11 @@ void MainWindow::on_button_STOP_clicked()
     this->agregar_log_sent();*/
 
     LACAN_HB_Handler(7,hb_con,this);
+
+    QColor *rojo = new QColor(255,0,0) ;
+    //ui->tableWidget_received->item(1,1)->setBackgroundColor(*rojo);
+    //ui->tableWidget_sent->item(2,1)->setBackgroundColor(QColor(125,125,125));
+    //ui->tableWidget_received->item(1,1)->setData()
 }
 
 void MainWindow::verificarHB(){
@@ -390,26 +394,25 @@ void MainWindow::verificarACK(){
     //se sigue almacenando dentro del vector por un tiempo determinado (DEAD_MSJ_ACK_TIME) antes de que sea borrado
 
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
+
         if((*it_ack)->ack_status==RECEIVED){        //si llego el ack..
             //if((*it_ack)->ack_timer.remainingTime()<=0){
             if(!((*it_ack)->ack_timer.isActive())){
-                qDebug()<<"entro al if RECEIVED";
                 msg_ack.erase(it_ack);                  //si hace mucho que se mando el mensaje y no se hizo nada lo borramos
             }
         }
         else{
-             if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack..
+             if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack y se vencion el timer
                 (*it_ack)->ack_status=ACK_TIMEOUT;
-                qDebug()<<"entro al if timeout";
                 if((*it_ack)->retries<=0){  // si no quedan reintentos
-                    qDebug()<<"entro al tosio";
+                    qDebug()<<"Entro a la ventana de generar msgbox";
+                    QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
+
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
-                    no_ACK_Handler(); //ver de eliminar el msg despues de procesar esta funcion, o dentro de la misma
+                    no_ACK_Handler();
                     msg_ack.erase(it_ack);
                 }
                 else{   //si quedan reintentos, vuelve a enviar el mensaje y descuenta reintentos
-
-                    qDebug()<<"entro al reenviar";
                     serialsend2(*(this->serial_port),(*it_ack)->msg);
                     (*it_ack)->ack_status=PENDACK;
                     (*it_ack)->ack_timer.setSingleShot(true);
@@ -450,7 +453,6 @@ void MainWindow::handleRead(){
         }
         this->agregar_log_rec(msg_log);
     }
-    qDebug()<<pila;
 }
 
 void MainWindow::change_ERflag(){
@@ -497,3 +499,54 @@ void MainWindow::erase_device_ui(uint16_t inactiveDev){
     //ui->the_one_true_list_DESTINO->takeItem(row);
 }
 
+void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
+    //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
+    //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
+    dest=source;
+    LACAN_Acknowledge(this,code,LACAN_FAILURE);
+    notsup_count++;
+    if(source&LACAN_ID_GEN){
+        notsup_gen++;
+    }
+
+}
+
+int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw){
+
+
+    //Esta funcion identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
+    uint16_t source=mje.ID&LACAN_IDENT_MASK;
+    uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
+    uint8_t code;
+
+    switch(fun){
+    case LACAN_FUN_DO:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+       // LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t code, uint16_t result)
+    break;
+    case LACAN_FUN_SET:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+    break;
+    case LACAN_FUN_QRY:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+    break;
+    case LACAN_FUN_ACK:
+        LACAN_ACK_Handler(mje.BYTE1, msg_ack);
+    break;
+    case LACAN_FUN_POST:
+        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
+    break;
+    case LACAN_FUN_ERR:
+    //	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
+    break;
+    case LACAN_FUN_HB:
+        LACAN_HB_Handler(source, hb_con, mw);
+        break;
+    default:
+        return LACAN_NO_SUCH_MSG;
+    }
+    return LACAN_SUCCESS;
+}

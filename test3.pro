@@ -38,7 +38,9 @@ SOURCES += \
     tiempo.cpp \
     LACAN_PRO.cpp \
     better_serialfunc.cpp \
-    addnewdevdialog.cpp
+    addnewdevdialog.cpp \
+    lacan_limits.cpp \
+    volante.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +56,11 @@ HEADERS += \
     pc.h \
     lacan_detect.h \
     better_serialfunc.h \
-    addnewdevdialog.h
+    addnewdevdialog.h \
+    limtes.h \
+    lacan_limits_gen.h \
+    lacan_limits.h \
+    volante.h
 
 FORMS += \
         mainwindow.ui \
@@ -63,7 +69,8 @@ FORMS += \
     enviar_mensaje.ui \
     estadored.ui \
     gen_eolico.ui \
-    addnewdevdialog.ui
+    addnewdevdialog.ui \
+    volante.ui
 
 RESOURCES += \
     imagenes.qrc

@@ -159,7 +159,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_tipo">
           <property name="text">
            <string>Tipo:</string>
           </property>
@@ -189,14 +189,14 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_valor">
           <property name="text">
            <string>Valor:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="text_VALOR_COMANDO"/>
+         <widget class="QDoubleSpinBox" name="spin_valor"/>
         </item>
        </layout>
       </item>
@@ -228,7 +228,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="label_comando">
         <property name="text">
          <string>Comando:</string>
         </property>

@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -112,7 +112,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="label_variable">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -227,14 +227,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLineEdit" name="text_VALOR">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="QDoubleSpinBox" name="spin_valor"/>
       </item>
      </layout>
     </item>
@@ -399,17 +392,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLineEdit" name="text_CODIGO">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>false</bool>
-        </property>
-       </widget>
+       <widget class="QSpinBox" name="spin_codigo"/>
       </item>
      </layout>
     </item>

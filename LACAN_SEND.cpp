@@ -42,13 +42,14 @@ int16_t LACAN_Heartbeat(MainWindow* mw){
 RequestType: si es un do, qry set... en principio no lo vamos a usar porque tenemos un object/code para todos
 Object: es el codigo
 Resultado: xD*/
-int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t requestType, uint16_t object, uint16_t result){
+int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t code, uint16_t result){
     LACAN_MSG msg;
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_ACK<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg.DLC=3;
-    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
-    msg.BYTE1=object;
+    //msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED)|(requestType & LACAN_BYTE0_RESERVED_MASK);// se usan los bits reservados para enviar el tipo de peticion
+    msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
+    msg.BYTE1=code;
     msg.BYTE2=result;
 
     serialsend2(*(mw->serial_port),msg);
@@ -118,10 +119,10 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
 
     serialsend2(*(mw->serial_port),msg);
 
-    qDebug()<<"POST";
-    qDebug()<<"valor: "<<data.var_float;
-    qDebug()<<"variable: "<<msg.BYTE1;
-    qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
+    //qDebug()<<"POST";
+    //qDebug()<<"valor: "<<data.var_float;
+    //qDebug()<<"variable: "<<msg.BYTE1;
+    //qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
 
     mw->msg_log.push_back(msg);
 
@@ -150,20 +151,15 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
         mw->code++;
 
     serialsend2(*(mw->serial_port),msg);
-
     TIMED_MSG* new_msg= new TIMED_MSG;
+
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.setSingleShot(true);
     new_msg->ack_timer.start(WAIT_ACK_TIME);
     new_msg->retries = RETRIES;
 
     mw->msg_ack.push_back(new_msg);
-
-    qDebug()<<"SET";
-    qDebug()<<"valor: "<<data.var_float;
-    qDebug()<<"variable: "<<msg.BYTE2;
-    qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
-
     mw->msg_log.push_back(msg);
 
     return LACAN_SUCCESS;
@@ -220,6 +216,7 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->ack_timer.setSingleShot(true);
     mw->msg_ack.push_back(new_msg);
     new_msg->retries = RETRIES;
 
