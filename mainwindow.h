@@ -39,6 +39,8 @@ public:
 
      void verificar_destino();
 
+     void erase_device_ui(uint16_t source);
+
 signals:
      void postforER_arrived(LACAN_MSG msg);
 

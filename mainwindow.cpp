@@ -166,8 +166,26 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
 
+    HB_CONTROL* newdev;
+    newdev=new HB_CONTROL();
+    newdev->device=LACAN_ID_GEN;
+    newdev->hb_status=ACTIVE;
+    newdev->hb_timer.start(DEAD_HB_TIME);
+    hb_con.push_back(newdev);
+    newdev=new HB_CONTROL();
+    newdev->device=LACAN_ID_BOOST;
+    newdev->hb_status=ACTIVE;
+    newdev->hb_timer.start(DEAD_HB_TIME);
+    hb_con.push_back(newdev);
+    newdev=new HB_CONTROL();
+    newdev->device=LACAN_ID_VOLANTE;
+    newdev->hb_status=ACTIVE;
+    newdev->hb_timer.start(DEAD_HB_TIME);
+    hb_con.push_back(newdev);
     //this->setLayout(ui->verticalLayout_7);
-
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
+         connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
+    }
     QStringList TableHeader;
     TableHeader<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
 
@@ -360,7 +378,7 @@ void MainWindow::verificarHB(){
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
         if(((*it_hb)->hb_timer.remainingTime()<= 0) && ((*it_hb)->hb_status==ACTIVE)){
             (*it_hb)->hb_status=INACTIVE;
-            cout<<"\nMurio un dispositivo :'( \n";
+            erase_device_ui(uint16_t((*it_hb)->device));
         }
     }
 }
@@ -450,7 +468,6 @@ void MainWindow::add_new_device(uint16_t source){
     newdev.device=source;
     newdev.hb_timer.start(DEAD_HB_TIME);
     newdev.hb_status=ACTIVE;
-    hb_con.push_back(&newdev);
 
     AddNewDevDialog *diag=new AddNewDevDialog(this);
     diag->setModal(true);
@@ -461,9 +478,22 @@ void MainWindow::add_new_device(uint16_t source){
 
 void MainWindow::add_dev_name(QString newdevname){
     if(!disp_map.contains(newdevname)){
+        hb_con.push_back(&newdev);
         disp_map[newdevname]=newdev.device;
+        ui->the_one_true_list_DESTINO->addItem(newdevname);
+    }else if(disp_map[newdevname]==newdev.device){
+        ui->the_one_true_list_DESTINO->addItem(newdevname);
+    }else{
+        QMessageBox::warning(this, "Error agregando dispositivo", "El nombre ingresado ya existe\n ", QMessageBox::Ok );
+        add_new_device(newdev.device);
     }
-    ui->the_one_true_list_DESTINO->addItem(newdevname);
 }
 
+void MainWindow::erase_device_ui(uint16_t inactiveDev){
+
+    QString name = disp_map.key(inactiveDev);
+    qDeleteAll(ui->the_one_true_list_DESTINO->findItems(name, Qt::MatchFixedString));
+    //int row=ui->the_one_true_list_DESTINO->row(new QListWidgetItem(disp_map.key(inactiveDev)) );
+    //ui->the_one_true_list_DESTINO->takeItem(row);
+}
 
