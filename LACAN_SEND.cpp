@@ -119,11 +119,6 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
 
     serialsend2(*(mw->serial_port),msg);
 
-    //qDebug()<<"POST";
-    //qDebug()<<"valor: "<<data.var_float;
-    //qDebug()<<"variable: "<<msg.BYTE1;
-    //qDebug()<<"destino: "<<(msg.BYTE0>>LACAN_BYTE0_RESERVED);
-
     mw->msg_log.push_back(msg);
 
     return LACAN_SUCCESS;
@@ -153,6 +148,7 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
     serialsend2(*(mw->serial_port),msg);
     TIMED_MSG* new_msg= new TIMED_MSG;
 
+    new_msg->main_act=mw->ERflag;
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.setSingleShot(true);
@@ -182,6 +178,11 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
 
     serialsend2(*(mw->serial_port),msg);
     TIMED_MSG* new_msg=new TIMED_MSG();
+
+    new_msg->main_act=mw->ERflag;
+    qDebug()<<"ERflag= "<<mw->ERflag;
+    qDebug()<<"new_msg->main_act= "<<new_msg->main_act;
+
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.setSingleShot(true);
@@ -213,6 +214,8 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
     serialsend2(*(mw->serial_port),msg);
 
     TIMED_MSG* new_msg= new TIMED_MSG;
+
+    new_msg->main_act=mw->ERflag;
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.start(WAIT_ACK_TIME);

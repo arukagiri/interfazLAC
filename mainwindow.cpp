@@ -364,8 +364,8 @@ void MainWindow::on_button_STOP_clicked()
 
     LACAN_Post(this,LACAN_VAR_IO,datos);
     this->agregar_log_sent();
-   /* LACAN_Heartbeat(this);
-    this->agregar_log_sent();*/
+    LACAN_Heartbeat(this);
+    this->agregar_log_sent();
 
     LACAN_HB_Handler(7,hb_con,this);
 
@@ -373,6 +373,8 @@ void MainWindow::on_button_STOP_clicked()
     //ui->tableWidget_received->item(1,1)->setBackgroundColor(*rojo);
     //ui->tableWidget_sent->item(2,1)->setBackgroundColor(QColor(125,125,125));
     //ui->tableWidget_received->item(1,1)->setData()
+
+    LACAN_ERR_Handler(10,20);
 }
 
 void MainWindow::verificarHB(){
@@ -404,10 +406,12 @@ void MainWindow::verificarACK(){
         else{
              if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack y se vencion el timer
                 (*it_ack)->ack_status=ACK_TIMEOUT;
-                if((*it_ack)->retries<=0){  // si no quedan reintentos
+                if((*it_ack)->retries<=0){  //si no quedan reintentos
                     qDebug()<<"Entro a la ventana de generar msgbox";
-                    QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
-
+                    if((*it_ack)->main_act==1){ //si el mensaje se mando desde la mainwindows
+                        QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
+                        qDebug()<<"Entro al if de generar msgbox";
+                    }
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
                     no_ACK_Handler();
                     msg_ack.erase(it_ack);
@@ -540,7 +544,7 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, v
         LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
     break;
     case LACAN_FUN_ERR:
-    //	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
+        LACAN_ERR_Handler(source,mje.BYTE1);
     break;
     case LACAN_FUN_HB:
         LACAN_HB_Handler(source, hb_con, mw);
@@ -549,4 +553,11 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, v
         return LACAN_NO_SUCH_MSG;
     }
     return LACAN_SUCCESS;
+}
+
+
+void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
+    QString msg_err ="Dispositivo: ";
+    msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
+        QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }

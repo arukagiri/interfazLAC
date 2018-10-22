@@ -170,7 +170,7 @@
 #define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
 //#define WAIT_ACK_TIME 500            //tiempo de espera un ack
-#define WAIT_ACK_TIME 1000            //tiempo de espera un ack
+#define WAIT_ACK_TIME 3000            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
 //que variables esta tomando como referencia para realizar el control (de esta manera se puede
@@ -212,6 +212,7 @@ struct  TIMED_MSG{
         QTimer ack_timer;
         uint8_t ack_status;
         uint8_t retries;
+        uint8_t main_act;
 };
 
 

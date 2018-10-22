@@ -43,7 +43,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_vol_torque->setText("----");
 
 
-    //send_qry();
+    send_qry();
     set_states();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
 

@@ -50,7 +50,8 @@
    </property>
    <property name="icon">
     <iconset resource="imagenes.qrc">
-     <normaloff>:/Imagenes/VOL.png</normaloff>:/Imagenes/VOL.png</iconset>
+     <normaloff>:/Imagenes/VOL.png</normaloff>
+     <disabledoff>:/Imagenes/VOL_off.png</disabledoff>:/Imagenes/VOL.png</iconset>
    </property>
    <property name="iconSize">
     <size>

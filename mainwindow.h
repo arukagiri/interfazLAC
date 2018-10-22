@@ -59,6 +59,7 @@ public slots:
 
      void no_ACK_Handler(void); //FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
 
+     void LACAN_ERR_Handler(uint16_t source,uint16_t err_cod);
 
 private slots:
 
