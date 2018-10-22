@@ -644,13 +644,13 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
-        LACAN_Do(mw, cmd);
+        LACAN_Do(mw, cmd,1);
         break;
     case SET:
-        LACAN_Set(mw,var,data);
+        LACAN_Set(mw,var,data,1);
         break;
     case QRY:
-        LACAN_Query(mw,var);
+        LACAN_Query(mw,var,1);
         break;
     case POST:
         LACAN_Post(mw,var,data);

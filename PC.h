@@ -212,7 +212,7 @@ struct  TIMED_MSG{
         QTimer ack_timer;
         uint8_t ack_status;
         uint8_t retries;
-        uint8_t main_act;
+        uint8_t show_miss_ack;
 };
 
 

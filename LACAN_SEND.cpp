@@ -125,7 +125,7 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
 }
 
 
-int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
+int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data, uint8_t show_ack){
 
     LACAN_MSG msg;
 
@@ -148,7 +148,9 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
     serialsend2(*(mw->serial_port),msg);
     TIMED_MSG* new_msg= new TIMED_MSG;
 
-    new_msg->main_act=mw->ERflag;
+    if(show_ack == 1){
+        new_msg->show_miss_ack = 1;
+    }
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.setSingleShot(true);
@@ -162,7 +164,7 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data){
 }
 
 
-int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
+int16_t LACAN_Query(MainWindow* mw, uint16_t variable,uint8_t show_ack){
     LACAN_MSG msg;
 
     msg.ID=(LACAN_LOCAL_ID | LACAN_FUN_QRY<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -179,9 +181,9 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
     serialsend2(*(mw->serial_port),msg);
     TIMED_MSG* new_msg=new TIMED_MSG();
 
-    new_msg->main_act=mw->ERflag;
-    qDebug()<<"ERflag= "<<mw->ERflag;
-    qDebug()<<"new_msg->main_act= "<<new_msg->main_act;
+    if(show_ack == 1){
+        new_msg->show_miss_ack = 1;
+    }
 
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
@@ -196,7 +198,7 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable){
 }
 
 
-int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
+int16_t LACAN_Do(MainWindow* mw, uint16_t cmd, uint8_t show_ack){
 
     LACAN_MSG msg;
 
@@ -215,7 +217,9 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd){
 
     TIMED_MSG* new_msg= new TIMED_MSG;
 
-    new_msg->main_act=mw->ERflag;
+    if(show_ack == 1){
+        new_msg->show_miss_ack = 1;
+    }
     new_msg->msg=msg;
     new_msg->ack_status=PENDACK;
     new_msg->ack_timer.start(WAIT_ACK_TIME);

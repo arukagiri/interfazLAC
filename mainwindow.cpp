@@ -373,8 +373,6 @@ void MainWindow::on_button_STOP_clicked()
     //ui->tableWidget_received->item(1,1)->setBackgroundColor(*rojo);
     //ui->tableWidget_sent->item(2,1)->setBackgroundColor(QColor(125,125,125));
     //ui->tableWidget_received->item(1,1)->setData()
-
-    LACAN_ERR_Handler(10,20);
 }
 
 void MainWindow::verificarHB(){
@@ -406,11 +404,16 @@ void MainWindow::verificarACK(){
         else{
              if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack y se vencion el timer
                 (*it_ack)->ack_status=ACK_TIMEOUT;
-                if((*it_ack)->retries<=0){  //si no quedan reintentos
-                    qDebug()<<"Entro a la ventana de generar msgbox";
-                    if((*it_ack)->main_act==1){ //si el mensaje se mando desde la mainwindows
-                        QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
-                        qDebug()<<"Entro al if de generar msgbox";
+                if((*it_ack)->retries<=0 && show_miss_ack_flag == 0){  //si no quedan reintentos
+                    if((*it_ack)->show_miss_ack==1){ //si el mensaje se mando desde la mainwindows
+                        show_miss_ack_flag = 1;
+                        QMessageBox::StandardButton reply;
+                        QString name = disp_map.key(((*it_ack)->msg.BYTE0) >> LACAN_BYTE0_RESERVED);
+                        QString mje = "Se ha agotado el tiempo de espera de la respuesta del " + name + ".";
+                        reply = QMessageBox::warning(this,"Error al enviar",mje,QMessageBox::Ok);
+                        if(reply){
+                            show_miss_ack_flag = 0;
+                        }
                     }
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
                     no_ACK_Handler();

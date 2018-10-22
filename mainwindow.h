@@ -96,6 +96,8 @@ public:
     bool vol_connected=0;
     bool boost_connected=0;
 
+    bool show_miss_ack_flag=0;
+
     QMap <QString,uint16_t> varmap;
 
     QMap<QString, uint16_t> disp_map;

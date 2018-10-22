@@ -76,7 +76,7 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
 {
 
     int prevsize=mw->msg_ack.size();
-    LACAN_Query(mw,consulta);
+    LACAN_Query(mw,consulta,1);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
 

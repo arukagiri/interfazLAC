@@ -145,7 +145,7 @@ void Comandar::on_button_ENVIAR_clicked()
      uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
-        LACAN_Do(mw,cmd);
+        LACAN_Do(mw,cmd,1);
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         /*uint32_t data_int = uint32_t(ui->spin_valor->value());
@@ -156,7 +156,7 @@ void Comandar::on_button_ENVIAR_clicked()
             data.var_float = data_float;*/
 
         data.var_float=ui->spin_valor->value();
-        LACAN_Set(mw,var_set,data);
+        LACAN_Set(mw,var_set,data,1);
 
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");

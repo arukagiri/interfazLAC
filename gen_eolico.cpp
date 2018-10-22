@@ -88,7 +88,7 @@ void Gen_Eolico::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->dest=LACAN_ID_GEN;
-    LACAN_Do(mw,cmd);
+    LACAN_Do(mw,cmd,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -97,7 +97,7 @@ void Gen_Eolico::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->dest=LACAN_ID_GEN;
-    LACAN_Do(mw,cmd);
+    LACAN_Do(mw,cmd,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -291,7 +291,7 @@ void Gen_Eolico::on_pushButton_apply_clicked(){
                else
                    val.var_float = data_float;*/
                val.var_float=ui->spin_speed_ref->value();
-               LACAN_Set(mw,LACAN_VAR_IO,val);
+               LACAN_Set(mw,LACAN_VAR_IO,val,1);
                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
                qDebug()<<"Se mando el set";
                mw->agregar_log_sent();
@@ -327,15 +327,15 @@ void Gen_Eolico::set_spin_click(bool state){
 void Gen_Eolico::enviar_variables_generales(){
 
     val.var_float=ui->spin_isd_ref->value();
-    LACAN_Set(mw,LACAN_VAR_ISD_SETP,val);
+    LACAN_Set(mw,LACAN_VAR_ISD_SETP,val,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
     val.var_float=ui->spin_lim_ibat->value();
-    LACAN_Set(mw,LACAN_VAR_BAT_IMAX,val);
+    LACAN_Set(mw,LACAN_VAR_BAT_IMAX,val,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
     val.var_float=ui->spin_lim_ief->value();
-    LACAN_Set(mw,LACAN_VAR_IEF_MAX,val);
+    LACAN_Set(mw,LACAN_VAR_IEF_MAX,val,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
