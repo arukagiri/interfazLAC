@@ -207,11 +207,11 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     }
     QStringList TableHeader_send;
     QStringList TableHeader_rece;
-    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
-    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
 
     ui->tableWidget_received->setRowCount(list_rec_cont);
-    ui->tableWidget_received->setColumnCount(8);
+    ui->tableWidget_received->setColumnCount(9);
     ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader_rece);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
     ui->tableWidget_received->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -221,7 +221,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
     ui->tableWidget_sent->setRowCount(list_send_cont);
-    ui->tableWidget_sent->setColumnCount(8);
+    ui->tableWidget_sent->setColumnCount(9);
     ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader_send);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
     ui->tableWidget_sent->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -354,8 +354,9 @@ void MainWindow::agregar_log_sent(){
         ui->tableWidget_sent->setItem(outlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_sent->setItem(outlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_sent->setItem(outlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_sent->setItem(outlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         outlog_cont++;
     }
     agregar_textlog(abs_msg,"Enviado");
@@ -393,8 +394,9 @@ void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
         ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_received->setItem(inlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_received->setItem(inlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         inlog_cont++;
         }
     }

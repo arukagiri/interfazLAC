@@ -45,6 +45,10 @@
 #define LACAN_CMD_MAGNETIZE     0x2F
 #define LACAN_CMD_MPPT_ENABLE   0x38
 #define LACAN_CMD_MPPT_DISABLE  0x3F
+#define LACAN_VAR_MOD_POT       0xC0
+#define LACAN_VAR_MOD_VEL       0xC1
+#define LACAN_VAR_MOD_TORQ      0xC2
+#define LACAN_VAR_MOD_MPPT      0xC3
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02
@@ -92,19 +96,15 @@
 #define LACAN_VAR_BAT_VMIN      0x5B
 #define LACAN_VAR_BAT_V         0x5C
 #define LACAN_VAR_BAT_V_SETP    0x5D
-#define LACAN_VAR_MOD_POT       0x64 // ver si lo usamos al final
-#define LACAN_VAR_MOD_VEL       0x65
-#define LACAN_VAR_MOD_TORQ      0x66
-#define LACAN_VAR_MOD_MPPT      0x67
 
-#define LACAN_VAR_TORQI_MAX     0x0
-#define LACAN_VAR_TORQI_MIN       0x0
-#define LACAN_VAR_TORQI            0x0
-#define LACAN_VAR_TORQI_SETP       0x0
-#define LACAN_VAR_TORQO_MAX        0x0
-#define LACAN_VAR_TORQO_MIN         0x0
-#define LACAN_VAR_TORQO             0x0
-#define LACAN_VAR_TORQO_SETP        0x0
+#define LACAN_VAR_TORQI_MAX     0x64
+#define LACAN_VAR_TORQI_MIN     0x65
+#define LACAN_VAR_TORQI         0x66
+#define LACAN_VAR_TORQI_SETP    0x67
+#define LACAN_VAR_TORQO_MAX     0x6A
+#define LACAN_VAR_TORQO_MIN     0x6B
+#define LACAN_VAR_TORQO         0x6C
+#define LACAN_VAR_TORQO_SETP    0x6D
 
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
@@ -129,12 +129,6 @@
 #define LACAN_ERR_NO_HEARTBEAT      0x38
 #define LACAN_ERR_INTERNAL_TRIP     0x39
 #define LACAN_ERR_EXTERNAL_TRIP     0x40
-
-// Diccionario de tipos de solicitudes (REQ). 3 bits (0x0 a 0x7)
-#define LACAN_REQ_SET           0x01
-#define LACAN_REQ_DO            0x02
-#define LACAN_REQ_QRY           0x03
-
 
 // C digos de respuesta del protocolo
 #define LACAN_SUCCESS           0

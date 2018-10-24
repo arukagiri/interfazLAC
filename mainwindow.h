@@ -12,7 +12,7 @@
 #include <QMap>
 #include "better_serialfunc.h"
 
-#define LOG_LIMIT 20
+#define LOG_LIMIT 500
 
 using namespace std;
 
