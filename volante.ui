@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1082</width>
-    <height>606</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,14 +19,14 @@
      <x>10</x>
      <y>10</y>
      <width>1031</width>
-     <height>561</height>
+     <height>521</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="imagenes.qrc">:/Imagenes/DB_VOL.png</pixmap>
+    <pixmap resource="imagenes.qrc">:/Imagenes/DB_VOLANTE.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

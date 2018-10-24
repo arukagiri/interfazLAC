@@ -12,6 +12,8 @@
 #include <QMap>
 #include "better_serialfunc.h"
 
+#define LOG_LIMIT 20
+
 using namespace std;
 
 namespace Ui {
@@ -97,6 +99,9 @@ public:
     bool boost_connected=0;
 
     bool show_miss_ack_flag=0;
+
+    uint16_t list_rec_cont = 0;
+    uint16_t list_send_cont = 0;
 
     QMap <QString,uint16_t> varmap;
 

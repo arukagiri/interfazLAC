@@ -233,7 +233,7 @@ typedef struct HB_CONTROL HB_CONTROL;
 //QString fun, com, dest, var_type, var_val, code;
 struct ABSTRACTED_MSG{
 
-    QString fun, com, dest, var_type, var_val, err_code, ack_res, ack_code,curr_time;
+    QString fun, com, dest, orig, var_type, var_val, err_code, ack_res, ack_code,curr_time;
 
 };
 

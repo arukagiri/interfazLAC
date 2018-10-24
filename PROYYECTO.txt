@@ -1,4 +1,27 @@
+==================================================================================================================================
+INTERFAZ:
+==================================================================================================================================
+que variables del generador deberian mostrarse desde consultar/comandar ?? las mismas que estan en el DB o mas?
 poner limites a las ventanas de enviar mensaje y comandar
+en enviar mensajes dejar que se muestren todas la variables
+
+si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
+actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
+
+SNIFER:
+	-agregar result de ack
+
+VOLANTE DE INERCIA:
+	-agregar las variables que estan en negrita
+	-poner modo "volante" y modo variador de velocidad
+	-ver de adgregar variable "energia" calculada en base a la velocidad
+
+LISTA DE DISPOSITIVOS:
+	-reiniciar COM al desconectar
+	-no revive GEN cuando conectas el CAN
+
+==================================================================================================================================
+REVISAR EN INTERFAZ:
 
 ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows o no
 
@@ -6,32 +29,16 @@ ver de usar la variable de ack no recibido para que no se logueen los qrys que s
 
 ver variables del gen, limites
 
-que variables del generador deberian mostrarse desde consultar/comandar ?? las mismas que estan en el DB o mas?
-y en la ventanta de ENVIAR_MENSAJE? dejamos que se muestren todas o tambien las limitamos?
+ver boton start y stop y reinicio por limit_log
 
-
-snifer:
-agregar columna de codigo de ack
-ver en recibidos la columna DESTINO que es lo que muestra
-hacer lista dinamica?? 	
-
-si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
-actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
+DB_VOL: AC GENERADOR esta bien ????
 
 ==================================================================================================================================
-LISTA DE DISPOSITIVOS:
-
-reiniciar COM al desconectar
-revive GEN cuando conectas el CAN
-
-
+MICRO	
 ==================================================================================================================================
-MICRO
+actualizar diccionarios
 
-HVACI_sensorless-setting.h --> bases para normalizar
-
-valores de variables xunidad
+valores de variables xunidad (HVACI_sensorless-setting.h --> bases para normalizar)
 
 manejo de ack---> hace falta el vector de ack?
 
-ver set y post handler como tratar los datos.. array de char en la union o con lo de joaquin

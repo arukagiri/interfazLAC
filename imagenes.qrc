@@ -13,5 +13,6 @@
         <file>Imagenes/PANEL_off.png</file>
         <file>Imagenes/VOL_off.png</file>
         <file>Imagenes/DB_VOL.png</file>
+        <file>Imagenes/DB_VOLANTE.png</file>
     </qresource>
 </RCC>

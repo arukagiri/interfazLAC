@@ -53,7 +53,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     QString format_time="hh:mm:ss";
     QString format_date="dd.MM.yyyy";
     QDateTime curr_date_time=QDateTime::currentDateTime();
-    ABSTRACTED_MSG abs_msg={"","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
+    ABSTRACTED_MSG abs_msg={"","","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
     float val_float;
     data_can val_union;
 
@@ -75,6 +75,26 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         abs_msg.dest="No especificada/No soportada";
         break;
     }
+
+    //REMITENTE
+    switch(msg_log.back().ID&LACAN_IDENT_MASK){
+    case LACAN_ID_BOOST:
+        abs_msg.orig="Boost\t";
+        break;
+    case LACAN_ID_GEN:
+        abs_msg.orig="Generador Eolico";
+        break;
+    case LACAN_ID_BROADCAST:
+        abs_msg.orig="Broadcast\t";
+        break;
+    case LACAN_ID_VOLANTE:
+        abs_msg.orig="Volante de Inercia";
+        break;
+    default:
+        abs_msg.orig="No especificada/No soportada";
+        break;
+    }
+
 
     //FUNCION
     switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
@@ -185,12 +205,14 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
-    QStringList TableHeader;
-    TableHeader<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
+    QStringList TableHeader_send;
+    QStringList TableHeader_rece;
+    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
 
-    ui->tableWidget_received->setRowCount(250);
+    ui->tableWidget_received->setRowCount(list_rec_cont);
     ui->tableWidget_received->setColumnCount(8);
-    ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader);
+    ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader_rece);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
     ui->tableWidget_received->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget_received->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -198,9 +220,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setShowGrid(false);
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    ui->tableWidget_sent->setRowCount(250);
+    ui->tableWidget_sent->setRowCount(list_send_cont);
     ui->tableWidget_sent->setColumnCount(8);
-    ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader);
+    ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader_send);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
     ui->tableWidget_sent->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget_sent->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -307,6 +329,25 @@ void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log);
     if(do_log){
+        if(list_send_cont>=LOG_LIMIT){  //limite de mensajes
+        do_log=FALSE;
+        QMessageBox::StandardButton reply;
+        reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+            if(reply==QMessageBox::Yes){
+                ui->tableWidget_received->clearContents();
+                ui->tableWidget_sent->clearContents();
+                outlog_cont=0;
+                msg_log.clear();
+                list_rec_cont = 0;
+                list_send_cont = 0;
+                ui->tableWidget_received->setRowCount(list_rec_cont);
+                ui->tableWidget_sent->setRowCount(list_send_cont);
+                do_log=TRUE;
+            }
+        }
+        else{
+        list_send_cont++;
+        ui->tableWidget_sent->setRowCount(list_send_cont);
         ui->tableWidget_sent->setItem(outlog_cont, 0, new QTableWidgetItem(abs_msg.dest));
         ui->tableWidget_sent->setItem(outlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
         ui->tableWidget_sent->setItem(outlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
@@ -318,13 +359,35 @@ void MainWindow::agregar_log_sent(){
         outlog_cont++;
     }
     agregar_textlog(abs_msg,"Enviado");
+    }
 }
 
 void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log);
     if(do_log){
-        ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.dest));
+        if(list_rec_cont>=LOG_LIMIT){  //limite de mensajes
+        QMessageBox::StandardButton reply;
+        reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+            if(reply==QMessageBox::Yes){
+                ui->tableWidget_received->clearContents();
+                ui->tableWidget_sent->clearContents();
+                outlog_cont=0;
+                msg_log.clear();
+                list_rec_cont = 0;
+                list_send_cont = 0;
+                ui->tableWidget_received->setRowCount(list_rec_cont);
+                ui->tableWidget_sent->setRowCount(list_send_cont);
+                do_log=TRUE;
+            }
+            else{
+                on_button_STOP_clicked();
+            }
+        }
+        else{
+        list_rec_cont++;
+        ui->tableWidget_received->setRowCount(list_rec_cont);
+        ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.orig));
         ui->tableWidget_received->setItem(inlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
         ui->tableWidget_received->setItem(inlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
         ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
@@ -333,6 +396,7 @@ void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
         ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
         ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
         inlog_cont++;
+        }
     }
     agregar_textlog(abs_msg,"Recibido");
 }
@@ -341,13 +405,17 @@ void MainWindow::on_button_START_clicked()
 {
     QMessageBox::StandardButton reply;
 
-    if(do_log==TRUE || outlog_cont>0){
+    if(outlog_cont>0 || inlog_cont>0){
         reply=QMessageBox::warning(this,"Aviso de perdida de mensajes","¿Esta seguro de comenzar una nueva sesion de registro de mensajes?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
         if(reply==QMessageBox::Yes){
             ui->tableWidget_received->clearContents();
             ui->tableWidget_sent->clearContents();
             outlog_cont=0;
             msg_log.clear();
+            list_rec_cont = 0;
+            list_send_cont = 0;
+            ui->tableWidget_received->setRowCount(list_rec_cont);
+            ui->tableWidget_sent->setRowCount(list_send_cont);
         }
     }
     do_log=TRUE;
@@ -355,24 +423,7 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-
-    //do_log=FALSE;
-    this->dest=LACAN_ID_GEN;
-    data_can datos;
-    //datos.var_float = 1.5;
-     datos.var_int = 12e5;
-
-    LACAN_Post(this,LACAN_VAR_IO,datos);
-    this->agregar_log_sent();
-    LACAN_Heartbeat(this);
-    this->agregar_log_sent();
-
-    LACAN_HB_Handler(7,hb_con,this);
-
-    QColor *rojo = new QColor(255,0,0) ;
-    //ui->tableWidget_received->item(1,1)->setBackgroundColor(*rojo);
-    //ui->tableWidget_sent->item(2,1)->setBackgroundColor(QColor(125,125,125));
-    //ui->tableWidget_received->item(1,1)->setData()
+    do_log=FALSE;
 }
 
 void MainWindow::verificarHB(){
