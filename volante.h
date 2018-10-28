@@ -2,6 +2,7 @@
 #define VOLANTE_H
 
 #include <QDialog>
+#include "PC.h"
 
 namespace Ui {
 class volante;
@@ -17,6 +18,7 @@ public:
 
 private:
     Ui::volante *ui;
+    uint16_t actual_mode;
 };
 
 #endif // VOLANTE_H

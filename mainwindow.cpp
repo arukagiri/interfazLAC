@@ -187,7 +187,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Generador Eolico"]=LACAN_ID_GEN;
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
-
+    /*PARA LA DETECCION DE HB Y DISPOSITIVOS
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
@@ -204,17 +204,16 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev->hb_status=ACTIVE;
     newdev->hb_timer.start(DEAD_HB_TIME);
     hb_con.push_back(newdev);
-    //this->setLayout(ui->verticalLayout_7);
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
-    }
+    }*/
     QStringList TableHeader_send;
     QStringList TableHeader_rece;
-    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
-    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
 
     ui->tableWidget_received->setRowCount(list_rec_cont);
-    ui->tableWidget_received->setColumnCount(8);
+    ui->tableWidget_received->setColumnCount(9);
     ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader_rece);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
     ui->tableWidget_received->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -224,7 +223,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
     ui->tableWidget_sent->setRowCount(list_send_cont);
-    ui->tableWidget_sent->setColumnCount(8);
+    ui->tableWidget_sent->setColumnCount(9);
     ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader_send);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
     ui->tableWidget_sent->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -357,8 +356,9 @@ void MainWindow::agregar_log_sent(){
         ui->tableWidget_sent->setItem(outlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_sent->setItem(outlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_sent->setItem(outlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_sent->setItem(outlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         outlog_cont++;
     }
     agregar_textlog(abs_msg,"Enviado");
@@ -396,8 +396,9 @@ void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
         ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_received->setItem(inlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_received->setItem(inlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         inlog_cont++;
         }
     }
@@ -436,7 +437,7 @@ void MainWindow::verificarHB(){
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
         if(((*it_hb)->hb_timer.remainingTime()<= 0) && ((*it_hb)->hb_status==ACTIVE)){
             (*it_hb)->hb_status=INACTIVE;
-            erase_device_ui(uint16_t((*it_hb)->device));
+            //erase_device_ui(uint16_t((*it_hb)->device)); VER DE VOLVERLO A ACTIVAR
         }
     }
 }

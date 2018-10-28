@@ -1,20 +1,23 @@
 ==================================================================================================================================
-INTERFAZ:
+HABLAR CON JOAQUIN:
 ==================================================================================================================================
-que variables del generador deberian mostrarse desde consultar/comandar ?? las mismas que estan en el DB o mas?
-poner limites a las ventanas de enviar mensaje y comandar
-en enviar mensajes dejar que se muestren todas la variables
+lista de variables del GENERADOR que van en:
+	el micro del gen (todas?)
+	ventanas consultar/comandar
+	db_gen
+	limites de cada una... (como es el tema de LimIbat por ejemplo)
+
+idem para el VOLANTE
 
 si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
 actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
 
-SNIFER:
-	-agregar result de ack
+==================================================================================================================================
+INTERFAZ:
+==================================================================================================================================
+que variables del generador deberian mostrarse desde consultar/comandar ?? las mismas que estan en el DB o mas?
 
-VOLANTE DE INERCIA:
-	-agregar las variables que estan en negrita
-	-poner modo "volante" y modo variador de velocidad
-	-ver de adgregar variable "energia" calculada en base a la velocidad
+poner limites a las ventanas de consultar y comandar
 
 LISTA DE DISPOSITIVOS:
 	-reiniciar COM al desconectar
@@ -25,20 +28,15 @@ REVISAR EN INTERFAZ:
 
 ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows o no
 
-ver de usar la variable de ack no recibido para que no se logueen los qrys que se mandan por atras
-
-ver variables del gen, limites
-
-ver boton start y stop y reinicio por limit_log
-
-DB_VOL: AC GENERADOR esta bien ????
+ver deadtime HB
 
 ==================================================================================================================================
 MICRO	
 ==================================================================================================================================
-actualizar diccionarios
+actualizar diccionarios  -> ver variables que no van -> las sacamos?  ==> ver variables del gen, limites
 
 valores de variables xunidad (HVACI_sensorless-setting.h --> bases para normalizar)
 
 manejo de ack---> hace falta el vector de ack?
 
+==================================================================================================================================
