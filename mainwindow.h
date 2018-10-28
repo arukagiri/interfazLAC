@@ -63,6 +63,8 @@ public slots:
 
      void LACAN_ERR_Handler(uint16_t source,uint16_t err_cod);
 
+     void do_stuff(); //slot en el cual se realizan acciones que requieren de una periocidad fija, tal como el envio del HB
+
 private slots:
 
     void handleRead();
@@ -107,6 +109,8 @@ public:
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
+
+    QTimer* periodicTimer;
 };
 
 #endif // MAINWINDOW_H

@@ -173,7 +173,10 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
-
+    periodicTimer = new QTimer();
+    periodicTimer->start(HB_TIME*3);
+    periodicTimer->setInterval(HB_TIME*3);
+    connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
 
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
@@ -614,4 +617,32 @@ void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
     QString msg_err ="Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
         QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
+}
+
+void MainWindow::do_stuff(){
+    LACAN_Heartbeat(this);
+    QSerialPortInfo* info=new QSerialPortInfo(*serial_port);
+    if(!info->isBusy()){
+        QSerialPort* newPort=new QSerialPort();
+        uint16_t bdr=0x05;
+        if(openport2(bdr,newPort)){
+            serial_port=newPort;
+            QMessageBox *connectionRegained= new QMessageBox();
+            connectionRegained->setIcon(QMessageBox::Information);
+            connectionRegained->setStandardButtons(QMessageBox::Ok);
+            connectionRegained->setText("Se ha recuperado la conexion con el adaptador,"
+                               "\nYorokobe ningendomo.");
+            connectionRegained->setWindowTitle("Conexion recuperada");
+            connectionRegained->exec();
+        }else{
+            QMessageBox *connectionLost= new QMessageBox();
+            connectionLost->setIcon(QMessageBox::Warning);
+            connectionLost->setStandardButtons(QMessageBox::Ok);
+            connectionLost->setText("Se ha perdido la conexion con el adaptador"
+                               "\nPor favor revise la instalacion,"
+                               "el programa intentara reconectar automaticamente.");
+            connectionLost->setWindowTitle("Conexion perdida");
+            connectionLost->exec();
+        }
+    }
 }

@@ -92,19 +92,19 @@
 #define LACAN_VAR_BAT_VMIN      0x5B
 #define LACAN_VAR_BAT_V         0x5C
 #define LACAN_VAR_BAT_V_SETP    0x5D
+#define LACAN_VAR_TORQI_MAX     0x64
+#define LACAN_VAR_TORQI_MIN       0x65
+#define LACAN_VAR_TORQI            0x66
+#define LACAN_VAR_TORQI_SETP       0x67
+#define LACAN_VAR_TORQO_MAX        0x6A
+#define LACAN_VAR_TORQO_MIN         0x6B
+#define LACAN_VAR_TORQO             0x6C
+#define LACAN_VAR_TORQO_SETP        0x6D
+
 #define LACAN_VAR_MOD_POT       0x64 // ver si lo usamos al final
 #define LACAN_VAR_MOD_VEL       0x65
 #define LACAN_VAR_MOD_TORQ      0x66
 #define LACAN_VAR_MOD_MPPT      0x67
-
-#define LACAN_VAR_TORQI_MAX     0x0
-#define LACAN_VAR_TORQI_MIN       0x0
-#define LACAN_VAR_TORQI            0x0
-#define LACAN_VAR_TORQI_SETP       0x0
-#define LACAN_VAR_TORQO_MAX        0x0
-#define LACAN_VAR_TORQO_MIN         0x0
-#define LACAN_VAR_TORQO             0x0
-#define LACAN_VAR_TORQO_SETP        0x0
 
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
@@ -167,7 +167,7 @@
 
 
 #define HB_TIME 5000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
-#define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
+#define DEAD_HB_TIME HB_TIME*4+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
 //#define WAIT_ACK_TIME 500            //tiempo de espera un ack
 #define WAIT_ACK_TIME 3000            //tiempo de espera un ack

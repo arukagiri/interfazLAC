@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
     openport2(bdr,serial_port);
 
     MainWindow w(*serial_port);
+
+
     w.show();
 
     return a.exec();

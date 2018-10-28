@@ -159,7 +159,7 @@ bool readport2(char* pila, QSerialPort& serial_port){
 }
 
 
-void openport2(uint8_t bdr, QSerialPort* serial_port){
+bool openport2(uint8_t bdr, QSerialPort* serial_port){
     char* pila;
     char retval;
     int i;
@@ -192,6 +192,7 @@ void openport2(uint8_t bdr, QSerialPort* serial_port){
                         if((mje.ID>>LACAN_IDENT_BITS)==LACAN_FUN_HB){//si resulta que el mensaje recibido es un HB, se considera que encontramos el puerto correcto
                             qDebug()<<"\nesta en el com "<<serial_port->portName()<<"\n";
                             com_detected=TRUE;
+                            return true;
                             break; //salgo de while
                         }
 
@@ -209,5 +210,6 @@ void openport2(uint8_t bdr, QSerialPort* serial_port){
             }
         }
     }
+    return false;
 
 }
