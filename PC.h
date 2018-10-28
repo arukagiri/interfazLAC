@@ -45,10 +45,6 @@
 #define LACAN_CMD_MAGNETIZE     0x2F
 #define LACAN_CMD_MPPT_ENABLE   0x38
 #define LACAN_CMD_MPPT_DISABLE  0x3F
-#define LACAN_VAR_MOD_POT       0xC0
-#define LACAN_VAR_MOD_VEL       0xC1
-#define LACAN_VAR_MOD_TORQ      0xC2
-#define LACAN_VAR_MOD_MPPT      0xC3
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02
@@ -96,7 +92,6 @@
 #define LACAN_VAR_BAT_VMIN      0x5B
 #define LACAN_VAR_BAT_V         0x5C
 #define LACAN_VAR_BAT_V_SETP    0x5D
-
 #define LACAN_VAR_TORQI_MAX     0x64
 #define LACAN_VAR_TORQI_MIN     0x65
 #define LACAN_VAR_TORQI         0x66
@@ -105,6 +100,13 @@
 #define LACAN_VAR_TORQO_MIN     0x6B
 #define LACAN_VAR_TORQO         0x6C
 #define LACAN_VAR_TORQO_SETP    0x6D
+#define LACAN_VAR_MOD           0xC0
+
+//Modos
+#define LACAN_VAR_MOD_POT       0xC0
+#define LACAN_VAR_MOD_VEL       0xC1
+#define LACAN_VAR_MOD_TORQ      0xC2
+#define LACAN_VAR_MOD_MPPT      0xC3
 
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
