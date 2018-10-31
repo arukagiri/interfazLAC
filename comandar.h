@@ -25,8 +25,11 @@ private:
     Ui::Comandar *ui;
     uint16_t var_set;
     uint16_t cmd;
+    uint16_t mode_set;
     MainWindow* mw;
     void set_tipo();
+
+    QMap <QString,LACAN_VAR> varmap;
 
 private slots:
     void DO_selected(void);

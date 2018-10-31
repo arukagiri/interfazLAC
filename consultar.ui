@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>186</height>
+    <width>262</width>
+    <height>391</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,7 +25,7 @@
      <x>20</x>
      <y>20</y>
      <width>211</width>
-     <height>151</height>
+     <height>170</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,16 +76,34 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QRadioButton" name="radioButton">
           <property name="text">
-           <string>Tipo:</string>
+           <string>SetPoint</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="list_TIPO_QRY"/>
+         <widget class="QRadioButton" name="radioButton_2">
+          <property name="text">
+           <string>Instantanea</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Modo:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="list_MODO_QRY"/>
         </item>
        </layout>
       </item>

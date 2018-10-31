@@ -29,8 +29,11 @@ private slots:
 private:
     Ui::Consultar *ui;
     uint16_t consulta;
+    uint16_t modo;
     MainWindow* mw ;
     void set_TIPO_CONSULTA();
+
+    QMap <QString,LACAN_VAR> varmap;
 };
 
 #endif // CONSULTAR_H

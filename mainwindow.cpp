@@ -20,6 +20,7 @@
 #include "LACAN_REC.h"
 #include "addnewdevdialog.h"
 #include <QColor>
+#include "lacan_limits_gen.h"
 
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
@@ -232,45 +233,78 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    varmap["Corriente de Entrada Instantanea"]=LACAN_VAR_II;
-    varmap["Corriente de Entrada Maxima"]=LACAN_VAR_II_MAX;
-    varmap["Corriente de Entrada Minima"]=LACAN_VAR_II_MIN;
-    varmap["Corriente de Entrada Set Point"]=LACAN_VAR_II_SETP;
-    varmap["Corriente de Salida Instantanea"]=LACAN_VAR_IO;
-    varmap["Corriente de Salida Maxima"]=LACAN_VAR_IO_MAX;
-    varmap["Corriente de Salida Minima"]=LACAN_VAR_IO_MIN;
-    varmap["Corriente de Salida Set Point"]=LACAN_VAR_IO_SETP;
-    varmap["Corriente de ISD Instantanea"]=LACAN_VAR_ISD;
-    varmap["Corriente de ISD Maxima"]=LACAN_VAR_ISD_MAX;
-    varmap["Corriente de ISD Minima"]=LACAN_VAR_ISD_MIN;
-    varmap["Corriente de ISD Set Point"]=LACAN_VAR_ISD_SETP;
-    varmap["Corriente Eficaz Instantanea"]=LACAN_VAR_IEF;
-    varmap["Corriente Eficaz Maxima"]=LACAN_VAR_IEF_MAX;
-    varmap["Corriente Eficaz Minima"]=LACAN_VAR_IEF_MIN;
-    varmap["Corriente Eficaz Set Point"]=LACAN_VAR_IEF_SETP;
-    varmap["Potencia de Entrada Instantanea"]=LACAN_VAR_PI;
-    varmap["Potencia de Entrada Maxima"]=LACAN_VAR_PI_MAX;
-    varmap["Potencia de Entrada Minima"]=LACAN_VAR_PI_MIN;
-    varmap["Potencia de Entrada Set Point"]=LACAN_VAR_PI_SETP;
-    varmap["Potencia de Salida Instantanea"]=LACAN_VAR_PO;
-    varmap["Potencia de Salida Maxima"]=LACAN_VAR_PO_MAX;
-    varmap["Potencia de Salida Minima"]=LACAN_VAR_PO_MIN;
-    varmap["Potencia de Salida Set Point"]=LACAN_VAR_PO_SETP;
-    varmap["Tension de Entrada Instantanea"]=LACAN_VAR_VI;
-    varmap["Tension de Entrada Maxima"]=LACAN_VAR_VI_MAX;
-    varmap["Tension de Entrada Minima"]=LACAN_VAR_VI_MIN;
-    varmap["Tension de Entrada Set Point"]=LACAN_VAR_VI_SETP;
-    varmap["Tension de Salida Instantanea"]=LACAN_VAR_VO;
-    varmap["Tension de Salida Maxima"]=LACAN_VAR_VO_MAX;
-    varmap["Tension de Salida Minima"]=LACAN_VAR_VO_MIN;
-    varmap["Tension de Salida Set Point"]=LACAN_VAR_VO_SETP;
-    varmap["Velocidad Angular Instantanea"]=LACAN_VAR_W;
-    varmap["Velocidad Angular Maxima"]=LACAN_VAR_W_MAX;
-    varmap["Velocidad Angular Minima"]=LACAN_VAR_W_MIN;
-    varmap["Velocidad Angular Set Point"]=LACAN_VAR_W_SETP;
-    varmap["Modo Potencia"]=LACAN_VAR_MOD_POT;
-    varmap["Modo Velocidad"]=LACAN_VAR_MOD_VEL;
-    varmap["Modo Torque"]=LACAN_VAR_MOD_TORQ;
+    /*  LACAN_VAR II;
+      LACAN_VAR IO;
+      LACAN_VAR ISD;
+      LACAN_VAR IEF;
+      LACAN_VAR PI;
+      LACAN_VAR PO;
+      LACAN_VAR VI;
+      LACAN_VAR VO;
+      LACAN_VAR TORQ;
+      LACAN_VAR W;
+      LACAN_VAR MOD;
+      varmap_gen["Corriente de Entrada"]=II;
+      varmap_gen["Corriente de Salida"]=IO;
+      varmap_gen["Corriente de ISD"]=ISD;
+      varmap_gen["Corriente Eficaz"]=IEF;
+      varmap_gen["Potencia de Entrada"]=PI;
+      varmap_gen["Potencia de Salida"]=PO;
+      varmap_gen["Tension de Entrada"]=VI;
+      varmap_gen["Tension de Salida"]=VO;
+      varmap_gen["Torque"]=TORQ;
+      varmap_gen["Velocidad Angular"]=W;
+      varmap_gen["Modo"]=MOD;*/
+
+   /* LACAN_VAR IO;
+    IO.instantanea=LACAN_VAR_IO_INST;
+    IO.setp=LACAN_VAR_IO_SETP;
+    IO.max=LACAN_VAR_GEN_IO_MAX;
+    IO.min=LACAN_VAR_GEN_IO_MIN;*/
+    LACAN_VAR ISD;
+    ISD.instantanea=LACAN_VAR_ISD_INST;
+    ISD.setp=LACAN_VAR_ISD_SETP;
+    ISD.max=LACAN_VAR_GEN_ISD_MAX;
+    ISD.min=LACAN_VAR_GEN_ISD_MIN;
+    LACAN_VAR IEF;
+    IEF.instantanea=LACAN_VAR_IEF_INST;
+    IEF.setp=LACAN_VAR_IEF_SETP;
+    IEF.max=LACAN_VAR_GEN_IEF_MAX;
+    IEF.min=LACAN_VAR_GEN_IEF_MIN;
+    LACAN_VAR PO;
+    PO.instantanea=LACAN_VAR_PO_INST;
+    PO.setp=LACAN_VAR_PO_SETP;
+    PO.max=LACAN_VAR_GEN_PO_MAX;
+    PO.min=LACAN_VAR_GEN_PO_MIN;
+    LACAN_VAR VO;
+    VO.instantanea=LACAN_VAR_VO_INST;
+    VO.setp=LACAN_VAR_VO_SETP;
+    VO.max=LACAN_VAR_GEN_VO_MAX;
+    VO.min=LACAN_VAR_GEN_VO_MIN;
+    LACAN_VAR TORQ;
+    TORQ.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ.setp=LACAN_VAR_TORQ_SETP;
+    TORQ.max=LACAN_VAR_GEN_TORQ_MAX;
+    TORQ.min=LACAN_VAR_GEN_TORQ_MIN;
+    LACAN_VAR W;
+    W.instantanea=LACAN_VAR_W_INST;
+    W.setp=LACAN_VAR_W_SETP;
+    W.max=LACAN_VAR_GEN_W_MAX;
+    W.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR IBAT;
+    IBAT.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT.setp=LACAN_VAR_I_BAT_SETP;
+    IBAT.max=LACAN_VAR_GEN_IBAT_MAX;
+    IBAT.min=LACAN_VAR_GEN_IBAT_MIN;
+   // varmap_gen["Corriente de Salida"]=IO;
+    varmap_gen["Corriente de ISD"]=ISD;
+    varmap_gen["Corriente Eficaz"]=IEF;
+    varmap_gen["Potencia de Salida"]=PO;
+    varmap_gen["Tension de Salida"]=VO;
+    varmap_gen["Torque"]=TORQ;
+    varmap_gen["Velocidad Angular"]=W;
+    varmap_gen["Corriente de Bateria"]=IBAT;
+
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }

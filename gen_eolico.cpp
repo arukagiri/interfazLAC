@@ -40,7 +40,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(mode_changed()));
 
 //SPIN
-    ui->spin_iconv->setValue(0);
     ui->spin_isd_ref->setValue(0);
     ui->spin_lim_ibat->setValue(0);
     ui->spin_lim_ief->setValue(0);
@@ -152,7 +151,7 @@ void Gen_Eolico::timer_handler(){
 
 void Gen_Eolico::send_qry(){
     //lista de variables a consultar
-    LACAN_Query(mw,LACAN_VAR_VO);
+   /* LACAN_Query(mw,LACAN_VAR_VO);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     LACAN_Query(mw,LACAN_VAR_IO);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -177,7 +176,7 @@ void Gen_Eolico::send_qry(){
 //    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 //    LACAN_Query(mw,);
 //    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-
+*/
     //hay que preguntar el modo??
 }
 
@@ -189,10 +188,6 @@ void Gen_Eolico::refresh_values(){
         ui->spin_pot_ref->setValue(pot_ref);
     if(!lim_vdc_click)
         ui->spin_lim_vdc->setValue(lim_vdc);
-    if(!vdc_click)
-        ui->spin_vdc->setValue(vdc);
-    if(!iconv_click)
-        ui->spin_iconv->setValue(iconv);
     if(!lim_ief_click)
         ui->spin_lim_ief->setValue(lim_ief);
     if(!torque_ref_click)
@@ -201,8 +196,6 @@ void Gen_Eolico::refresh_values(){
         ui->spin_isd_ref->setValue(isd_ref);
     if(!lim_ibat_click)
         ui->spin_lim_ibat->setValue(lim_ibat);
-    if(!ibat_click)
-        ui->spin_ibat->setValue(ibat);
 
     ui->label_gen_vo->setText(QString::number(gen_vo));
     ui->label_gen_io->setText(QString::number(gen_io));
@@ -221,12 +214,6 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_ISD_SETP:
             isd_ref=recibed_val.var_float;
         break;
-        case LACAN_VAR_BAT_IMAX:
-            lim_ibat=recibed_val.var_float;
-        break;
-        case LACAN_VAR_IEF_MAX:
-            lim_ief=recibed_val.var_float;
-        break;
          /*case LACAN_VAR_IO:
             lim_vdc=recibed_val.var_float;
         break;*/
@@ -237,16 +224,16 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
             speed_ref=recibed_val.var_float;
 
         break;
-        case LACAN_VAR_TORQI_SETP:
+        case LACAN_VAR_TORQ_SETP:
             torque_ref=recibed_val.var_float;
         break;
        /* case LACAN_VAR_BAT_I: //o la de setpoint
             ibat=recibed_val.var_float;
         break;*/
-       case LACAN_VAR_IO:
+       case LACAN_VAR_IO_INST:
             gen_io=recibed_val.var_float;
         break;
-        case LACAN_VAR_VO:
+        case LACAN_VAR_VO_INST:
             gen_vo=recibed_val.var_float;
         break;
     default:
@@ -291,7 +278,7 @@ void Gen_Eolico::on_pushButton_apply_clicked(){
                else
                    val.var_float = data_float;*/
                val.var_float=ui->spin_speed_ref->value();
-               LACAN_Set(mw,LACAN_VAR_IO,val,1);
+               LACAN_Set(mw,LACAN_VAR_IO_INST,val,1);
                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
                qDebug()<<"Se mando el set";
                mw->agregar_log_sent();
@@ -326,7 +313,7 @@ void Gen_Eolico::set_spin_click(bool state){
 //en esta funcion se envia el set de las variables que son comunes a todos los modos
 void Gen_Eolico::enviar_variables_generales(){
 
-    val.var_float=ui->spin_isd_ref->value();
+/*    val.var_float=ui->spin_isd_ref->value();
     LACAN_Set(mw,LACAN_VAR_ISD_SETP,val,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
@@ -337,7 +324,7 @@ void Gen_Eolico::enviar_variables_generales(){
     val.var_float=ui->spin_lim_ief->value();
     LACAN_Set(mw,LACAN_VAR_IEF_MAX,val,1);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->agregar_log_sent();
+    mw->agregar_log_sent();*/
 
   /*  val.var_float=ui->spin_ibat->value();
     LACAN_Set(mw,   ,val);
@@ -416,7 +403,7 @@ void Gen_Eolico::on_spin_isd_ref_valueChanged(double arg1)
 
 
 void Gen_Eolico::set_limits_gen(){
-    ui->spin_ibat->setMaximum(LACAN_VAR_GEN_BAT_I_SETP_LIM_MAX);
+/*    ui->spin_ibat->setMaximum(LACAN_VAR_GEN_BAT_I_SETP_LIM_MAX);
     ui->spin_ibat->setMinimum(LACAN_VAR_GEN_BAT_I_SETP_LIM_MIN);
     ui->spin_ibat->setDecimals(3);
 
@@ -454,6 +441,6 @@ void Gen_Eolico::set_limits_gen(){
 
     ui->spin_isd_ref->setMaximum(LACAN_VAR_GEN_ISD_SETP_LIM_MAX);
     ui->spin_isd_ref->setMinimum(LACAN_VAR_GEN_ISD_SETP_LIM_MIN);
-    ui->spin_isd_ref->setDecimals(3);
+    ui->spin_isd_ref->setDecimals(3);*/
 
 }

@@ -29,26 +29,25 @@ Consultar::Consultar(QWidget *parent) :
     case LACAN_ID_GEN:
         ui->label_DESTINO_QRY->setText("Generador Eolico");
 
-        ui->list_VARIABLE_QRY->addItem("Corriente de Entrada");
+        varmap = mw->varmap_gen;
+
         ui->list_VARIABLE_QRY->addItem("Corriente de Salida");
         ui->list_VARIABLE_QRY->addItem("Corriente de ISD");
         ui->list_VARIABLE_QRY->addItem("Corriente Eficaz");
-        ui->list_VARIABLE_QRY->addItem("Potencia de Entrada");
         ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
-        ui->list_VARIABLE_QRY->addItem("Tension de Entrada");
         ui->list_VARIABLE_QRY->addItem("Tension de Salida");
         ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
         ui->list_VARIABLE_QRY->addItem("Modo");
 
-        ui->list_TIPO_QRY->addItem("Maxima");
-        ui->list_TIPO_QRY->addItem("Minima");
-        ui->list_TIPO_QRY->addItem("Set Point");
-        ui->list_TIPO_QRY->addItem("Instantanea");
+        ui->list_MODO_QRY->addItem("Maxima");
+        ui->list_MODO_QRY->addItem("Minima");
+        ui->list_MODO_QRY->addItem("Set Point");
+        ui->list_MODO_QRY->addItem("Instantanea");
 
-        consulta=LACAN_VAR_II_MAX;
+        //consulta=LACAN_VAR_II_MAX;
 
         connect(ui->list_VARIABLE_QRY,SIGNAL(currentTextChanged(QString)),this,SLOT(VARIABLE_CONSULTA_Changed()));
-        connect(ui->list_TIPO_QRY,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_CONSULTA_Changed()));
+        connect(ui->list_MODO_QRY,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_CONSULTA_Changed()));
         break;
 
     case LACAN_ID_BOOST:
@@ -97,12 +96,12 @@ void Consultar::VARIABLE_CONSULTA_Changed(){
 
 void Consultar::TIPO_CONSULTA_Changed(){
     QString var_selectedstr;
-    var_selectedstr=ui->list_VARIABLE_QRY->currentText()+" "+ui->list_TIPO_QRY->currentText();
+    var_selectedstr=ui->list_VARIABLE_QRY->currentText()+" "+ui->list_MODO_QRY->currentText();
     qDebug()<<var_selectedstr;
-    consulta=mw->varmap[var_selectedstr];
+    consulta= varmap[var_selectedstr].setp;
 //    switch(ui->list_VARIABLE_QRY->currentIndex()){
 //        case II:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_II_MAX;
 //                    break;
@@ -118,7 +117,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //            }
 //            break;
 //        case IO:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_IO_MAX;
 //                    break;
@@ -134,7 +133,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case ISD:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_ISD_MAX;
 //                    break;
@@ -150,7 +149,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case IEF:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_IEF_MAX;
 //                    break;
@@ -163,7 +162,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case PI:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_PI_MAX;
 //                    break;
@@ -179,7 +178,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case PO:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_PO_MAX;
 //                    break;
@@ -195,7 +194,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                       }
 //            break;
 //        case VI:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_VI_MAX;
 //                    break;
@@ -211,7 +210,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case VO:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_VO_MAX;
 //                    break;
@@ -227,7 +226,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //                   }
 //            break;
 //        case W:
-//            switch (ui->list_TIPO_QRY->currentIndex()) {
+//            switch (ui->list_MODO_QRY->currentIndex()) {
 //                case MAX:
 //                    consulta=LACAN_VAR_W_MAX;
 //                    break;
@@ -243,7 +242,7 @@ void Consultar::TIPO_CONSULTA_Changed(){
 //            }
 //        break;
 //        case MOD:
-//            switch (ui->list_TIPO_QRY->currentIndex()){
+//            switch (ui->list_MODO_QRY->currentIndex()){
 
 //                case MOD_P:
 //                    consulta=LACAN_VAR_MOD_POT;
@@ -262,17 +261,17 @@ void Consultar::TIPO_CONSULTA_Changed(){
 void Consultar::set_TIPO_CONSULTA(){
     switch (ui->list_VARIABLE_QRY->currentIndex()) {
     case MOD:
-        ui->list_TIPO_QRY->clear();
-        ui->list_TIPO_QRY->addItem("Potencia");
-        ui->list_TIPO_QRY->addItem("Velocidad");
-        ui->list_TIPO_QRY->addItem("Torque");
+        ui->list_MODO_QRY->clear();
+        ui->list_MODO_QRY->addItem("Potencia");
+        ui->list_MODO_QRY->addItem("Velocidad");
+        ui->list_MODO_QRY->addItem("Torque");
         break;
     default:
-        ui->list_TIPO_QRY->clear();
-        ui->list_TIPO_QRY->addItem("Maxima");
-        ui->list_TIPO_QRY->addItem("Minima");
-        ui->list_TIPO_QRY->addItem("Set Point");
-        ui->list_TIPO_QRY->addItem("Instantanea");
+        ui->list_MODO_QRY->clear();
+        ui->list_MODO_QRY->addItem("Maxima");
+        ui->list_MODO_QRY->addItem("Minima");
+        ui->list_MODO_QRY->addItem("Set Point");
+        ui->list_MODO_QRY->addItem("Instantanea");
         break;
     }
 }

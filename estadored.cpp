@@ -110,7 +110,7 @@ void EstadoRed::refresh_values(){
 
 void EstadoRed::send_qry(){
 
-    if(mw->gen_connected){
+   /* if(mw->gen_connected){
         mw->dest=LACAN_ID_GEN;
         LACAN_Query(mw,LACAN_VAR_VO);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -142,7 +142,7 @@ void EstadoRed::send_qry(){
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_VI);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    }
+    }*/
 
 }
 
@@ -177,10 +177,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
     switch (source) {
     case LACAN_ID_BOOST:
         switch (msg.BYTE1) {
-        case LACAN_VAR_IO:
+        case LACAN_VAR_IO_INST:
             boost_io=msg.BYTE2;
             break;
-        case LACAN_VAR_VO:
+        case LACAN_VAR_VO_INST:
             boost_vo=msg.BYTE2;
             break;
         default:
@@ -195,10 +195,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         emit postforGEN_arrived(msg);
 
         switch (msg.BYTE1) {
-        case LACAN_VAR_IO:
+        case LACAN_VAR_IO_INST:
             gen_io=msg.BYTE2;
             break;
-        case LACAN_VAR_VO:
+        case LACAN_VAR_VO_INST:
             gen_vo=msg.BYTE2;
             break;
         default:
@@ -209,10 +209,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
 
     case LACAN_ID_VOLANTE:
         switch (msg.BYTE1) {
-        case LACAN_VAR_IO:
+        case LACAN_VAR_IO_INST:
             vol_io=msg.BYTE2;
             break;
-        case LACAN_VAR_VO:
+        case LACAN_VAR_VO_INST:
             vol_vo=msg.BYTE2;
             break;
         default:

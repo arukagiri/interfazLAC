@@ -105,7 +105,8 @@ public:
     uint16_t list_rec_cont = 0;
     uint16_t list_send_cont = 0;
 
-    QMap <QString,uint16_t> varmap;
+    QMap <QString,LACAN_VAR> varmap_gen;
+    QMap <QString,LACAN_VAR> varmap_vol;
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;

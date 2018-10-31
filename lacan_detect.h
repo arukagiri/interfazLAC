@@ -82,136 +82,70 @@ QString detect_var(uint8_t var){
        case LACAN_VAR_STATUS:
            return "Vector de Estado";
            break;
-       case LACAN_VAR_II_MAX:
-           return "Corriente de Entrada Max";
-           break;
-       case LACAN_VAR_II_MIN:
-           return "Corriente de Entrada Min";
-           break;
-       case LACAN_VAR_II:
+       case LACAN_VAR_II_INST:
            return "Corriente de Entrada Instantanea";
            break;
        case LACAN_VAR_II_SETP:
            return "Corriente de Entrada SetPoint";
            break;
-       case LACAN_VAR_IO_MAX:
-           return "Corriente de Salida Max";
-           break;
-       case LACAN_VAR_IO_MIN:
-           return "Corriente de Salida Min";
-           break;
-       case LACAN_VAR_IO:
+       case LACAN_VAR_IO_INST:
            return "Corriente de Salida Instantanea";
            break;
        case LACAN_VAR_IO_SETP:
            return "Corriente de Salida SetPoint";
            break;
-       case LACAN_VAR_ISD_MAX:
-           return "Corriente de ISD Max";
-           break;
-       case LACAN_VAR_ISD_MIN:
-           return "Corriente de ISD Min";
-           break;
-       case LACAN_VAR_ISD:
+       case LACAN_VAR_ISD_INST:
            return "Corriente de ISD Instantanea";
            break;
        case LACAN_VAR_ISD_SETP:
            return "Corriente de ISD SetPoint";
            break;
-       case LACAN_VAR_IEF_MAX:
-           return "Corriente de Eficaz Max";
-           break;
-       case LACAN_VAR_IEF_MIN:
-           return "Corriente de Eficaz Min";
-           break;
-       case LACAN_VAR_IEF:
+       case LACAN_VAR_IEF_INST:
            return "Corriente de Eficaz Instantanea";
            break;
        case LACAN_VAR_IEF_SETP:
            return "Corriente de Eficaz SetPoint";
            break;
-       case LACAN_VAR_PI_MAX:
-           return "Potencia de Entrada Max";
-           break;
-       case LACAN_VAR_PI_MIN:
-           return "Potencia de Entrada Min";
-           break;
-       case LACAN_VAR_PI:
+       case LACAN_VAR_PI_INST:
            return "Potencia de Entrada Instantanea";
            break;
        case LACAN_VAR_PI_SETP:
            return "Potencia de Entrada SetPoint";
            break;
-       case LACAN_VAR_PO_MAX:
-           return "Potencia de Salida Max";
-           break;
-       case LACAN_VAR_PO_MIN:
-           return "Potencia de Salida Min";
-           break;
-       case LACAN_VAR_PO:
+       case LACAN_VAR_PO_INST:
            return "Potencia de Salida Instantanea";
            break;
        case LACAN_VAR_PO_SETP:
            return "Potencia de Salida SetPoint";
            break;
-       case LACAN_VAR_VI_MAX:
-           return "Tension de Entrada Max";
-           break;
-       case LACAN_VAR_VI_MIN:
-           return "Tension de Entrada Min";
-           break;
-       case LACAN_VAR_VI:
+       case LACAN_VAR_VI_INST:
            return "Tension de Entrada Instantenea";
            break;
        case LACAN_VAR_VI_SETP:
            return "Tension de Entrada SetPoint";
            break;
-       case LACAN_VAR_VO_MAX:
-           return "Tension de Salida Max";
-           break;
-       case LACAN_VAR_VO_MIN:
-           return "Tension de Salida Min";
-           break;
-       case LACAN_VAR_VO:
+       case LACAN_VAR_VO_INST:
            return "Tension de Salida Instantenea";
            break;
        case LACAN_VAR_VO_SETP:
            return "Tension de Salida SetPoint";
            break;
-       case LACAN_VAR_W_MAX:
-           return "Velocidad Angular Max";
-           break;
-       case LACAN_VAR_W_MIN:
-           return "Velocidad Angular Min";
-           break;
-       case LACAN_VAR_W:
+       case LACAN_VAR_W_INST:
            return "Velocidad Angular Instantanea";
            break;
        case LACAN_VAR_W_SETP:
            return "Velocidad Angular SetPoint";
            break;
-       case LACAN_VAR_BAT_IMAX:
-           return "Corriente de Bateria Max";
-           break;
-       case LACAN_VAR_BAT_IMIN:
-           return "Corriente de Bateria Min";
-           break;
-       case LACAN_VAR_BAT_I:
+       case LACAN_VAR_I_BAT_INST:
            return "Corriente de Bateria Instantanea";
            break;
-       case LACAN_VAR_BAT_I_SETP:
+       case LACAN_VAR_I_BAT_SETP:
            return "Corriente de Bateria SetPoint";
            break;
-       case LACAN_VAR_BAT_VMAX:
-           return "Tension de Bateria Max";
-           break;
-       case LACAN_VAR_BAT_VMIN:
-           return "Tension de Bateria Min";
-           break;
-       case LACAN_VAR_BAT_V:
+       case LACAN_VAR_V_BAT_INST:
            return "Tension de Bateria Instantanea";
            break;
-       case LACAN_VAR_BAT_V_SETP:
+       case LACAN_VAR_V_BAT_SETP:
            return "Tension de Bateria SetPoint";
            break;
        case LACAN_VAR_MOD_POT:
