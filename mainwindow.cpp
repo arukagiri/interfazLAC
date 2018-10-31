@@ -115,6 +115,23 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
 
+        if(abs_msg.var_type=="Modo"){
+            switch (msg_log.back().BYTE3){
+            case LACAN_VAR_MOD_POT:
+                abs_msg.var_val = "Modo Potencia";
+                break;
+            case LACAN_VAR_MOD_VEL:
+                abs_msg.var_val = "Modo Velocidad";
+                break;
+            case LACAN_VAR_MOD_TORQ:
+                abs_msg.var_val = "Modo Torque";
+                break;
+            default:
+                abs_msg.var_val = "No especificada/soportada";
+                break;
+            }
+        }
+        else{
         val_union.var_char[0]=char(msg_log.back().BYTE3);
         val_union.var_char[1]=char(msg_log.back().BYTE4);
         val_union.var_char[2]=char(msg_log.back().BYTE5);
@@ -122,7 +139,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
         val_float = val_union.var_float;
         abs_msg.var_val=QString::number(double(val_float));
-
+        }
         break;
 
     case LACAN_FUN_QRY:
@@ -233,30 +250,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    /*  LACAN_VAR II;
-      LACAN_VAR IO;
-      LACAN_VAR ISD;
-      LACAN_VAR IEF;
-      LACAN_VAR PI;
-      LACAN_VAR PO;
-      LACAN_VAR VI;
-      LACAN_VAR VO;
-      LACAN_VAR TORQ;
-      LACAN_VAR W;
-      LACAN_VAR MOD;
-      varmap_gen["Corriente de Entrada"]=II;
-      varmap_gen["Corriente de Salida"]=IO;
-      varmap_gen["Corriente de ISD"]=ISD;
-      varmap_gen["Corriente Eficaz"]=IEF;
-      varmap_gen["Potencia de Entrada"]=PI;
-      varmap_gen["Potencia de Salida"]=PO;
-      varmap_gen["Tension de Entrada"]=VI;
-      varmap_gen["Tension de Salida"]=VO;
-      varmap_gen["Torque"]=TORQ;
-      varmap_gen["Velocidad Angular"]=W;
-      varmap_gen["Modo"]=MOD;*/
-
-   /* LACAN_VAR IO;
+    /* LACAN_VAR IO;
     IO.instantanea=LACAN_VAR_IO_INST;
     IO.setp=LACAN_VAR_IO_SETP;
     IO.max=LACAN_VAR_GEN_IO_MAX;
@@ -296,7 +290,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     IBAT.setp=LACAN_VAR_I_BAT_SETP;
     IBAT.max=LACAN_VAR_GEN_IBAT_MAX;
     IBAT.min=LACAN_VAR_GEN_IBAT_MIN;
-   // varmap_gen["Corriente de Salida"]=IO;
+    //varmap_gen["Corriente de Salida"]=IO;
     varmap_gen["Corriente de ISD"]=ISD;
     varmap_gen["Corriente Eficaz"]=IEF;
     varmap_gen["Potencia de Salida"]=PO;
@@ -304,7 +298,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     varmap_gen["Torque"]=TORQ;
     varmap_gen["Velocidad Angular"]=W;
     varmap_gen["Corriente de Bateria"]=IBAT;
-
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }

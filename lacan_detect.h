@@ -136,6 +136,12 @@ QString detect_var(uint8_t var){
        case LACAN_VAR_W_SETP:
            return "Velocidad Angular SetPoint";
            break;
+       case LACAN_VAR_TORQ_INST:
+           return "Torque Instantaneo";
+           break;
+       case LACAN_VAR_TORQ_SETP:
+           return "Torque SetPoint";
+           break;
        case LACAN_VAR_I_BAT_INST:
            return "Corriente de Bateria Instantanea";
            break;
@@ -149,15 +155,8 @@ QString detect_var(uint8_t var){
            return "Tension de Bateria SetPoint";
            break;
        case LACAN_VAR_MOD_POT:
-           return "Modo Potencia";
+           return "Modo";
            break;
-       case LACAN_VAR_MOD_VEL:
-           return "Modo Velocidad";
-           break;
-       case LACAN_VAR_MOD_TORQ:
-           return "Modo Torque";
-           break;
-
         default:
             return "No especificada/soportada";
         }
