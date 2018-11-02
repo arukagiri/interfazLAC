@@ -1,6 +1,8 @@
 ==================================================================================================================================
 HABLAR CON JOAQUIN:
 ==================================================================================================================================
+el modo MPPT no envia ninguna consigna?
+
 CORRIENTE DE SALIDA EN EL DB?
 CORRIENTE DE BATERIA Y CORRIENTE CONVERTIDOR
 
@@ -11,6 +13,8 @@ actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar 
 
 ==================================================================================================================================
 INTERFAZ:
+
+ver por que se me loguean los qrys..
 
 ver de agregar iq e id en el db del GEN
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos

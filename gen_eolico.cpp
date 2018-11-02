@@ -31,10 +31,16 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
 //COMBO BOX MODO
 
-    ui->combo_modo->addItem("Velocidad (0)",QVariant(0));
-    ui->combo_modo->addItem("Potencia (1)",QVariant(1));
-    ui->combo_modo->addItem("Torque (2)",QVariant(2));
-    ui->combo_modo->addItem("MPPT (3)",QVariant(3));
+    //ui->combo_modo->addItem("Velocidad (0)",QVariant(0));
+    //ui->combo_modo->addItem("Potencia (1)",QVariant(1));
+    //ui->combo_modo->addItem("Torque (2)",QVariant(2));
+    //ui->combo_modo->addItem("MPPT (3)",QVariant(3));
+
+    ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
+    ui->combo_modo->addItem("Potencia (1)",QVariant(LACAN_VAR_MOD_POT));
+    ui->combo_modo->addItem("Torque (2)",QVariant(LACAN_VAR_MOD_TORQ));
+    ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
+    on_combo_modo_currentIndexChanged(0);
     mode_changed();
 
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(mode_changed()));
@@ -91,65 +97,56 @@ void Gen_Eolico::on_pushButton_apply_clicked(){
     //str.append(ui->combo_modo->currentText());
     reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
     if(reply==QMessageBox::Yes){
-        enviar_variables_generales();
-        actual_mode = ui->combo_modo->currentIndex();
+        enviar_variables_generales(); //envio las variables que no dependen del modo
+
+        //envio el modo actual
+        data_can modo;
+        modo.var_char[0] = actual_mode;
+        modo.var_char[1] = 0;
+        modo.var_char[2] = 0;
+        modo.var_char[3] = 0;
+        LACAN_Set(mw,LACAN_VAR_MOD,modo,1);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        mw->agregar_log_sent();
+
+        //Envio la variable de setpoint, dependiendo del modo
         switch(actual_mode){
-            case 3: //mppt
-                qDebug()<<"caso3";
-                //LACAN_Set(mw,LACAN_VAR_MOD_MPPT,true);
+            case LACAN_VAR_MOD_TORQ: //torque
+                qDebug()<<"TORQUE";
+                val.var_float=ui->spin_torque_ref->value();
+                LACAN_Set(mw,LACAN_VAR_TORQ_SETP,val,1);
+                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+                mw->agregar_log_sent();
+                break;
+            case LACAN_VAR_MOD_MPPT: //mppt
+                qDebug()<<"MPPT";
+                //val.var_float=ui->spin_torque_ref->value();
+                //LACAN_Set(mw,LACAN_VAR_TORQ_SETP,val,1);
                 //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-            break;
-            case 2: //torque
-                qDebug()<<"caso2";
-                //LACAN_Set(mw,LACAN_VAR_MOD_TORQ,true);
-                //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-            break;
-            case 1: //potencia
-                qDebug()<<"caso1";
-                //LACAN_Set(mw,LACAN_VAR_MOD_POT,true);
-                //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-            break;
-            case 0: //velocidad      //no me deja poner este primero..
-
-                //LACAN_Set(mw,LACAN_VAR_MOD_VEL,true);
-            //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-
-            /* uint32_t data_int = ui->spin_speed_ref->value();
-               float data_float = ui->spin_speed_ref->value();
-               if(data_int == data_float)   //para ver si estas mandando un int o un float
-                   val.var_int = data_int;
-               else
-                   val.var_float = data_float;*/
-               val.var_float=ui->spin_speed_ref->value();
-               LACAN_Set(mw,LACAN_VAR_IO_INST,val,1);
-               connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-               qDebug()<<"Se mando el set";
-               mw->agregar_log_sent();
-            break;
+                //mw->agregar_log_sent();
+                break;
+            case LACAN_VAR_MOD_VEL: //velocidad      //no me deja poner este primero..
+                qDebug()<<"VELOCIDAD";
+                val.var_float=ui->spin_speed_ref->value();
+                LACAN_Set(mw,LACAN_VAR_W_SETP,val,1);
+                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+                mw->agregar_log_sent();
+                break;
+            case LACAN_VAR_MOD_POT: //potencia
+                qDebug()<<"POTENCIA";
+                val.var_float=ui->spin_pot_ref->value();
+                LACAN_Set(mw,LACAN_VAR_PO_SETP,val,1);
+                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+                mw->agregar_log_sent();
+                break;
+            default:
+               break;
                 }
         }
     else{
     on_pushButton_cancel_clicked();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -347,24 +344,30 @@ void Gen_Eolico::set_spin_click(bool state){
 
 //habilita y deshabilita los campos, dependiendo el modo actual
 void Gen_Eolico::new_mode(){
-    qDebug()<<ui->combo_modo->currentIndex();
-    switch (ui->combo_modo->currentIndex()) {
-    case 0:     //Velocidad
+
+    qDebug()<<"Numero de Modo: "<<ui->combo_modo->currentIndex();
+    switch (actual_mode) {
+    case LACAN_VAR_MOD_VEL:     //Velocidad
+        qDebug()<<"Entro a velocidad";
         ui->spin_pot_ref->setDisabled(true);
         ui->spin_speed_ref->setEnabled(true);
         ui->spin_torque_ref->setDisabled(true);
         break;
-    case 1:     //Potencia
+    case LACAN_VAR_MOD_POT:     //Potencia
+        qDebug()<<"Entro a potencia";
         ui->spin_pot_ref->setEnabled(true);
         ui->spin_speed_ref->setDisabled(true);
         ui->spin_torque_ref->setDisabled(true);
         break;
-    case 2:     //Torque
+    case LACAN_VAR_MOD_TORQ:     //Torque
+        qDebug()<<"Entro a Torke";
         ui->spin_pot_ref->setDisabled(true);
         ui->spin_speed_ref->setDisabled(true);
         ui->spin_torque_ref->setEnabled(true);
         break;
-    case 3:     //Potencia
+    case LACAN_VAR_MOD_MPPT:     //MPPT
+
+        qDebug()<<"Entro a Mppt";
         ui->spin_pot_ref->setDisabled(true);
         ui->spin_speed_ref->setDisabled(true);
         ui->spin_torque_ref->setDisabled(true);
@@ -460,3 +463,8 @@ void Gen_Eolico::on_spin_isd_ref_valueChanged(double arg1)
 }
 
 
+
+void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
+{
+   actual_mode = ui->combo_modo->itemData(index).toInt();
+}

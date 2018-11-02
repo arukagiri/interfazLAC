@@ -98,6 +98,7 @@ private slots:
     void on_spin_lim_ief_valueChanged(double arg1);
     void on_spin_torque_ref_valueChanged(double arg1);
     void on_spin_isd_ref_valueChanged(double arg1);
+    void on_combo_modo_currentIndexChanged(int index);
 };
 
 #endif // GEN_EOLICO_H
