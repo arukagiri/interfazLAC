@@ -211,12 +211,4 @@ QString detect_mode(uint8_t modo){
     }
 }
 
-float lacan_data_float(char b0, char b1, char b2, char b3){
-    data_can valor;
-    valor.var_char[0]=b0;
-    valor.var_char[1]=b1;
-    valor.var_char[2]=b2;
-    valor.var_char[3]=b3;
-    return valor.var_float;
-}
 

@@ -40,6 +40,8 @@ private:
     MainWindow* mw ;
     QTimer *time_2sec;
 
+    data_can recibed_val;
+
     float gen_vo;
     float gen_io;
     float gen_vel;

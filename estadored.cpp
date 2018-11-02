@@ -35,7 +35,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_gen_torque->setText("----");
     ui->label_gen_modo->setText("----");
 
-    ui->label_vol_vo->setText("----");
+    /*ui->label_vol_vo->setText("----");
     ui->label_vol_io->setText("----");
     ui->label_boost_vi->setText("----");
     ui->label_boost_ii->setText("----");
@@ -43,8 +43,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_boost_vo->setText("----");
     ui->label_boost_io->setText("----");
     ui->label_vol_velocidad->setText("----");
-    ui->label_vol_torque->setText("----");
-
+    ui->label_vol_torque->setText("----");*/
 
     send_qry();
     set_states();
@@ -71,7 +70,7 @@ void EstadoRed::refresh_values(){
         ui->label_gen_modo->setText("----");
     }
 
-    if(mw->boost_connected){
+    /*if(mw->boost_connected){
         ui->label_boost_vo->setText(QString::number(boost_vo));
         ui->label_boost_io->setText(QString::number(boost_io));
         ui->label_boost_vi->setText(QString::number(boost_vi));
@@ -95,7 +94,7 @@ void EstadoRed::refresh_values(){
         ui->label_vol_io->setText("----");
         ui->label_vol_velocidad->setText("----");
         ui->label_vol_torque->setText("----");
-    }
+    }*/
 }
 
 void EstadoRed::send_qry(){
@@ -181,20 +180,24 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
         emit postforGEN_arrived(msg);
 
         switch (msg.BYTE1) {
+        recibed_val.var_char[0]=msg.BYTE2;
+        recibed_val.var_char[1]=msg.BYTE3;
+        recibed_val.var_char[2]=msg.BYTE4;
+        recibed_val.var_char[3]=msg.BYTE5;
         case LACAN_VAR_IO_INST:
-            gen_io = lacan_data_float(msg.BYTE2,msg.BYTE3,msg.BYTE4,msg.BYTE5);
+            gen_io = recibed_val.var_float;
             break;
         case LACAN_VAR_VO_INST:
-            gen_vo = lacan_data_float(msg.BYTE2,msg.BYTE3,msg.BYTE4,msg.BYTE5);
+            gen_vo = recibed_val.var_float;
             break;
         case LACAN_VAR_TORQ_INST:
-            gen_tor = lacan_data_float(msg.BYTE2,msg.BYTE3,msg.BYTE4,msg.BYTE5);
+            gen_tor = recibed_val.var_float;
             break;
         case LACAN_VAR_W_INST:
-            gen_vel = lacan_data_float(msg.BYTE2,msg.BYTE3,msg.BYTE4,msg.BYTE5);
+            gen_vel = recibed_val.var_float;
             break;
         case LACAN_VAR_MOD:
-            gen_mod=msg.BYTE2;
+            gen_mod = recibed_val.var_char[0];
             break;
         default:
             break;
@@ -219,7 +222,6 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
     }
 
 }
-
 
 
 void EstadoRed::on_button_vol_clicked()

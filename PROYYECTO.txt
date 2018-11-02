@@ -4,18 +4,20 @@ HABLAR CON JOAQUIN:
 CORRIENTE DE SALIDA EN EL DB?
 CORRIENTE DE BATERIA Y CORRIENTE CONVERTIDOR
 
+idem para el VOLANTE
+
+si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
+actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
+
 ==================================================================================================================================
 INTERFAZ:
 
+ver de agregar iq e id en el db del GEN
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
 enviar hexadecimales
 ==================================================================================================================================
-LISTA DE DISPOSITIVOS:
-
-que ande
-
-reemplazar las flag de estado de red (ej gen_connected) por las flag que haga luli
+LISTA DE DISPOSITIVOS
 
 ==================================================================================================================================
 REVISAR EN INTERFAZ:

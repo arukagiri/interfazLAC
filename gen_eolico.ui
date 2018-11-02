@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1124</width>
-    <height>610</height>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
     <rect>
      <x>590</x>
      <y>290</y>
-     <width>100</width>
+     <width>118</width>
      <height>22</height>
     </rect>
    </property>
@@ -45,7 +45,7 @@
     <item>
      <widget class="QLabel" name="label_isd_ref">
       <property name="text">
-       <string>Isd Ref:</string>
+       <string>Isd Ref (A):</string>
       </property>
      </widget>
     </item>
@@ -168,27 +168,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
-   <property name="geometry">
-    <rect>
-     <x>800</x>
-     <y>20</y>
-     <width>291</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="html">
-    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Cosas para cambiar aparte:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1) Ponerle la unidad el los labels de cada cosa&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2) agregar Iq e Id&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NOTA: 3) Line Edit de 37*17&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_lim_iconv">
    <property name="geometry">
     <rect>
@@ -207,7 +186,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>260</x>
      <y>440</y>
-     <width>119</width>
+     <width>145</width>
      <height>22</height>
     </rect>
    </property>
@@ -215,7 +194,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_torque_ref">
       <property name="text">
-       <string>Torque Ref:</string>
+       <string>Torque Ref (Nm):</string>
       </property>
      </widget>
     </item>
@@ -229,7 +208,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>10</x>
      <y>340</y>
-     <width>101</width>
+     <width>127</width>
      <height>22</height>
     </rect>
    </property>
@@ -237,7 +216,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_pot_ref">
       <property name="text">
-       <string>Pot Ref:</string>
+       <string>Pot Ref (kW):</string>
       </property>
      </widget>
     </item>
@@ -251,7 +230,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_variables_salida">
    <property name="geometry">
     <rect>
-     <x>560</x>
+     <x>540</x>
      <y>30</y>
      <width>121</width>
      <height>16</height>
@@ -266,7 +245,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>50</x>
      <y>280</y>
-     <width>115</width>
+     <width>144</width>
      <height>22</height>
     </rect>
    </property>
@@ -274,7 +253,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_speed_ref">
       <property name="text">
-       <string>Speed Ref:</string>
+       <string>Speed Ref (rpm):</string>
       </property>
      </widget>
     </item>
@@ -290,7 +269,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>350</x>
      <y>210</y>
-     <width>97</width>
+     <width>115</width>
      <height>22</height>
     </rect>
    </property>
@@ -298,7 +277,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_lim_ief">
       <property name="text">
-       <string>Lim Ief:</string>
+       <string>Lim Ief (A):</string>
       </property>
      </widget>
     </item>
@@ -312,7 +291,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_vdc_2">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>110</x>
      <y>130</y>
      <width>30</width>
      <height>16</height>
@@ -402,7 +381,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>100</x>
      <y>90</y>
-     <width>100</width>
+     <width>117</width>
      <height>22</height>
     </rect>
    </property>
@@ -410,7 +389,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_lim_vdc">
       <property name="text">
-       <string>Lim Vdc:</string>
+       <string>Lim Vdc (V):</string>
       </property>
      </widget>
     </item>
@@ -424,7 +403,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>200</x>
      <y>20</y>
-     <width>103</width>
+     <width>121</width>
      <height>22</height>
     </rect>
    </property>
@@ -432,7 +411,7 @@ p, li { white-space: pre-wrap; }
     <item>
      <widget class="QLabel" name="label_lim_ibat">
       <property name="text">
-       <string>Lim Ibat:</string>
+       <string>Lim Ibat (A):</string>
       </property>
      </widget>
     </item>
@@ -453,6 +432,67 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Ibat</string>
    </property>
+  </widget>
+  <widget class="QLabel" name="label_gen_ibat_4">
+   <property name="geometry">
+    <rect>
+     <x>1620</x>
+     <y>120</y>
+     <width>46</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ibat</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>70</y>
+     <width>135</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_7">
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Velocidad (rpm):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>Torque (Nm):</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_gen_vel">
+        <property name="text">
+         <string>velocidad</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_gen_tor">
+        <property name="text">
+         <string>torque</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

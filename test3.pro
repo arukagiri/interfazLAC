@@ -39,7 +39,6 @@ SOURCES += \
     LACAN_PRO.cpp \
     better_serialfunc.cpp \
     addnewdevdialog.cpp \
-    lacan_limits.cpp \
     volante.cpp \
     bytesend.cpp \
     lacan_detect.cpp
@@ -61,7 +60,6 @@ HEADERS += \
     addnewdevdialog.h \
     limtes.h \
     lacan_limits_gen.h \
-    lacan_limits.h \
     volante.h \
     bytesend.h
 
