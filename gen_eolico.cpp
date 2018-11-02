@@ -19,14 +19,14 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
     mw = qobject_cast<MainWindow*>(this->parent());
 
-     //**********************************************************************
-    //*****               se cambia el destino                      ********
-     //*******************************************************************
-    //mw->dest=LACAN_ID_GE
-     //2 es la ID del GEN. cuando debugueo me pone 3, en la funcion, no 2
-                             //si paras el timer que corre en la pantalla estado de red, esto anda perfecto
-                             //creo que cuando mandas los qrys de estado de red te pisan este valor
-//*************************************************************************************
+//*******************************************************************
+//*****               se cambia el destino                   ********
+//*******************************************************************
+//mw->dest=LACAN_ID_GE
+//2 es la ID del GEN. cuando debugueo me pone 3, en la funcion, no 2
+//si paras el timer que corre en la pantalla estado de red, esto anda perfecto
+ //creo que cuando mandas los qrys de estado de red te pisan este valor
+//*********************************************************************
 
     time_2sec = new QTimer();
 

@@ -35,7 +35,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_gen_torque->setText("----");
     ui->label_gen_modo->setText("----");
 
-    ui->label_vol_vo->setText("----");
+    /*ui->label_vol_vo->setText("----");
     ui->label_vol_io->setText("----");
     ui->label_boost_vi->setText("----");
     ui->label_boost_ii->setText("----");
@@ -43,8 +43,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_boost_vo->setText("----");
     ui->label_boost_io->setText("----");
     ui->label_vol_velocidad->setText("----");
-    ui->label_vol_torque->setText("----");
-
+    ui->label_vol_torque->setText("----");*/
 
     send_qry();
     set_states();
@@ -71,7 +70,7 @@ void EstadoRed::refresh_values(){
         ui->label_gen_modo->setText("----");
     }
 
-    if(mw->boost_connected){
+    /*if(mw->boost_connected){
         ui->label_boost_vo->setText(QString::number(boost_vo));
         ui->label_boost_io->setText(QString::number(boost_io));
         ui->label_boost_vi->setText(QString::number(boost_vi));
@@ -95,7 +94,7 @@ void EstadoRed::refresh_values(){
         ui->label_vol_io->setText("----");
         ui->label_vol_velocidad->setText("----");
         ui->label_vol_torque->setText("----");
-    }
+    }*/
 }
 
 void EstadoRed::send_qry(){

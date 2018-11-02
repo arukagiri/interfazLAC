@@ -41,7 +41,8 @@ SOURCES += \
     addnewdevdialog.cpp \
     lacan_limits.cpp \
     volante.cpp \
-    bytesend.cpp
+    bytesend.cpp \
+    lacan_detect.cpp
 
 HEADERS += \
         mainwindow.h \

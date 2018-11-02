@@ -117,23 +117,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
 
         if(abs_msg.var_type=="Modo"){
-            switch (msg_log.back().BYTE3){
-            case LACAN_VAR_MOD_POT:
-                abs_msg.var_val = "Modo Potencia";
-                break;
-            case LACAN_VAR_MOD_VEL:
-                abs_msg.var_val = "Modo Velocidad";
-                break;
-            case LACAN_VAR_MOD_TORQ:
-                abs_msg.var_val = "Modo Torque";
-                break;
-            case LACAN_VAR_MOD_MPPT:
-                abs_msg.var_val = "Modo MPPT";
-                break;
-            default:
-                abs_msg.var_val = "No especificada/soportada";
-                break;
-            }
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
         }
         else{
         val_union.var_char[0]=char(msg_log.back().BYTE3);
@@ -161,15 +145,18 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
+        if(abs_msg.var_type=="Modo"){
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
+        }
+        else{
+            val_union.var_char[0]=char(msg_log.back().BYTE2);
+            val_union.var_char[1]=char(msg_log.back().BYTE3);
+            val_union.var_char[2]=char(msg_log.back().BYTE4);
+            val_union.var_char[3]=char(msg_log.back().BYTE5);
 
-        val_union.var_char[0]=char(msg_log.back().BYTE2);
-        val_union.var_char[1]=char(msg_log.back().BYTE3);
-        val_union.var_char[2]=char(msg_log.back().BYTE4);
-        val_union.var_char[3]=char(msg_log.back().BYTE5);
-
-        val_float = val_union.var_float;
-        abs_msg.var_val=QString::number(double(val_float));
-
+            val_float = val_union.var_float;
+            abs_msg.var_val=QString::number(double(val_float));
+        }
         break;
 
     case LACAN_FUN_HB:

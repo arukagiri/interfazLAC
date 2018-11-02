@@ -233,7 +233,7 @@ lo hice de dos formas distintas, porque me gusta mas la de abajo (que te restrin
 
 Fijate cual te copa mas y decime.
 
-Falta que el segundo byte de la ID te deje poner un 7 como maximo en el ultimo numero (11bits).
+Falta que el segundo byte de la ID te deje poner un 7 como maximo (11bits de ID).
 
 Salu2</string>
    </property>

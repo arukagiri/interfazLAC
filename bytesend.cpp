@@ -31,7 +31,8 @@ ByteSend::ByteSend(QWidget *parent) :
 
     ui->id1->setInputMask("HH;");
     ui->id1->setText("");
-    ui->id2->setInputMask("H9;");   //el segundo byte de esta deberia ser menor a 7
+
+    ui->id2->setInputMask("9");   //este byte deberia ser menor a 7
     ui->id2->setText("");
 
 }
