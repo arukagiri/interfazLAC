@@ -21,6 +21,7 @@
 #include "addnewdevdialog.h"
 #include <QColor>
 #include "lacan_limits_gen.h"
+#include "bytesend.h"
 
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
@@ -125,6 +126,9 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
                 break;
             case LACAN_VAR_MOD_TORQ:
                 abs_msg.var_val = "Modo Torque";
+                break;
+            case LACAN_VAR_MOD_MPPT:
+                abs_msg.var_val = "Modo MPPT";
                 break;
             default:
                 abs_msg.var_val = "No especificada/soportada";
@@ -353,6 +357,8 @@ void MainWindow::on_button_ESTADO_RED_clicked()
     ERflag=true;
     connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
+
+
 
 void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
@@ -673,4 +679,11 @@ void MainWindow::do_stuff(){
             connectionLost->exec();
         }
     }
+}
+
+void MainWindow::on_button_ESTADO_RED_2_clicked()
+{
+    ByteSend *bytewin = new ByteSend(this);
+    bytewin->setModal(true);
+    bytewin->show();
 }

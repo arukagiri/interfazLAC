@@ -11,10 +11,14 @@ actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar 
 
 ==================================================================================================================================
 INTERFAZ:
+
+ventana comandar --> variable IBAT hace caca porque tiene limites negativos
+
+log de qry y post... ver que se haga bien
+
+enviar hexadecimales
 ==================================================================================================================================
-LISTA DE DISPOSITIVOS:
-	-reiniciar COM al desconectar
-	-no revive GEN cuando conectas el CAN
+LISTA DE DISPOSITIVOS
 
 ==================================================================================================================================
 REVISAR EN INTERFAZ:

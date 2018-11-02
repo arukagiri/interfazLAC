@@ -31,6 +31,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     time_2sec = new QTimer();
 
 //COMBO BOX MODO
+
     ui->combo_modo->addItem("Velocidad (0)",QVariant(0));
     ui->combo_modo->addItem("Potencia (1)",QVariant(1));
     ui->combo_modo->addItem("Torque (2)",QVariant(2));
@@ -109,6 +110,7 @@ void Gen_Eolico::mode_changed(){
 }
 
 void Gen_Eolico::new_mode(){
+    qDebug()<<ui->combo_modo->currentIndex();
     switch (ui->combo_modo->currentIndex()) {
     case 0:     //Velocidad
         ui->spin_pot_ref->setDisabled(true);

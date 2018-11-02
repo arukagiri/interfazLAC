@@ -82,6 +82,8 @@ private slots:
     void on_button_STOP_clicked();
 
 
+    void on_button_ESTADO_RED_2_clicked();
+
 public:
 
     QSerialPort *serial_port;

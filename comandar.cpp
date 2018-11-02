@@ -9,8 +9,6 @@
 #include <QWidget>
 #include <QMap>
 
-enum COMANDOS {START,STOP,RESET};
-
 //PARA LA MAIN WINDOWS
 Comandar::Comandar(QWidget *parent) :
     QDialog(parent),
@@ -44,14 +42,12 @@ Comandar::Comandar(QWidget *parent) :
             ui->list_MOD_SET->addItem("Torque",QVariant(LACAN_VAR_MOD_TORQ));
             ui->list_MOD_SET->addItem("MPPT",QVariant(LACAN_VAR_MOD_MPPT));
             ui->list_MOD_SET->setDisabled(true);
+            mode_set = LACAN_VAR_MOD_VEL;   //inicializo con el primero
 
-            ui->list_COMANDO->addItem("Start");
-            ui->list_COMANDO->addItem("Stop");
-            ui->list_COMANDO->addItem("Reset");
-            // ui->list_COMANDO->addItem("Start",QVariant()); lo podemos hacer con esto y sacar la actual CMD
-            //ui->list_COMANDO->addItem("Stop",QVariant());
-            //ui->list_COMANDO->addItem("Reset",QVariant());
-
+            ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
+            ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
+            ui->list_COMANDO->addItem("Reset",QVariant(LACAN_CMD_RESET));
+            cmd = LACAN_CMD_START;
 
             //var_set=LACAN_VAR_PO_SETP;
             //ui->spin_valor->setMaximum(varmap["Potencia de Salida"].max);
@@ -74,12 +70,10 @@ void Comandar::on_button_ENVIAR_clicked()
     uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
-        DO_ACTUAL_CMD();
         LACAN_Do(mw,cmd,1);
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
-        mode_set = ui->list_MOD_SET->currentIndex();
         data.var_char[0]=mode_set;
         data.var_char[1]=0;
         data.var_char[2]=0;
@@ -136,22 +130,18 @@ void Comandar::SET_ACTUAL_VAR(){
    ui->spin_valor->setMinimum(varmap[var_selectedstr].min);
 }
 
-void Comandar::DO_ACTUAL_CMD(){
-    switch(ui->list_COMANDO->currentIndex()){
-        case START:
-            cmd=LACAN_CMD_START;
-            break;
-        case STOP:
-            cmd=LACAN_CMD_STOP;
-            break;
-        case RESET:
-            cmd=LACAN_CMD_RESET;
-            break;
-    }
+
+void Comandar::on_list_MOD_SET_currentIndexChanged(int index)
+{
+    mode_set = ui->list_MOD_SET->itemData(index).toInt();
+}
+
+void Comandar::on_list_COMANDO_currentIndexChanged(int index)
+{
+    cmd = ui->list_COMANDO->itemData(index).toInt();
 }
 
 Comandar::~Comandar()
 {
     delete ui;
 }
-

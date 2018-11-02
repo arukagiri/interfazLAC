@@ -154,7 +154,7 @@ QString detect_var(uint8_t var){
        case LACAN_VAR_V_BAT_SETP:
            return "Tension de Bateria SetPoint";
            break;
-       case LACAN_VAR_MOD_POT:
+       case LACAN_VAR_MOD:
            return "Modo";
            break;
         default:
