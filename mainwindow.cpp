@@ -676,6 +676,8 @@ void MainWindow::do_stuff(){
                 connectionRegained->exec();
                 cExit=0;
                 NoUSB=false;
+                uint8_t bdr=0x05;
+                sendinit2(*serial_port,bdr);
             }else{
                 if(cExit<5){
                     QMessageBox *connectionLost= new QMessageBox();

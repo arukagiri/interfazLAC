@@ -22,6 +22,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_update_pushButton_clicked();
+
 private:
     Ui::OpenPort *ui;
 };

@@ -59,7 +59,6 @@ HEADERS += \
     lacan_detect.h \
     better_serialfunc.h \
     addnewdevdialog.h \
-    limtes.h \
     lacan_limits_gen.h \
     volante.h \
     bytesend.h \
