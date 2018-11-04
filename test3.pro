@@ -41,7 +41,8 @@ SOURCES += \
     addnewdevdialog.cpp \
     volante.cpp \
     bytesend.cpp \
-    lacan_detect.cpp
+    lacan_detect.cpp \
+    openport.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -61,7 +62,8 @@ HEADERS += \
     limtes.h \
     lacan_limits_gen.h \
     volante.h \
-    bytesend.h
+    bytesend.h \
+    openport.h
 
 FORMS += \
         mainwindow.ui \
@@ -72,7 +74,8 @@ FORMS += \
     gen_eolico.ui \
     addnewdevdialog.ui \
     volante.ui \
-    bytesend.ui
+    bytesend.ui \
+    openport.ui
 
 RESOURCES += \
     imagenes.qrc

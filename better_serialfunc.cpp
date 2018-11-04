@@ -162,7 +162,6 @@ bool readport2(char* pila, QSerialPort& serial_port){
 bool openport2(uint8_t bdr, QSerialPort* serial_port){
     char* pila= new char[7];
     char retval;
-    int i;
     bool com_detected=0;
     QTimer* wait_portinit= new QTimer();
     wait_portinit->setSingleShot(true);
@@ -181,8 +180,6 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
         serial_port->setFlowControl(QSerialPort::NoFlowControl);
         retval = serial_port->open(QSerialPort::ReadWrite); // abrimos el puerto com señalado, retval=1 si hay algo conectado y lo pudo abrir
         if(!retval){            //si no devuelve 1 es porque no se puede abrir=>aumentamos el nro de com y pasamos al siguiente
-             qDebug()<<"Error abriendo el puerto";
-             qDebug()<<serial_port->portName();
              serial_port->close();
         }
         else{                                               //si devuelve 1 es porque esta conectado
@@ -198,7 +195,6 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
                             qDebug()<<"\nesta en el com "<<serial_port->portName()<<"\n";
                             com_detected=TRUE;
                             return true;
-                            break; //salgo de while
                         }
 
                     }
