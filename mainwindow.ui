@@ -84,6 +84,13 @@
         </layout>
        </item>
        <item>
+        <widget class="QPushButton" name="button_ESTADO_RED_2">
+         <property name="text">
+          <string>Enviar Bytes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

@@ -20,6 +20,8 @@
 #include "LACAN_REC.h"
 #include "addnewdevdialog.h"
 #include <QColor>
+#include "lacan_limits_gen.h"
+#include "bytesend.h"
 
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
@@ -114,6 +116,10 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
 
+        if(abs_msg.var_type=="Modo"){
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
+        }
+        else{
         val_union.var_char[0]=char(msg_log.back().BYTE3);
         val_union.var_char[1]=char(msg_log.back().BYTE4);
         val_union.var_char[2]=char(msg_log.back().BYTE5);
@@ -121,7 +127,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
         val_float = val_union.var_float;
         abs_msg.var_val=QString::number(double(val_float));
-
+        }
         break;
 
     case LACAN_FUN_QRY:
@@ -139,15 +145,18 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
+        if(abs_msg.var_type=="Modo"){
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
+        }
+        else{
+            val_union.var_char[0]=char(msg_log.back().BYTE2);
+            val_union.var_char[1]=char(msg_log.back().BYTE3);
+            val_union.var_char[2]=char(msg_log.back().BYTE4);
+            val_union.var_char[3]=char(msg_log.back().BYTE5);
 
-        val_union.var_char[0]=char(msg_log.back().BYTE2);
-        val_union.var_char[1]=char(msg_log.back().BYTE3);
-        val_union.var_char[2]=char(msg_log.back().BYTE4);
-        val_union.var_char[3]=char(msg_log.back().BYTE5);
-
-        val_float = val_union.var_float;
-        abs_msg.var_val=QString::number(double(val_float));
-
+            val_float = val_union.var_float;
+            abs_msg.var_val=QString::number(double(val_float));
+        }
         break;
 
     case LACAN_FUN_HB:
@@ -231,45 +240,54 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    varmap["Corriente de Entrada Instantanea"]=LACAN_VAR_II;
-    varmap["Corriente de Entrada Maxima"]=LACAN_VAR_II_MAX;
-    varmap["Corriente de Entrada Minima"]=LACAN_VAR_II_MIN;
-    varmap["Corriente de Entrada Set Point"]=LACAN_VAR_II_SETP;
-    varmap["Corriente de Salida Instantanea"]=LACAN_VAR_IO;
-    varmap["Corriente de Salida Maxima"]=LACAN_VAR_IO_MAX;
-    varmap["Corriente de Salida Minima"]=LACAN_VAR_IO_MIN;
-    varmap["Corriente de Salida Set Point"]=LACAN_VAR_IO_SETP;
-    varmap["Corriente de ISD Instantanea"]=LACAN_VAR_ISD;
-    varmap["Corriente de ISD Maxima"]=LACAN_VAR_ISD_MAX;
-    varmap["Corriente de ISD Minima"]=LACAN_VAR_ISD_MIN;
-    varmap["Corriente de ISD Set Point"]=LACAN_VAR_ISD_SETP;
-    varmap["Corriente Eficaz Instantanea"]=LACAN_VAR_IEF;
-    varmap["Corriente Eficaz Maxima"]=LACAN_VAR_IEF_MAX;
-    varmap["Corriente Eficaz Minima"]=LACAN_VAR_IEF_MIN;
-    varmap["Corriente Eficaz Set Point"]=LACAN_VAR_IEF_SETP;
-    varmap["Potencia de Entrada Instantanea"]=LACAN_VAR_PI;
-    varmap["Potencia de Entrada Maxima"]=LACAN_VAR_PI_MAX;
-    varmap["Potencia de Entrada Minima"]=LACAN_VAR_PI_MIN;
-    varmap["Potencia de Entrada Set Point"]=LACAN_VAR_PI_SETP;
-    varmap["Potencia de Salida Instantanea"]=LACAN_VAR_PO;
-    varmap["Potencia de Salida Maxima"]=LACAN_VAR_PO_MAX;
-    varmap["Potencia de Salida Minima"]=LACAN_VAR_PO_MIN;
-    varmap["Potencia de Salida Set Point"]=LACAN_VAR_PO_SETP;
-    varmap["Tension de Entrada Instantanea"]=LACAN_VAR_VI;
-    varmap["Tension de Entrada Maxima"]=LACAN_VAR_VI_MAX;
-    varmap["Tension de Entrada Minima"]=LACAN_VAR_VI_MIN;
-    varmap["Tension de Entrada Set Point"]=LACAN_VAR_VI_SETP;
-    varmap["Tension de Salida Instantanea"]=LACAN_VAR_VO;
-    varmap["Tension de Salida Maxima"]=LACAN_VAR_VO_MAX;
-    varmap["Tension de Salida Minima"]=LACAN_VAR_VO_MIN;
-    varmap["Tension de Salida Set Point"]=LACAN_VAR_VO_SETP;
-    varmap["Velocidad Angular Instantanea"]=LACAN_VAR_W;
-    varmap["Velocidad Angular Maxima"]=LACAN_VAR_W_MAX;
-    varmap["Velocidad Angular Minima"]=LACAN_VAR_W_MIN;
-    varmap["Velocidad Angular Set Point"]=LACAN_VAR_W_SETP;
-    varmap["Modo Potencia"]=LACAN_VAR_MOD_POT;
-    varmap["Modo Velocidad"]=LACAN_VAR_MOD_VEL;
-    varmap["Modo Torque"]=LACAN_VAR_MOD_TORQ;
+    /* LACAN_VAR IO;
+    IO.instantanea=LACAN_VAR_IO_INST;
+    IO.setp=LACAN_VAR_IO_SETP;
+    IO.max=LACAN_VAR_GEN_IO_MAX;
+    IO.min=LACAN_VAR_GEN_IO_MIN;*/
+    LACAN_VAR ISD;
+    ISD.instantanea=LACAN_VAR_ISD_INST;
+    ISD.setp=LACAN_VAR_ISD_SETP;
+    ISD.max=LACAN_VAR_GEN_ISD_MAX;
+    ISD.min=LACAN_VAR_GEN_ISD_MIN;
+    LACAN_VAR IEF;
+    IEF.instantanea=LACAN_VAR_IEF_INST;
+    IEF.setp=LACAN_VAR_IEF_SETP;
+    IEF.max=LACAN_VAR_GEN_IEF_MAX;
+    IEF.min=LACAN_VAR_GEN_IEF_MIN;
+    LACAN_VAR PO;
+    PO.instantanea=LACAN_VAR_PO_INST;
+    PO.setp=LACAN_VAR_PO_SETP;
+    PO.max=LACAN_VAR_GEN_PO_MAX;
+    PO.min=LACAN_VAR_GEN_PO_MIN;
+    LACAN_VAR VO;
+    VO.instantanea=LACAN_VAR_VO_INST;
+    VO.setp=LACAN_VAR_VO_SETP;
+    VO.max=LACAN_VAR_GEN_VO_MAX;
+    VO.min=LACAN_VAR_GEN_VO_MIN;
+    LACAN_VAR TORQ;
+    TORQ.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ.setp=LACAN_VAR_TORQ_SETP;
+    TORQ.max=LACAN_VAR_GEN_TORQ_MAX;
+    TORQ.min=LACAN_VAR_GEN_TORQ_MIN;
+    LACAN_VAR W;
+    W.instantanea=LACAN_VAR_W_INST;
+    W.setp=LACAN_VAR_W_SETP;
+    W.max=LACAN_VAR_GEN_W_MAX;
+    W.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR IBAT;
+    IBAT.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT.setp=LACAN_VAR_I_BAT_SETP;
+    IBAT.max=LACAN_VAR_GEN_IBAT_MAX;
+    IBAT.min=LACAN_VAR_GEN_IBAT_MIN;
+    //varmap_gen["Corriente de Salida"]=IO;
+    varmap_gen["Corriente de ISD"]=ISD;
+    varmap_gen["Corriente Eficaz"]=IEF;
+    varmap_gen["Potencia de Salida"]=PO;
+    varmap_gen["Tension de Salida"]=VO;
+    varmap_gen["Torque"]=TORQ;
+    varmap_gen["Velocidad Angular"]=W;
+    varmap_gen["Corriente de Bateria"]=IBAT;
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
 }
@@ -325,6 +343,8 @@ void MainWindow::on_button_ESTADO_RED_clicked()
     ERflag=true;
     connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
+
+
 
 void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
@@ -647,4 +667,11 @@ void MainWindow::do_stuff(){
             connectionLost->exec();
         }
     }
+}
+
+void MainWindow::on_button_ESTADO_RED_2_clicked()
+{
+    ByteSend *bytewin = new ByteSend(this);
+    bytewin->setModal(true);
+    bytewin->show();
 }

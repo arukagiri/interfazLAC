@@ -1,11 +1,10 @@
 ==================================================================================================================================
 HABLAR CON JOAQUIN:
 ==================================================================================================================================
-lista de variables del GENERADOR que van en:
-	el micro del gen (todas?)
-	ventanas consultar/comandar
-	db_gen
-	limites de cada una... (como es el tema de LimIbat por ejemplo)
+el modo MPPT no envia ninguna consigna?
+
+CORRIENTE DE SALIDA EN EL DB?
+CORRIENTE DE BATERIA Y CORRIENTE CONVERTIDOR
 
 idem para el VOLANTE
 
@@ -14,21 +13,22 @@ actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar 
 
 ==================================================================================================================================
 INTERFAZ:
+
+ver por que se me loguean los qrys..
+
+ver de agregar iq e id en el db del GEN
+ventana comandar --> variable IBAT hace caca porque tiene limites negativos
+
+enviar hexadecimales
 ==================================================================================================================================
-que variables del generador deberian mostrarse desde consultar/comandar ?? las mismas que estan en el DB o mas?
-
-poner limites a las ventanas de consultar y comandar
-
-LISTA DE DISPOSITIVOS:
-	-reiniciar COM al desconectar
-	-no revive GEN cuando conectas el CAN
+LISTA DE DISPOSITIVOS
 
 ==================================================================================================================================
 REVISAR EN INTERFAZ:
 
 ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows o no
 
-ver deadtime HB
+ver deadtime HB y refresco de ventanas
 
 ==================================================================================================================================
 MICRO	

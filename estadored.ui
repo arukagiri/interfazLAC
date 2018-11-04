@@ -271,54 +271,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>60</y>
-     <width>170</width>
-     <height>36</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
-      <item>
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Velocidad (UNIDAD):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Torque (UNIDAD):</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_8">
-      <item>
-       <widget class="QLabel" name="label_gen_velocidad">
-        <property name="text">
-         <string>velocidad</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_gen_torque">
-        <property name="text">
-         <string>torque</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="layoutWidget_4">
    <property name="geometry">
     <rect>
@@ -427,6 +379,65 @@
    <property name="text">
     <string>PRUEBA</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>30</y>
+     <width>158</width>
+     <height>57</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_13">
+    <item>
+     <widget class="QLabel" name="label_gen_modo">
+      <property name="text">
+       <string>modo</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Velocidad (UNIDAD):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Torque (UNIDAD):</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_gen_velocidad">
+          <property name="text">
+           <string>velocidad</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_gen_torque">
+          <property name="text">
+           <string>torque</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

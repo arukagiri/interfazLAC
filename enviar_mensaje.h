@@ -33,6 +33,8 @@ private:
 
     void set_TIPO_VAR();
 
+    QMap <QString,LACAN_VAR> varmap;
+
 
 private slots:
     void MENSAJE_changed(void);
