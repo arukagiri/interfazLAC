@@ -187,7 +187,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Generador Eolico"]=LACAN_ID_GEN;
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
-    /*PARA LA DETECCION DE HB Y DISPOSITIVOS
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
@@ -197,16 +196,16 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+100);
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
-    }*/
+    }
     QStringList TableHeader_send;
     QStringList TableHeader_rece;
     TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
@@ -437,7 +436,7 @@ void MainWindow::verificarHB(){
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
         if(((*it_hb)->hb_timer.remainingTime()<= 0) && ((*it_hb)->hb_status==ACTIVE)){
             (*it_hb)->hb_status=INACTIVE;
-            //erase_device_ui(uint16_t((*it_hb)->device)); VER DE VOLVERLO A ACTIVAR
+            erase_device_ui(uint16_t((*it_hb)->device));
         }
     }
 }
@@ -624,9 +623,11 @@ void MainWindow::do_stuff(){
     LACAN_Heartbeat(this);
     QSerialPortInfo* info=new QSerialPortInfo(*serial_port);
     if(!info->isBusy()){
+        serial_port->close();
         QSerialPort* newPort=new QSerialPort();
         uint16_t bdr=0x05;
         if(openport2(bdr,newPort)){
+            serial_port=new QSerialPort();
             serial_port=newPort;
             QMessageBox *connectionRegained= new QMessageBox();
             connectionRegained->setIcon(QMessageBox::Information);
