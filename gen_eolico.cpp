@@ -6,8 +6,7 @@
 #include <QTimer>
 #include "PC.h"
 #include "LACAN_SEND.h"
-#include "lacan_limits.h"
-
+#include "lacan_limits_gen.h"
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
@@ -64,6 +63,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->label_gen_io->setText("----");
     ui->label_gen_vo->setText("----");
     ui->label_gen_ibat->setText("----");
+    ui->label_gen_po->setText("----");
     ui->label_gen_vel->setText("----");
     ui->label_gen_tor->setText("----");
 
@@ -196,6 +196,9 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_IO_INST:
             gen_io = recibed_val.var_float;
         break;
+        case LACAN_VAR_PO_INST:
+            gen_po = recibed_val.var_float;
+        break;
         case LACAN_VAR_W_INST:
             gen_vel = recibed_val.var_float;
         break;
@@ -245,6 +248,8 @@ void Gen_Eolico::send_qry(){
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     LACAN_Query(mw,LACAN_VAR_TORQ_INST);   //gen_ibat
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    LACAN_Query(mw,LACAN_VAR_PO_INST);   //gen_po
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 
     LACAN_Query(mw,LACAN_VAR_W_SETP);   //sped_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -285,6 +290,7 @@ void Gen_Eolico::refresh_values(){
     ui->label_gen_vo->setText(QString::number(gen_vo));
     ui->label_gen_io->setText(QString::number(gen_io));
     ui->label_gen_ibat->setText(QString::number(gen_ibat));
+    ui->label_gen_po->setText(QString::number(gen_po));
     ui->label_gen_tor->setText(QString::number(gen_tor));
     ui->label_gen_vel->setText(QString::number(gen_vel));
 }

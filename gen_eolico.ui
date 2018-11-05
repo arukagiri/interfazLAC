@@ -449,15 +449,22 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>740</x>
-     <y>70</y>
-     <width>135</width>
-     <height>36</height>
+     <x>734</x>
+     <y>50</y>
+     <width>161</width>
+     <height>55</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_9">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <item>
+       <widget class="QLabel" name="label_14">
+        <property name="text">
+         <string>Potencia (kW):</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="label_12">
         <property name="text">
@@ -476,6 +483,13 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_gen_po">
+        <property name="text">
+         <string>Potencia (kW):</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="label_gen_vel">
         <property name="text">
