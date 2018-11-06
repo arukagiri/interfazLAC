@@ -179,12 +179,12 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     serial_port=&serial_port0;
     do_log=false;
     ERflag= false;
+    NoUSB=false;
     dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
     periodicTimer = new QTimer();
-    periodicTimer->start(HB_TIME*3);
-    periodicTimer->setInterval(HB_TIME*3);
+    periodicTimer->start(HB_TIME);
     connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
 
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
@@ -196,7 +196,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Generador Eolico"]=LACAN_ID_GEN;
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
-    /*PARA LA DETECCION DE HB Y DISPOSITIVOS
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
@@ -206,16 +205,16 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+100);
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
-    }*/
+    }
     QStringList TableHeader_send;
     QStringList TableHeader_rece;
     TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
@@ -291,6 +290,21 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     varmap_gen["Corriente de Bateria"]=IBAT;
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
+    //VOLVER A PONER EL PRIMERO, VERSION LULI
+    connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+    //LA MALA
+    //connect(serial_port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+}
+
+void MainWindow::handlePortError(QSerialPort::SerialPortError error){
+    if(error!=QSerialPort::NoError){
+        NoUSB=true;
+        if(serial_port->isOpen()){
+            serial_port->close();
+        }
+        QMessageBox::warning(this, "Ups","Error con el puerto USB serie",QMessageBox::Ok);
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -302,15 +316,19 @@ void MainWindow::verificar_destino(){
     dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
 
-
 void MainWindow::on_button_COMANDAR_clicked()
 {
 
     verificar_destino();
-    Comandar *comwin = new Comandar(this);
+    if(dest  != LACAN_ID_BROADCAST){
+        Comandar *comwin = new Comandar(this);
 
-    comwin->setModal(true);
-    comwin->show();
+        comwin->setModal(true);
+        comwin->show();
+    }
+    else{
+        QMessageBox::warning(this, "Error","No puede comandar a todos los dispositivos juntos",QMessageBox::Ok);
+    }
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
@@ -344,8 +362,6 @@ void MainWindow::on_button_ESTADO_RED_clicked()
     ERflag=true;
     connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
-
-
 
 void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
@@ -448,6 +464,7 @@ void MainWindow::on_button_START_clicked()
 void MainWindow::on_button_STOP_clicked()
 {
     do_log=FALSE;
+    LACAN_HB_Handler(LACAN_ID_GEN,hb_con,this);
 }
 
 void MainWindow::verificarHB(){
@@ -455,9 +472,11 @@ void MainWindow::verificarHB(){
     //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de
     //tolerancia (DEAD_HB_TIME), esta funcion se encarga de que el programa lo considere inactivo
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
-        if(((*it_hb)->hb_timer.remainingTime()<= 0) && ((*it_hb)->hb_status==ACTIVE)){
+        //ver de cambiar condicion porq el remaining empieza a correr de nuevo cuando entra al slot
+        if(((*it_hb)->hb_timer.remainingTime()> 15000) && ((*it_hb)->hb_status==ACTIVE)){
             (*it_hb)->hb_status=INACTIVE;
-            //erase_device_ui(uint16_t((*it_hb)->device)); VER DE VOLVERLO A ACTIVAR
+            (*it_hb)->hb_timer.stop();
+            erase_device_ui(uint16_t((*it_hb)->device));
         }
     }
 }
@@ -581,6 +600,11 @@ void MainWindow::erase_device_ui(uint16_t inactiveDev){
     //ui->the_one_true_list_DESTINO->takeItem(row);
 }
 
+void MainWindow::add_device_ui(uint16_t reactivatedDev){
+    QString name = disp_map.key(reactivatedDev);
+    ui->the_one_true_list_DESTINO->addItem(name);
+}
+
 void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
     //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
     //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
@@ -633,7 +657,6 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, v
     return LACAN_SUCCESS;
 }
 
-
 void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
     QString msg_err ="Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
@@ -641,31 +664,50 @@ void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
 }
 
 void MainWindow::do_stuff(){
-    LACAN_Heartbeat(this);
-    QSerialPortInfo* info=new QSerialPortInfo(*serial_port);
-    if(!info->isBusy()){
-        QSerialPort* newPort=new QSerialPort();
-        uint16_t bdr=0x05;
-        if(openport2(bdr,newPort)){
-            serial_port=newPort;
-            QMessageBox *connectionRegained= new QMessageBox();
-            connectionRegained->setIcon(QMessageBox::Information);
-            connectionRegained->setStandardButtons(QMessageBox::Ok);
-            connectionRegained->setText("Se ha recuperado la conexion con el adaptador,"
-                               "\nYorokobe ningendomo.");
-            connectionRegained->setWindowTitle("Conexion recuperada");
-            connectionRegained->exec();
-        }else{
-            QMessageBox *connectionLost= new QMessageBox();
-            connectionLost->setIcon(QMessageBox::Warning);
-            connectionLost->setStandardButtons(QMessageBox::Ok);
-            connectionLost->setText("Se ha perdido la conexion con el adaptador"
-                               "\nPor favor revise la instalacion,"
-                               "el programa intentara reconectar automaticamente.");
-            connectionLost->setWindowTitle("Conexion perdida");
-            connectionLost->exec();
+    static int cReconnect=0; // usamos contadores para realizar acciones periodicas con distintos intervalos mediante un solo timer
+    static int cExit=0;
+
+    if(NoUSB){
+        cReconnect++;
+        if(cReconnect>=6){
+            cExit++;
+            cReconnect=0;
+            int retval = serial_port->open(QSerialPort::ReadWrite);
+            if(retval){
+                QMessageBox *connectionRegained= new QMessageBox();
+                connectionRegained->setIcon(QMessageBox::Information);
+                connectionRegained->setStandardButtons(QMessageBox::Ok);
+                connectionRegained->setText("Se ha recuperado la conexion con el adaptador,"
+                                   "\nYorokobe ningendomo.");
+                connectionRegained->setWindowTitle("Conexion recuperada");
+                connectionRegained->exec();
+                cExit=0;
+                NoUSB=false;
+                uint8_t bdr=0x05;
+                sendinit2(*serial_port,bdr);
+            }else{
+                if(cExit<5){
+                    QMessageBox *connectionLost= new QMessageBox();
+                    connectionLost->setIcon(QMessageBox::Warning);
+                    connectionLost->setStandardButtons(QMessageBox::Ok);
+                    connectionLost->setText("Se ha perdido la conexion con el adaptador"
+                                       "\nPor favor revise el puerto USB,"
+                                       "el programa intentara reconectar automaticamente"+ QString::number(5-cExit) + "veces mas.");
+                    connectionLost->setWindowTitle("Error en la reconexion");
+                    connectionLost->exec();
+                }else{
+                    QMessageBox::warning(this, "Ups",
+                                                   "No se pudo reiniciar el puerto luego de 5 intentos,\n la aplicacion se cerrara, chau",
+                                                   QMessageBox::Ok);
+                    QCoreApplication::exit(1);
+                }
+            }
         }
+
+    }else{
+        LACAN_Heartbeat(this);
     }
+
 }
 
 void MainWindow::on_button_ESTADO_RED_2_clicked()
@@ -673,4 +715,14 @@ void MainWindow::on_button_ESTADO_RED_2_clicked()
     ByteSend *bytewin = new ByteSend(this);
     bytewin->setModal(true);
     bytewin->show();
+}
+
+
+bool MainWindow::device_is_connected(uint8_t id){
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
+        if((*it_hb)->device == id){
+            return (*it_hb)->hb_status;
+        }
+    }
+    return false;
 }

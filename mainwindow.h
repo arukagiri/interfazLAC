@@ -41,7 +41,9 @@ public:
 
      void verificar_destino();
 
-     void erase_device_ui(uint16_t source);
+     void erase_device_ui(uint16_t inactiveDev);
+
+     void add_device_ui(uint16_t reactivatedDev);
 
      void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code);
 
@@ -52,6 +54,8 @@ signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
+
+     void handlePortError(QSerialPort::SerialPortError error);
 
      void add_dev_name(QString);
 
@@ -81,8 +85,8 @@ private slots:
 
     void on_button_STOP_clicked();
 
-
     void on_button_ESTADO_RED_2_clicked();
+
 
 public:
 
@@ -96,7 +100,7 @@ public:
     bool do_log;
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
-
+    bool NoUSB;
     //bool gen_connected=0;
     bool gen_connected=1;
     bool vol_connected=0;
@@ -112,6 +116,8 @@ public:
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
+
+    bool device_is_connected(uint8_t id);
 
     QTimer* periodicTimer;
 };

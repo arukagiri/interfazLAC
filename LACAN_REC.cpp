@@ -28,7 +28,10 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, MainWindow *
     bool stalkerfound=false;
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
         if((*it_hb)->device==source){
-            (*it_hb)->hb_status=ACTIVE;
+            if((*it_hb)->hb_status==INACTIVE){
+                (*it_hb)->hb_status=ACTIVE;
+                mw->add_device_ui(source);
+            }
             (*it_hb)->hb_timer.start(DEAD_HB_TIME);
             devfound=true;
             break;
@@ -45,7 +48,6 @@ void LACAN_HB_Handler(uint16_t source, vector<HB_CONTROL*>& hb_con, MainWindow *
         addnewdev->setIcon(QMessageBox::Question);
         addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         addnewdev->setDefaultButton(QMessageBox::Yes);
-        //addnewdev->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
         addnewdev->setText("Ha llegado un Heartbeat de un dispositivo"
                            " desconocido,\nDesea agregarlo a la red?\n"
                            "En caso afirmativo se le pedira que ingrese"

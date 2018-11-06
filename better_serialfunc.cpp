@@ -119,7 +119,7 @@ bool readport2(char* pila, QSerialPort& serial_port){
     //ver de poner un while, es posible perder datos de esta forma TESTEAR
     while((newdataflag=serial_port.read(pila+index_pila,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
 
-        //qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
+        qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
 
 
         index_pila++;
@@ -160,13 +160,17 @@ bool readport2(char* pila, QSerialPort& serial_port){
 
 
 bool openport2(uint8_t bdr, QSerialPort* serial_port){
-    char* pila;
+    char* pila= new char[7];
     char retval;
-    int i;
     bool com_detected=0;
-    tiempo wait_portinit;
+    QTimer* wait_portinit= new QTimer();
+    wait_portinit->setSingleShot(true);
+    static int portnumber=0;
 
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
+        //TEST
+        portnumber++;
+        qDebug()<<portnumber;
 
         serial_port->setPort(info);
         serial_port->setBaudRate(QSerialPort::Baud115200);
@@ -176,15 +180,13 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
         serial_port->setFlowControl(QSerialPort::NoFlowControl);
         retval = serial_port->open(QSerialPort::ReadWrite); // abrimos el puerto com señalado, retval=1 si hay algo conectado y lo pudo abrir
         if(!retval){            //si no devuelve 1 es porque no se puede abrir=>aumentamos el nro de com y pasamos al siguiente
-             cout<<"error abriendo el puerto\n";
-             qDebug()<<serial_port->portName();
              serial_port->close();
         }
         else{                                               //si devuelve 1 es porque esta conectado
-            qDebug()<<"debug 2";
+            qDebug()<<"No hubo problemas abriendo el puerto \nComenzando inicializacion de adaptador";
             sendinit2(*serial_port,bdr); // enviamos secuencia de iniciacion segun un baudrate(CAN) elegido
-            wait_portinit.start(); //se inicializa un timer para esperar una respuesta
-            while(wait_portinit.getime()<6000000){ //leemos el puerto y verificamos que el comienzo del mensaje es valido VER
+            wait_portinit->start(30000); //se inicializa un timer para esperar una respuesta
+            while(wait_portinit->remainingTime()){ //leemos el puerto y verificamos que el comienzo del mensaje es valido VER
                 //se compara el tamaño en bytes del mensaje con el que deberia tener,
                 if(readport2(pila,*serial_port)){
                     if((pila[4]>>LACAN_BYTE0_RESERVED)==LACAN_ID_BROADCAST){//verificamos que el destino sea broadcast (estamos buscando un HB)
@@ -193,7 +195,6 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
                             qDebug()<<"\nesta en el com "<<serial_port->portName()<<"\n";
                             com_detected=TRUE;
                             return true;
-                            break; //salgo de while
                         }
 
                     }
@@ -210,6 +211,8 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
             }
         }
     }
+    portnumber=0;
+    wait_portinit->stop();
     return false;
 
 }

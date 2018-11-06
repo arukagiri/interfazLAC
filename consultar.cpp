@@ -54,6 +54,20 @@ Consultar::Consultar(QWidget *parent) :
         break;
     case LACAN_ID_BROADCAST:
         ui->label_DESTINO_QRY->setText("Broadcast");
+        ui->label_DESTINO_QRY->setText("Generador Eolico");
+
+        varmap = mw->varmap_gen;
+
+        ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
+        ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
+        ui->list_VARIABLE_QRY->addItem("Torque");
+        ui->list_VARIABLE_QRY->addItem("Tension de Salida");
+        ui->list_VARIABLE_QRY->addItem("Corriente de ISD");
+        ui->list_VARIABLE_QRY->addItem("Corriente Eficaz");
+        ui->list_VARIABLE_QRY->addItem("Corriente de Bateria");
+        ui->list_VARIABLE_QRY->addItem("Modo");
+
+        consulta=LACAN_VAR_PO_SETP;
 
         break;
     }

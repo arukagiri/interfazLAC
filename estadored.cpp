@@ -35,15 +35,15 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_gen_torque->setText("----");
     ui->label_gen_modo->setText("----");
 
-    /*ui->label_vol_vo->setText("----");
+    ui->label_vol_vo->setText("----");
     ui->label_vol_io->setText("----");
+    ui->label_vol_velocidad->setText("----");
+    ui->label_vol_torque->setText("----");
+
     ui->label_boost_vi->setText("----");
     ui->label_boost_ii->setText("----");
-
     ui->label_boost_vo->setText("----");
     ui->label_boost_io->setText("----");
-    ui->label_vol_velocidad->setText("----");
-    ui->label_vol_torque->setText("----");*/
 
     send_qry();
     set_states();
@@ -55,7 +55,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
 void EstadoRed::refresh_values(){
 
-    if(mw->gen_connected){
+    if(mw->device_is_connected(LACAN_ID_GEN)){
         ui->label_gen_vo->setText(QString::number(gen_vo));
         ui->label_gen_io->setText(QString::number(gen_io));
         ui->label_gen_velocidad->setText(QString::number(gen_vel));
