@@ -81,7 +81,10 @@ void Comandar::on_button_ENVIAR_clicked()
         }
         else{
         SET_ACTUAL_VAR();
-        data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+        double doub;
+
+        doub = ui->spin_valor->value();
+        data.var_int=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
         }
         LACAN_Set(mw,var_set,data,1);
     }else{
