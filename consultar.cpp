@@ -7,9 +7,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
-enum TIPO_VAR {MAX,MIN,SETP,INST};
-enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
+//enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
+//enum TIPO_VAR {MAX,MIN,SETP,INST};
+//enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 
 
 Consultar::Consultar(QWidget *parent) :
@@ -50,6 +50,19 @@ Consultar::Consultar(QWidget *parent) :
         break;
     case LACAN_ID_VOLANTE:
         ui->label_DESTINO_QRY->setText("Volante de Inercia");
+
+        varmap = mw->varmap_vol;
+
+        ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
+        ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
+        ui->list_VARIABLE_QRY->addItem("Velocidad angular Standby");
+        ui->list_VARIABLE_QRY->addItem("Torque");
+        ui->list_VARIABLE_QRY->addItem("Tension de Salida");
+        ui->list_VARIABLE_QRY->addItem("Corriente de ID");
+        ui->list_VARIABLE_QRY->addItem("Corriente de Bateria");
+        ui->list_VARIABLE_QRY->addItem("Modo");
+
+        consulta=LACAN_VAR_PO_SETP;
 
         break;
     case LACAN_ID_BROADCAST:

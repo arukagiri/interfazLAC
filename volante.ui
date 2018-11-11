@@ -16,10 +16,10 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>469</x>
-     <y>10</y>
-     <width>621</width>
-     <height>271</height>
+     <x>30</x>
+     <y>50</y>
+     <width>991</width>
+     <height>501</height>
     </rect>
    </property>
    <property name="text">
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>30</y>
+     <y>70</y>
      <width>115</width>
      <height>22</height>
     </rect>
@@ -59,10 +59,10 @@
   <widget class="QWidget" name="layoutWidget_9">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>240</y>
-     <width>101</width>
-     <height>31</height>
+     <x>40</x>
+     <y>260</y>
+     <width>103</width>
+     <height>36</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -92,9 +92,9 @@
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>180</y>
-     <width>91</width>
+     <x>550</x>
+     <y>230</y>
+     <width>95</width>
      <height>22</height>
     </rect>
    </property>
@@ -107,15 +107,15 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_speed_ref_2"/>
+     <widget class="QDoubleSpinBox" name="spin_id_ref"/>
     </item>
    </layout>
   </widget>
   <widget class="QWidget" name="layoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>310</y>
+     <x>50</x>
+     <y>330</y>
      <width>162</width>
      <height>175</height>
     </rect>
@@ -223,76 +223,190 @@
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_variables_salida">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>10</y>
-     <width>121</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Variables de Salida:</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>650</x>
-     <y>30</y>
-     <width>170</width>
-     <height>55</height>
+     <x>500</x>
+     <y>10</y>
+     <width>497</width>
+     <height>78</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Tension de salida (V):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Corriente de salida (A):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_energia_label">
-        <property name="text">
-         <string>Energia ():</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="label_123">
+      <property name="text">
+       <string>Variables de Salida:</string>
+      </property>
+     </widget>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
-       <widget class="QLabel" name="label_vol_vo">
-        <property name="text">
-         <string>tension</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Tension de salida (V):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Corriente de salida (A):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>Corriente Bat. (A):</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_vol_vo">
+            <property name="text">
+             <string>tension</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_vol_io">
+            <property name="text">
+             <string>corriente </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_vol_ibat">
+            <property name="text">
+             <string>ibat</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_vol_io">
-        <property name="text">
-         <string>corriente </string>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>5</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_energia">
-        <property name="text">
-         <string>energia</string>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_19">
+            <property name="text">
+             <string>Potencia (kW):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Energia (kJ):</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_vol_po">
+            <property name="text">
+             <string>Potencia (kW):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_vol_ener">
+            <property name="text">
+             <string>energia</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>5</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>Velocidad (rpm):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Torque (Nm):</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_vol_vel">
+            <property name="text">
+             <string>velocidad</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_vol_tor">
+            <property name="text">
+             <string>torque</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

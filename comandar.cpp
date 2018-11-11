@@ -47,13 +47,37 @@ Comandar::Comandar(QWidget *parent) :
             ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
             ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
             ui->list_COMANDO->addItem("Reset",QVariant(LACAN_CMD_RESET));
-            cmd = LACAN_CMD_START;
+            cmd = LACAN_CMD_START;  //inicializo con el primero
 
             //var_set=LACAN_VAR_PO_SETP;
             //ui->spin_valor->setMaximum(varmap["Potencia de Salida"].max);
             //ui->spin_valor->setMinimum(varmap["Potencia de Salida"].min);
             //cmd=LACAN_CMD_START;
             //mode_set=LACAN_VAR_MOD_MPPT;
+        break;
+        case LACAN_ID_VOLANTE:
+            ui->label_DESTINO->setText("Volante de Inercia");
+
+            varmap = mw->varmap_vol;
+
+            ui->list_VARIABLE->addItem("Velocidad Angular");
+            ui->list_VARIABLE->addItem("Corriente de ID");
+            ui->list_VARIABLE->addItem("Velocidad angular Standby");
+            ui->list_VARIABLE->addItem("Modo");
+
+            ui->list_MOD_SET->addItem("Velocidad",QVariant(LACAN_VAR_MOD_VEL));
+            ui->list_MOD_SET->addItem("Inercia",QVariant(LACAN_VAR_MOD_INER));
+            ui->list_MOD_SET->setDisabled(true);
+            mode_set = LACAN_VAR_MOD_VEL;   //inicializo con el primero
+
+            ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
+            ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
+            ui->list_COMANDO->addItem("Reset",QVariant(LACAN_CMD_RESET));
+            cmd = LACAN_CMD_START;
+
+        break;
+        default:
+        break;
     }
 
     SET_selected();

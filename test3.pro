@@ -42,7 +42,8 @@ SOURCES += \
     volante.cpp \
     bytesend.cpp \
     lacan_detect.cpp \
-    openport.cpp
+    openport.cpp \
+    boost.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -62,7 +63,9 @@ HEADERS += \
     lacan_limits_gen.h \
     volante.h \
     bytesend.h \
-    openport.h
+    openport.h \
+    lacan_limits_vol.h \
+    boost.h
 
 FORMS += \
         mainwindow.ui \
@@ -74,7 +77,9 @@ FORMS += \
     addnewdevdialog.ui \
     volante.ui \
     bytesend.ui \
-    openport.ui
+    openport.ui \
+    boost.ui \
+    boost.ui
 
 RESOURCES += \
     imagenes.qrc
