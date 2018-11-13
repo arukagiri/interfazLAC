@@ -114,32 +114,41 @@ LACAN_MSG mensaje_recibido2(char *sub_pila){
 uint16_t readport2(char* pila, uint16_t* first_byte, QSerialPort& serial_port){
     bool newdataflag = false;
     uint16_t cant_msg = 0;
-    static uint16_t index_pila=0;   //  ESTO POR QUE ES STATIC???????????????????????????????????
-    static uint16_t dlc=0;          // ESTO POR QUE ES STATIC????????????????????????????????????
-    first_byte[0]=0;    //esto es redundante pero fue
+    //static uint16_t index_pila=0;   //  ESTO POR QUE ES STATIC???????????????????????????????????
+   // static uint16_t dlc=0;          // ESTO POR QUE ES STATIC????????????????????????????????????
+
+    uint16_t index_pila=0;   //  ESTO POR QUE ES STATIC???????????????????????????????????
+    uint16_t dlc=0;
+    first_byte[0]=0;    //esto es redundante pero fue, guarda la posicion del primer byte del proximo mensaje
 
     //ver de poner un while, es posible perder datos de esta forma TESTEAR
     while((newdataflag=serial_port.read(pila+index_pila,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
+   /*     QString text = QString::number(pila[index_pila]);
+        bool ok = true;
+        int value = text.toInt(&ok, 16);
+        qDebug<<QString::number(value);*/
 
-        qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
 
-        index_pila++;   //ya apunta a la siguiente
-        if(index_pila==1){
-            if((pila[0]&0xFF)==0xAA)
+     qDebug()<<"nuevo byte: "<<QString::number(pila[index_pila]);
+
+        index_pila++;        //ya apunta a la siguiente
+        if(index_pila-first_byte[cant_msg]==1){
+            if((pila[first_byte[cant_msg]]&0xFF)==0xAA)
                 qDebug()<<"\nLlego AA\n";   //primeros 8 bits de cabecera de mensaje
                 //timeout.start();
             else
-                index_pila=0;
+                index_pila=first_byte[cant_msg];
                 //conterror++;
         }
-        if(index_pila==2){
-            if(((pila[1]&0xFF)>>4)==0xC){   //ultimos 4 bits de cabecera
+        if(index_pila-first_byte[cant_msg]==2){
+            if(((pila[first_byte[cant_msg]+1]&0xFF)>>4)==0xC){   //ultimos 4 bits de cabecera
                 qDebug()<<"Llego 0xC + dlc\n";
-                dlc=pila[1]&15;             //extraigo dlc
+                //dlc=pila[1]&15;             //extraigo dlc
+                dlc=pila[first_byte[cant_msg]+1]&15;                //extraigo dlc
                 //conterror=0;
             }
             else
-                index_pila=0;
+                index_pila=first_byte[cant_msg];
                 //conterror++;
             }
 
@@ -148,27 +157,35 @@ uint16_t readport2(char* pila, uint16_t* first_byte, QSerialPort& serial_port){
             //index_pila=0;
         }
 
-        if((index_pila>=(dlc+5))&&(((pila[dlc+4])&0xFF)==0x55)){//comprobamos que el mensaje llego entero
+        if((index_pila-first_byte[cant_msg]>=(dlc+5))){
+            if(((pila[dlc+4+first_byte[cant_msg]])&0xFF)==0x55){
+                if(pila[first_byte[cant_msg]+4]==8){
+                    qDebug()<<"llego ack";
+                }//comprobamos que el mensaje llego entero
             qDebug()<<"ENTRO UN MENSAJE COMPLETO";
             //index_pila=0; //reseteamos variables para volverlas a usar en el proximo mensaje
             dlc=0;
             cant_msg++;
-            first_byte[cant_msg]=index_pila; //guardo la primer direccion del siguiente mensaje, si es que existe (index_pila ya apunta al proximo)
-                                                //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
-        }
+            first_byte[cant_msg]=index_pila;    //notar que index pila ya apunta a la siguiente
+                                                //guardo la primer direccion del siguiente mensaje, si es que existe (index_pila ya apunta al proximo)
+             }                                   //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
+        else{
+            index_pila=first_byte[cant_msg];
+            //conterror++;
+        }}
     }
     return cant_msg;
 }
 
 bool readport(char* pila, QSerialPort& serial_port){
-    bool newdataflag=false;
+   bool newdataflag=false;
    bool newmsgflag=false;
    static uint16_t index_pila=0;
    static uint16_t dlc=0;
    //ver de poner un while, es posible perder datos de esta forma TESTEAR
    while((newdataflag=serial_port.read(pila+index_pila,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
 
-       qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
+       //qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
 
 
        index_pila++;
@@ -202,8 +219,7 @@ bool readport(char* pila, QSerialPort& serial_port){
        qDebug()<<"ENTRO";
        return newmsgflag=true;
 
-   }
-   }
+   }}
    return newmsgflag=false;
 }
 

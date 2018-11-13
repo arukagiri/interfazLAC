@@ -12,17 +12,12 @@ ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows 
 
 ver deadtime HB y refresco de ventanas
 
-las pantallas de generador, volante, etc.. hace falta que sean "setmodal(true)"
-
 ==================================================================================================================================
 ==================================================================================================================================
 ==================================================================================================================================
 PROBAR EL LUNES:
 
-
 ver de hacer andar el code compouse
-
-probar el cambio que hice para recibir dos mensajes juntos
 
 ver de mandarle post/set con distintos float, double lo que sea... 
 por que una vez aunduvo y ahora no anda?
@@ -34,5 +29,3 @@ VOLANTE:
 #define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
 
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
-
-variables... W_STNADBY... no hay instantanea... ver venana consultar

@@ -491,9 +491,9 @@ void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
     uint16_t cant_msg=0;
-    uint16_t first_byte[100]={0};        //notar que el primer elemento de este vector, siempre es 0
-    static char pila[100]={0};           //esto no hace falta que sea static creo*****************************************************************************
-    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
+    uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
+    static char pila[200]={0};           //esto no hace falta que sea static creo*****************************************************************************
+        cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
     for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
