@@ -5,7 +5,7 @@
 
 
 void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
-//crear archivo para cada variable e ir guardando en bloc de notas
+uint8_t cont = 1;
 }
 
 void LACAN_ACK_Handler(uint16_t BYTE1, vector<TIMED_MSG*>& msg_ack){

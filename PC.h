@@ -75,10 +75,10 @@
 #define LACAN_VAR_MOD           0xC0
 
 //Modos
-#define LACAN_VAR_MOD_POT       0x00
-#define LACAN_VAR_MOD_VEL       0x01
+#define LACAN_VAR_MOD_VEL       0x00
+#define LACAN_VAR_MOD_MPPT      0x01
 #define LACAN_VAR_MOD_TORQ      0x02
-#define LACAN_VAR_MOD_MPPT      0x03
+#define LACAN_VAR_MOD_POT       0x03
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
 #define LACAN_RES_OK                0x00

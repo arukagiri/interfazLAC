@@ -685,7 +685,7 @@ void MainWindow::do_stuff(){
                     connectionLost->setStandardButtons(QMessageBox::Ok);
                     connectionLost->setText("Se ha perdido la conexion con el adaptador"
                                        "\nPor favor revise el puerto USB,"
-                                       "el programa intentara reconectar automaticamente"+ QString::number(5-cExit) + "veces mas.");
+                                       "el programa intentara reconectar automaticamente "+ QString::number(5-cExit) + " veces mas.");
                     connectionLost->setWindowTitle("Error en la reconexion");
                     connectionLost->exec();
                 }else{
