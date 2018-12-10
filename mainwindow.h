@@ -87,6 +87,7 @@ private slots:
 
     void on_button_ESTADO_RED_2_clicked();
 
+
 public:
 
     QSerialPort *serial_port;
@@ -115,6 +116,8 @@ public:
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
+
+    bool device_is_connected(uint8_t id);
 
     QTimer* periodicTimer;
 };

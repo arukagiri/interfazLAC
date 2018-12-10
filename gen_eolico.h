@@ -56,6 +56,7 @@ private:
 
     float gen_vo;
     float gen_io;
+    float gen_po;
     float gen_ibat;
     float gen_vel;
     float gen_tor;

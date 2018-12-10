@@ -48,29 +48,29 @@
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02
-#define LACAN_VAR_II_INST            0x06
+#define LACAN_VAR_II_INST       0x06
 #define LACAN_VAR_II_SETP       0x07
-#define LACAN_VAR_IO_INST            0x0C
+#define LACAN_VAR_IO_INST       0x0C
 #define LACAN_VAR_IO_SETP       0x0D
-#define LACAN_VAR_ISD_INST           0x16
+#define LACAN_VAR_ISD_INST      0x16
 #define LACAN_VAR_ISD_SETP      0x17
-#define LACAN_VAR_IEF_INST           0x1C
+#define LACAN_VAR_IEF_INST      0x1C
 #define LACAN_VAR_IEF_SETP      0x1D
-#define LACAN_VAR_PI_INST            0x26
+#define LACAN_VAR_PI_INST       0x26
 #define LACAN_VAR_PI_SETP       0x27
-#define LACAN_VAR_PO_INST            0x2C
+#define LACAN_VAR_PO_INST       0x2C
 #define LACAN_VAR_PO_SETP       0x2D
-#define LACAN_VAR_VI_INST            0x36
+#define LACAN_VAR_VI_INST       0x36
 #define LACAN_VAR_VI_SETP       0x37
-#define LACAN_VAR_VO_INST            0x3C
+#define LACAN_VAR_VO_INST       0x3C
 #define LACAN_VAR_VO_SETP       0x3D
-#define LACAN_VAR_W_INST             0x46
+#define LACAN_VAR_W_INST        0x46
 #define LACAN_VAR_W_SETP        0x47
-#define LACAN_VAR_I_BAT_INST         0x56
+#define LACAN_VAR_I_BAT_INST    0x56
 #define LACAN_VAR_I_BAT_SETP    0x57
-#define LACAN_VAR_V_BAT_INST         0x5C
+#define LACAN_VAR_V_BAT_INST    0x5C
 #define LACAN_VAR_V_BAT_SETP    0x5D
-#define LACAN_VAR_TORQ_INST          0x6C
+#define LACAN_VAR_TORQ_INST     0x6C
 #define LACAN_VAR_TORQ_SETP     0x6D
 #define LACAN_VAR_MOD           0xC0
 
@@ -113,6 +113,7 @@
 #define PENDACK         0
 #define RECEIVED        1
 #define ACK_TIMEOUT     2
+
 //Numero de reintentos de ack
 #define RETRIES 2
 

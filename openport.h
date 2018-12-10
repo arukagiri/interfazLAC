@@ -14,7 +14,7 @@ class OpenPort : public QDialog
     Q_OBJECT
 
 public:
-    explicit OpenPort(QWidget *parent = nullptr);
+    explicit OpenPort(QWidget *parent = 0);
     ~OpenPort();
 
 private slots:

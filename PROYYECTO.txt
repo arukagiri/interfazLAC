@@ -16,7 +16,6 @@ INTERFAZ:
 
 ver por que se me loguean los qrys..
 
-ver de agregar iq e id en el db del GEN
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
 enviar hexadecimales
@@ -33,10 +32,31 @@ ver deadtime HB y refresco de ventanas
 ==================================================================================================================================
 MICRO	
 ==================================================================================================================================
+Hay que hacer algo con los handlers de:
+ERR
+ACK
+HB
+POST
+
+#define BASE_TORQUE         		// Base torque (N.m)
+#define BASE_FLUX       	
+
+Set Handler:
+TorqueRef = data.iq/BASE_TORQUE;
+
+i = data.iq/BASE_CURRENT; //siempre usamos la misma base para todas las corrientes?
+//tmpValue = data.u32;  ??
+
+
+para setear cada variable tengo que verificar el estado? o solo para setear el troq, w, y potencia
+
+
+-----------------------------------
 actualizar diccionarios  -> ver variables que no van -> las sacamos?  ==> ver variables del gen, limites
 
 valores de variables xunidad (HVACI_sensorless-setting.h --> bases para normalizar)
 
 manejo de ack---> hace falta el vector de ack?
+
 
 ==================================================================================================================================

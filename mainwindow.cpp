@@ -290,8 +290,10 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     varmap_gen["Corriente de Bateria"]=IBAT;
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
-
+    //VOLVER A PONER EL PRIMERO, VERSION LULI
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+    //LA MALA
+    //connect(serial_port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
 }
 
 void MainWindow::handlePortError(QSerialPort::SerialPortError error){
@@ -318,10 +320,15 @@ void MainWindow::on_button_COMANDAR_clicked()
 {
 
     verificar_destino();
-    Comandar *comwin = new Comandar(this);
+    if(dest  != LACAN_ID_BROADCAST){
+        Comandar *comwin = new Comandar(this);
 
-    comwin->setModal(true);
-    comwin->show();
+        comwin->setModal(true);
+        comwin->show();
+    }
+    else{
+        QMessageBox::warning(this, "Error","No puede comandar a todos los dispositivos juntos",QMessageBox::Ok);
+    }
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
@@ -708,4 +715,14 @@ void MainWindow::on_button_ESTADO_RED_2_clicked()
     ByteSend *bytewin = new ByteSend(this);
     bytewin->setModal(true);
     bytewin->show();
+}
+
+
+bool MainWindow::device_is_connected(uint8_t id){
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
+        if((*it_hb)->device == id){
+            return (*it_hb)->hb_status;
+        }
+    }
+    return false;
 }
