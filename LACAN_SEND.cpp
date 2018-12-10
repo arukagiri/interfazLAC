@@ -112,10 +112,10 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
     msg.DLC=6;
     msg.BYTE0=uint16_t(mw->dest << LACAN_BYTE0_RESERVED);
     msg.BYTE1=variable;
-    msg.BYTE2=uint16_t(data.var_char[0]);
-    msg.BYTE3=uint16_t(data.var_char[1]);
-    msg.BYTE4=uint16_t(data.var_char[2]);
-    msg.BYTE5=uint16_t(data.var_char[3]);
+    msg.BYTE2=data.var_char[0];
+    msg.BYTE3=data.var_char[1];
+    msg.BYTE4=data.var_char[2];
+    msg.BYTE5=data.var_char[3];
 
     serialsend2(*(mw->serial_port),msg);
 

@@ -10,12 +10,17 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include "openport.h"
+#include "enviador.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     OpenPort* op=new OpenPort();
+
+    enviador envio;
+
+    envio.start();
 
     op->show();
     /*
@@ -25,7 +30,6 @@ int main(int argc, char *argv[])
 
     openport2(bdr,serial_port);
     */
-
 
     return a.exec();
 }

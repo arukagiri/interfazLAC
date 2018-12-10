@@ -172,5 +172,3 @@ uint8_t ByteSend::text2int(const QString letras){
     }
 }
 
-
-

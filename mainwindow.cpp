@@ -25,7 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lacan_limits_vol.h"
-
+#include <QThread>
+#include "tiempo.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -254,6 +255,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
     //LA MALA
     //connect(serial_port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+
 }
 
 void MainWindow::handlePortError(QSerialPort::SerialPortError error){
@@ -423,8 +425,67 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-    do_log=FALSE;
-    LACAN_HB_Handler(LACAN_ID_GEN,hb_con,this);
+    QTimer *dilei=new QTimer();
+    dilei->setSingleShot(true);
+    //do_log=FALSE;
+    //LACAN_HB_Handler(LACAN_ID_GEN,hb_con,this);
+    static int probando=0;
+    probando++;
+    uint32_t final=100000000;
+    uint8_t z=0;
+    data_can a;
+    a.var_float=probando;
+    dest=LACAN_ID_GEN;
+
+    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+    LACAN_Heartbeat(this);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+
+   /* LACAN_Acknowledge(this,10,probando);
+    t.start();
+    while(t.getime()<final){
+        z++;
+    }*/
+
+    LACAN_Heartbeat(this);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+
+    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+
+    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+
+    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
+    dilei->start(1000);
+    while(dilei->remainingTime() <= 0){
+        z++;
+    }
+
+    //dest=LACAN_ID_GEN;
+    //float dato=300.1;
+    //LACAN_Post(this,LACAN_VAR_W_SETP,dato);
 }
 
 void MainWindow::verificarHB(){
@@ -674,10 +735,7 @@ void MainWindow::do_stuff(){
         }
 
     }else{
-        LACAN_Heartbeat(this);
-        //dest=LACAN_ID_GEN;
-        //float dato=300.1;
-        //LACAN_Post(this,LACAN_VAR_W_SETP,dato);
+       // LACAN_Heartbeat(this);
     }
 
 }
@@ -795,3 +853,12 @@ void MainWindow::create_varmap_vol(){
     varmap_vol["Tension de Salida"]=VO_VOL;
     varmap_vol["Corriente de Bateria"]=IBAT_VOL;
 }
+
+void MainWindow::on_pushButton_clicked(bool checked)
+{
+    dest = LACAN_ID_GEN;
+    data_can val;
+    val.var_float=1.5;
+    LACAN_Post(this,LACAN_VAR_STANDBY_W_SETP,val);
+}
+

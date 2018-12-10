@@ -43,7 +43,8 @@ SOURCES += \
     bytesend.cpp \
     lacan_detect.cpp \
     openport.cpp \
-    boost.cpp
+    boost.cpp \
+    enviador.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -65,7 +66,8 @@ HEADERS += \
     bytesend.h \
     openport.h \
     lacan_limits_vol.h \
-    boost.h
+    boost.h \
+    enviador.h
 
 FORMS += \
         mainwindow.ui \
