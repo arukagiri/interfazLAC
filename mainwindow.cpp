@@ -434,28 +434,28 @@ void MainWindow::on_button_STOP_clicked()
     uint32_t final=100000000;
     uint8_t z=0;
     data_can a;
-    a.var_float=probando;
+    a.var_float=140.3;
     dest=LACAN_ID_GEN;
 
-    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
+    LACAN_Post(this,LACAN_VAR_W_SETP,a);
     dilei->start(1000);
     while(dilei->remainingTime() <= 0){
         z++;
     }
-
+/*
     LACAN_Heartbeat(this);
     dilei->start(1000);
     while(dilei->remainingTime() <= 0){
         z++;
     }
 
-
+*/
    /* LACAN_Acknowledge(this,10,probando);
     t.start();
     while(t.getime()<final){
         z++;
     }*/
-
+/*
     LACAN_Heartbeat(this);
     dilei->start(1000);
     while(dilei->remainingTime() <= 0){
@@ -482,7 +482,7 @@ void MainWindow::on_button_STOP_clicked()
     while(dilei->remainingTime() <= 0){
         z++;
     }
-
+*/
     //dest=LACAN_ID_GEN;
     //float dato=300.1;
     //LACAN_Post(this,LACAN_VAR_W_SETP,dato);
