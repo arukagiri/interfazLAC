@@ -15,7 +15,7 @@ int16_t LACAN_Error(MainWindow* mw, uint16_t errCode){
     msg->BYTE0=LACAN_ID_BROADCAST << LACAN_BYTE0_RESERVED;//direccion de destino, corrida una cierta cantidad de bits reservados
     msg->BYTE1=errCode;//codigo de error a enviar
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
     mw->msg_log.push_back(*msg);
 
     return LACAN_SUCCESS; // si el mensaje fue correctamente enviado se devuelve success, ver implementacion de codigos de fracaso
@@ -29,7 +29,7 @@ int16_t LACAN_Heartbeat(MainWindow* mw){
     msg->DLC=1;
     msg->BYTE0=LACAN_ID_BROADCAST << LACAN_BYTE0_RESERVED;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     mw->msg_log.push_back(*msg);
 
@@ -51,7 +51,7 @@ int16_t LACAN_Acknowledge(MainWindow* mw, uint16_t code, uint16_t result){
     msg->BYTE1=code;
     msg->BYTE2=result;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     mw->msg_log.push_back(*msg);
 
@@ -67,7 +67,7 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t variable, uint16_t data){
     msg->BYTE1=variable;
     msg->BYTE2=data;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     mw->msg_log.push_back(msg);
 
@@ -90,7 +90,7 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, uint16_t data){
     else
         mw->code++;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     TIMED_MSG new_msg;
     new_msg->msg=msg;
@@ -116,7 +116,7 @@ int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
     msg->BYTE4=uint16_t(data.var_char[2]);
     msg->BYTE5=uint16_t(data.var_char[3]);
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     mw->msg_log.push_back(*msg);
 
@@ -144,7 +144,7 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, data_can data, uint8_t show
     else
         mw->code++;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
     TIMED_MSG* new_msg= new TIMED_MSG;
 
     if(show_ack == 1){
@@ -177,7 +177,7 @@ int16_t LACAN_Query(MainWindow* mw, uint16_t variable,uint8_t show_ack){
     else
         mw->code++;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
     TIMED_MSG* new_msg=new TIMED_MSG();
 
     if(show_ack == 1){
@@ -212,7 +212,7 @@ int16_t LACAN_Do(MainWindow* mw, uint16_t cmd, uint8_t show_ack){
     else
         mw->code++;
 
-    emit mw->addMsg_Stack(msg);
+    emit mw->stack.push_back(msg);
 
     TIMED_MSG* new_msg= new TIMED_MSG;
 

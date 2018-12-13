@@ -50,10 +50,10 @@ public:
 
      int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw);
 
+     bool device_is_connected(uint8_t id);
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
-     void addMsg_Stack(LACAN_MSG*);
 
 public slots:
 
@@ -89,6 +89,7 @@ private slots:
 
     void on_button_ESTADO_RED_2_clicked();
 
+    void handleSendTimeout();
 
 public:
 
@@ -119,9 +120,9 @@ public:
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
 
-    bool device_is_connected(uint8_t id);
 
     QTimer* periodicTimer;
+    vector<LACAN_MSG*> stack;
 };
 
 #endif // MAINWINDOW_H

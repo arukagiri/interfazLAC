@@ -188,7 +188,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
 
     SenderThread* msgSender=new SenderThread(this);
-    connect(this,SIGNAL(addMsg_Stack(LACAN_MSG*)),msgSender,SLOT(loadNewMsg(LACAN_MSG*)));
+    connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
     msgSender->start();
 
 
@@ -469,7 +469,7 @@ void MainWindow::on_button_START_clicked()
 void MainWindow::on_button_STOP_clicked()
 {
     do_log=FALSE;
-    for(int i=0;i<60000;i++){
+    for(int i=0;i<50;i++){
         LACAN_Acknowledge(this,1,LACAN_RES_OK);
     }
 
@@ -733,4 +733,17 @@ bool MainWindow::device_is_connected(uint8_t id){
         }
     }
     return false;
+}
+
+void MainWindow::handleSendTimeout(){
+    static int cont=0;
+    cont++;
+    if(cont>49){
+        qDebug()<<"ENVIADO";
+    }
+    if(!stack.empty()){
+        serialsend2(*serial_port,*stack.back());
+        stack.pop_back();
+    }
+
 }

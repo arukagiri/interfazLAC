@@ -16,13 +16,9 @@ class SenderThread : public QThread
 public:
     explicit SenderThread(QObject *parent = nullptr);
     virtual void run() override;
-    vector<LACAN_MSG*> stack;
-    MainWindow* mw;
     tiempo senderTimer;
 signals:
-
-public slots:
-    void loadNewMsg(LACAN_MSG*);
+    void sendTimeout();
 };
 
 #endif // SENDERTHREAD_H

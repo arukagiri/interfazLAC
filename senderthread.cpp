@@ -5,27 +5,16 @@
 
 SenderThread::SenderThread(QObject *parent) : QThread(parent)
 {
-    mw = qobject_cast<MainWindow*>(this->parent());
-    senderTimer.start();
 }
 
 void SenderThread::run(){
     long int timeout=500;
-    int cont=0;
+    senderTimer.start();
     while(true){
-        qApp->processEvents();
-        if(stack.size()!=0 && senderTimer.getime()>timeout){
-            cont++;
-            if(cont>59999){
-                qDebug()<<"TERMINOO";
-            }
+        if(senderTimer.getime()>timeout){
             senderTimer.start();
-            //serialsend2(*(mw->serial_port),*(stack.back()));
-            stack.pop_back();
+            emit sendTimeout();
         }
     }
 }
 
-void SenderThread::loadNewMsg(LACAN_MSG* newMsg){
-    stack.push_back(newMsg);
-}
