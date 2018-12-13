@@ -22,7 +22,7 @@
 #include <QColor>
 #include "lacan_limits_gen.h"
 #include "bytesend.h"
-
+#include "senderthread.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -186,6 +186,11 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     periodicTimer = new QTimer();
     periodicTimer->start(HB_TIME);
     connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
+
+    SenderThread* msgSender=new SenderThread(this);
+    connect(this,SIGNAL(addMsg_Stack(LACAN_MSG*)),msgSender,SLOT(loadNewMsg(LACAN_MSG*)));
+    msgSender->start();
+
 
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
@@ -464,7 +469,10 @@ void MainWindow::on_button_START_clicked()
 void MainWindow::on_button_STOP_clicked()
 {
     do_log=FALSE;
-    LACAN_HB_Handler(LACAN_ID_GEN,hb_con,this);
+    for(int i=0;i<60000;i++){
+        LACAN_Acknowledge(this,1,LACAN_RES_OK);
+    }
+
 }
 
 void MainWindow::verificarHB(){
@@ -705,7 +713,7 @@ void MainWindow::do_stuff(){
         }
 
     }else{
-        LACAN_Heartbeat(this);
+        //LACAN_Heartbeat(this);
     }
 
 }

@@ -12,6 +12,7 @@
 #include <QMap>
 #include "better_serialfunc.h"
 
+
 #define LOG_LIMIT 500
 
 using namespace std;
@@ -52,6 +53,7 @@ public:
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
+     void addMsg_Stack(LACAN_MSG*);
 
 public slots:
 

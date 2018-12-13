@@ -42,7 +42,8 @@ SOURCES += \
     volante.cpp \
     bytesend.cpp \
     lacan_detect.cpp \
-    openport.cpp
+    openport.cpp \
+    senderthread.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -62,7 +63,8 @@ HEADERS += \
     lacan_limits_gen.h \
     volante.h \
     bytesend.h \
-    openport.h
+    openport.h \
+    senderthread.h
 
 FORMS += \
         mainwindow.ui \

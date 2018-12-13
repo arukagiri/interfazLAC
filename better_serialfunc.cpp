@@ -121,20 +121,19 @@ bool readport2(char* pila, QSerialPort& serial_port){
 
         qDebug()<<"algo se puede leer: "<<QString::number(pila[index_pila]);
 
-
         index_pila++;
         if(index_pila==1){
             if((pila[0]&0xFF)==0xAA)
-                qDebug()<<"\nLlego AA\n";
+                qDebug()<<"\nLlego AA\n";   //primeros 8 bits de cabecera de mensaje
                 //timeout.start();
             else
                 index_pila=0;
                 //conterror++;
         }
         if(index_pila==2){
-            if(((pila[1]&0xFF)>>4)==0xC){
-                qDebug()<<"Llego b2\n";
-                dlc=pila[1]&15;
+            if(((pila[1]&0xFF)>>4)==0xC){   //ultimos 4 bits de cabecera
+                qDebug()<<"Llego 0xC + dlc\n";
+                dlc=pila[1]&15;             //extraigo dlc
                 //conterror=0;
             }
             else
@@ -147,13 +146,12 @@ bool readport2(char* pila, QSerialPort& serial_port){
             //index_pila=0;
         }
 
-    if((index_pila>=(dlc+5))&&(((pila[dlc+4])&0xFF)==0x55)){//comprobamos que el mensaje llego entero
-        index_pila=0; //reseteamos variables para volverlas a usar en el proximo mensaje
-        dlc=0;
-        qDebug()<<"ENTRO";
-        return newmsgflag=true;
-
-    }
+        if((index_pila>=(dlc+5))&&(((pila[dlc+4])&0xFF)==0x55)){//comprobamos que el mensaje llego entero
+            index_pila=0; //reseteamos variables para volverlas a usar en el proximo mensaje
+            dlc=0;
+            qDebug()<<"ENTRO";
+            return newmsgflag=true;
+        }
     }
     return newmsgflag=false;
 }
