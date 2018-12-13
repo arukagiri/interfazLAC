@@ -27,6 +27,7 @@
 #include "lacan_limits_vol.h"
 #include <QThread>
 #include "tiempo.h"
+#include "senderthread.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -190,6 +191,11 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     periodicTimer = new QTimer();
     periodicTimer->start(HB_TIME);
     connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
+
+    SenderThread* msgSender=new SenderThread(this);
+    connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
+    msgSender->start();
+
 
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
@@ -425,67 +431,10 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-    QTimer *dilei=new QTimer();
-    dilei->setSingleShot(true);
-    //do_log=FALSE;
-    //LACAN_HB_Handler(LACAN_ID_GEN,hb_con,this);
-    static int probando=0;
-    probando++;
-    uint32_t final=100000000;
-    uint8_t z=0;
-    data_can a;
-    a.var_float=140.3;
-    dest=LACAN_ID_GEN;
-
-    LACAN_Post(this,LACAN_VAR_W_SETP,a);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
+    do_log=FALSE;
+    for(int i=0;i<50;i++){
+        LACAN_Acknowledge(this,1,LACAN_RES_OK);
     }
-/*
-    LACAN_Heartbeat(this);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
-    }
-
-*/
-   /* LACAN_Acknowledge(this,10,probando);
-    t.start();
-    while(t.getime()<final){
-        z++;
-    }*/
-/*
-    LACAN_Heartbeat(this);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
-    }
-
-
-    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
-    }
-
-
-    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
-    }
-
-
-    LACAN_Post(this,LACAN_VAR_VI_SETP,a);
-    dilei->start(1000);
-    while(dilei->remainingTime() <= 0){
-        z++;
-    }
-*/
-    //dest=LACAN_ID_GEN;
-    //float dato=300.1;
-    //LACAN_Post(this,LACAN_VAR_W_SETP,dato);
 }
 
 void MainWindow::verificarHB(){
@@ -722,7 +671,7 @@ void MainWindow::do_stuff(){
                     connectionLost->setStandardButtons(QMessageBox::Ok);
                     connectionLost->setText("Se ha perdido la conexion con el adaptador"
                                        "\nPor favor revise el puerto USB,"
-                                       "el programa intentara reconectar automaticamente"+ QString::number(5-cExit) + "veces mas.");
+                                       "el programa intentara reconectar automaticamente "+ QString::number(5-cExit) + " veces mas.");
                     connectionLost->setWindowTitle("Error en la reconexion");
                     connectionLost->exec();
                 }else{
@@ -735,7 +684,7 @@ void MainWindow::do_stuff(){
         }
 
     }else{
-       // LACAN_Heartbeat(this);
+        LACAN_Heartbeat(this);
     }
 
 }
@@ -862,3 +811,13 @@ void MainWindow::on_pushButton_clicked(bool checked)
     LACAN_Post(this,LACAN_VAR_STANDBY_W_SETP,val);
 }
 
+
+void MainWindow::handleSendTimeout(){
+    static int cont=0;
+    if(!stack.empty()){
+        serialsend2(*serial_port,*stack.back());
+        qDebug()<<"ENVIADO";
+        stack.pop_back();
+    }
+
+}

@@ -130,7 +130,6 @@ uint16_t readport2(char* pila, uint16_t* first_byte, QSerialPort& serial_port){
 
 
      qDebug()<<"nuevo byte: "<<QString::number(pila[index_pila]);
-
         index_pila++;        //ya apunta a la siguiente
         if(index_pila-first_byte[cant_msg]==1){
             if((pila[first_byte[cant_msg]]&0xFF)==0xAA)

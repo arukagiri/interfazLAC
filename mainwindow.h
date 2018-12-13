@@ -12,6 +12,7 @@
 #include <QMap>
 #include "better_serialfunc.h"
 
+
 #define LOG_LIMIT 500
 
 using namespace std;
@@ -49,6 +50,7 @@ public:
 
      int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw);
 
+     bool device_is_connected(uint8_t id);
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
@@ -89,6 +91,8 @@ private slots:
 
     void on_pushButton_clicked(bool checked);
 
+    void handleSendTimeout();
+
 private:
     void create_varmap_gen();
     void create_varmap_vol();
@@ -123,9 +127,9 @@ public:
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
 
-    bool device_is_connected(uint8_t id);
 
     QTimer* periodicTimer;
+    vector<LACAN_MSG*> stack;
 };
 
 #endif // MAINWINDOW_H
