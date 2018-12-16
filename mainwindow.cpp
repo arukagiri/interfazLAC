@@ -502,8 +502,8 @@ void MainWindow::no_ACK_Handler(void){}
 void MainWindow::handleRead(){
     uint16_t cant_msg=0;
     uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
-    static char pila[200]={0};           //esto no hace falta que sea static creo*****************************************************************************
-        cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
+    static vector<char> pila;
+    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
     for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
@@ -513,11 +513,11 @@ void MainWindow::handleRead(){
 
         //sub_pila=pila(first_byte[i],first_byte[i+1]-1);  //extraigo de pila, un solo mensaje
         int h=0;
-        for(int j=first_byte[i];j<first_byte[i+1];j++){
-            sub_pila[h]=pila[j];
+        for(uint j=first_byte[i];j<first_byte[i+1];j++){
+            sub_pila[h]=pila.at(j);
             h++;
         } //extraigo de pila, un solo mensaje
-
+        pila.erase(pila.begin()+first_byte[i],pila.begin()+first_byte[i+1]); //borro el mensaje que acabo de copiar a la sub pila
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
@@ -531,7 +531,7 @@ void MainWindow::handleRead(){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
             }
         //}
-        this->agregar_log_rec(msg_log);
+        agregar_log_rec(msg_log);
     }
 }
 
