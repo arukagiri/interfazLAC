@@ -20,7 +20,14 @@
 #include "LACAN_REC.h"
 #include "addnewdevdialog.h"
 #include <QColor>
-
+#include "lacan_limits_gen.h"
+#include "bytesend.h"
+#include <stdlib.h>
+#include <string.h>
+#include "lacan_limits_vol.h"
+#include <QThread>
+#include "tiempo.h"
+#include "senderthread.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -53,7 +60,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     QString format_time="hh:mm:ss";
     QString format_date="dd.MM.yyyy";
     QDateTime curr_date_time=QDateTime::currentDateTime();
-    ABSTRACTED_MSG abs_msg={"","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
+    ABSTRACTED_MSG abs_msg={"","","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
     float val_float;
     data_can val_union;
 
@@ -76,6 +83,26 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         break;
     }
 
+    //REMITENTE
+    switch(msg_log.back().ID&LACAN_IDENT_MASK){
+    case LACAN_ID_BOOST:
+        abs_msg.orig="Boost\t";
+        break;
+    case LACAN_ID_GEN:
+        abs_msg.orig="Generador Eolico";
+        break;
+    case LACAN_ID_BROADCAST:
+        abs_msg.orig="Broadcast\t";
+        break;
+    case LACAN_ID_VOLANTE:
+        abs_msg.orig="Volante de Inercia";
+        break;
+    default:
+        abs_msg.orig="No especificada/No soportada";
+        break;
+    }
+
+
     //FUNCION
     switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
     case LACAN_FUN_ERR:
@@ -94,6 +121,10 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
         abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
         abs_msg.var_type=detect_var(msg_log.back().BYTE2);
 
+        if(abs_msg.var_type=="Modo"){
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
+        }
+        else{
         val_union.var_char[0]=char(msg_log.back().BYTE3);
         val_union.var_char[1]=char(msg_log.back().BYTE4);
         val_union.var_char[2]=char(msg_log.back().BYTE5);
@@ -101,7 +132,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
         val_float = val_union.var_float;
         abs_msg.var_val=QString::number(double(val_float));
-
+        }
         break;
 
     case LACAN_FUN_QRY:
@@ -119,15 +150,18 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
         abs_msg.var_type=detect_var(msg_log.back().BYTE1);
+        if(abs_msg.var_type=="Modo"){
+            abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
+        }
+        else{
+            val_union.var_char[0]=char(msg_log.back().BYTE2);
+            val_union.var_char[1]=char(msg_log.back().BYTE3);
+            val_union.var_char[2]=char(msg_log.back().BYTE4);
+            val_union.var_char[3]=char(msg_log.back().BYTE5);
 
-        val_union.var_char[0]=char(msg_log.back().BYTE2);
-        val_union.var_char[1]=char(msg_log.back().BYTE3);
-        val_union.var_char[2]=char(msg_log.back().BYTE4);
-        val_union.var_char[3]=char(msg_log.back().BYTE5);
-
-        val_float = val_union.var_float;
-        abs_msg.var_val=QString::number(double(val_float));
-
+            val_float = val_union.var_float;
+            abs_msg.var_val=QString::number(double(val_float));
+        }
         break;
 
     case LACAN_FUN_HB:
@@ -150,9 +184,17 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     serial_port=&serial_port0;
     do_log=false;
     ERflag= false;
+    NoUSB=false;
     dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
+    periodicTimer = new QTimer();
+    periodicTimer->start(HB_TIME);
+    connect(periodicTimer,SIGNAL(timeout()),this,SLOT(do_stuff()));
+
+    SenderThread* msgSender=new SenderThread(this);
+    connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
+    msgSender->start();
 
 
     ui->the_one_true_list_DESTINO->addItem("Broadcast");
@@ -164,7 +206,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     disp_map["Generador Eolico"]=LACAN_ID_GEN;
     disp_map["Volante de Inercia"]=LACAN_ID_VOLANTE;
     disp_map["Boost"]=LACAN_ID_BOOST;
-
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
@@ -174,23 +215,24 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+100);
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
     newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
-    //this->setLayout(ui->verticalLayout_7);
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
-    QStringList TableHeader;
-    TableHeader<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Codigo de error"<<"Fecha y Hora";
+    QStringList TableHeader_send;
+    QStringList TableHeader_rece;
+    TableHeader_send<<"Destino"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
+    TableHeader_rece<<"Origen"<<"Funcion"<<"Variable"<<"Valor"<<"Comando"<<"Codigo de ack"<<"Resultado ack"<<"Codigo de error"<<"Fecha y Hora";
 
-    ui->tableWidget_received->setRowCount(250);
-    ui->tableWidget_received->setColumnCount(8);
-    ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader);
+    ui->tableWidget_received->setRowCount(list_rec_cont);
+    ui->tableWidget_received->setColumnCount(9);
+    ui->tableWidget_received->setHorizontalHeaderLabels(TableHeader_rece);
     ui->tableWidget_received->verticalHeader()->setVisible(false);
     ui->tableWidget_received->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget_received->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -198,9 +240,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_received->setShowGrid(false);
     ui->tableWidget_received->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    ui->tableWidget_sent->setRowCount(250);
-    ui->tableWidget_sent->setColumnCount(8);
-    ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader);
+    ui->tableWidget_sent->setRowCount(list_send_cont);
+    ui->tableWidget_sent->setColumnCount(9);
+    ui->tableWidget_sent->setHorizontalHeaderLabels(TableHeader_send);
     ui->tableWidget_sent->verticalHeader()->setVisible(false);
     ui->tableWidget_sent->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget_sent->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -208,47 +250,29 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    varmap["Corriente de Entrada Instantanea"]=LACAN_VAR_II;
-    varmap["Corriente de Entrada Maxima"]=LACAN_VAR_II_MAX;
-    varmap["Corriente de Entrada Minima"]=LACAN_VAR_II_MIN;
-    varmap["Corriente de Entrada Set Point"]=LACAN_VAR_II_SETP;
-    varmap["Corriente de Salida Instantanea"]=LACAN_VAR_IO;
-    varmap["Corriente de Salida Maxima"]=LACAN_VAR_IO_MAX;
-    varmap["Corriente de Salida Minima"]=LACAN_VAR_IO_MIN;
-    varmap["Corriente de Salida Set Point"]=LACAN_VAR_IO_SETP;
-    varmap["Corriente de ISD Instantanea"]=LACAN_VAR_ISD;
-    varmap["Corriente de ISD Maxima"]=LACAN_VAR_ISD_MAX;
-    varmap["Corriente de ISD Minima"]=LACAN_VAR_ISD_MIN;
-    varmap["Corriente de ISD Set Point"]=LACAN_VAR_ISD_SETP;
-    varmap["Corriente Eficaz Instantanea"]=LACAN_VAR_IEF;
-    varmap["Corriente Eficaz Maxima"]=LACAN_VAR_IEF_MAX;
-    varmap["Corriente Eficaz Minima"]=LACAN_VAR_IEF_MIN;
-    varmap["Corriente Eficaz Set Point"]=LACAN_VAR_IEF_SETP;
-    varmap["Potencia de Entrada Instantanea"]=LACAN_VAR_PI;
-    varmap["Potencia de Entrada Maxima"]=LACAN_VAR_PI_MAX;
-    varmap["Potencia de Entrada Minima"]=LACAN_VAR_PI_MIN;
-    varmap["Potencia de Entrada Set Point"]=LACAN_VAR_PI_SETP;
-    varmap["Potencia de Salida Instantanea"]=LACAN_VAR_PO;
-    varmap["Potencia de Salida Maxima"]=LACAN_VAR_PO_MAX;
-    varmap["Potencia de Salida Minima"]=LACAN_VAR_PO_MIN;
-    varmap["Potencia de Salida Set Point"]=LACAN_VAR_PO_SETP;
-    varmap["Tension de Entrada Instantanea"]=LACAN_VAR_VI;
-    varmap["Tension de Entrada Maxima"]=LACAN_VAR_VI_MAX;
-    varmap["Tension de Entrada Minima"]=LACAN_VAR_VI_MIN;
-    varmap["Tension de Entrada Set Point"]=LACAN_VAR_VI_SETP;
-    varmap["Tension de Salida Instantanea"]=LACAN_VAR_VO;
-    varmap["Tension de Salida Maxima"]=LACAN_VAR_VO_MAX;
-    varmap["Tension de Salida Minima"]=LACAN_VAR_VO_MIN;
-    varmap["Tension de Salida Set Point"]=LACAN_VAR_VO_SETP;
-    varmap["Velocidad Angular Instantanea"]=LACAN_VAR_W;
-    varmap["Velocidad Angular Maxima"]=LACAN_VAR_W_MAX;
-    varmap["Velocidad Angular Minima"]=LACAN_VAR_W_MIN;
-    varmap["Velocidad Angular Set Point"]=LACAN_VAR_W_SETP;
-    varmap["Modo Potencia"]=LACAN_VAR_MOD_POT;
-    varmap["Modo Velocidad"]=LACAN_VAR_MOD_VEL;
-    varmap["Modo Torque"]=LACAN_VAR_MOD_TORQ;
+    create_varmap_gen();
+    create_varmap_vol();
+
+
+
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
+    //VOLVER A PONER EL PRIMERO, VERSION LULI
+    connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+    //LA MALA
+    //connect(serial_port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+
+}
+
+void MainWindow::handlePortError(QSerialPort::SerialPortError error){
+    if(error!=QSerialPort::NoError){
+        NoUSB=true;
+        if(serial_port->isOpen()){
+            serial_port->close();
+        }
+        QMessageBox::warning(this, "Ups","Error con el puerto USB serie",QMessageBox::Ok);
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -260,15 +284,19 @@ void MainWindow::verificar_destino(){
     dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
 
-
 void MainWindow::on_button_COMANDAR_clicked()
 {
 
     verificar_destino();
-    Comandar *comwin = new Comandar(this);
+    if(dest  != LACAN_ID_BROADCAST){
+        Comandar *comwin = new Comandar(this);
 
-    comwin->setModal(true);
-    comwin->show();
+        comwin->setModal(true);
+        comwin->show();
+    }
+    else{
+        QMessageBox::warning(this, "Error","No puede comandar a todos los dispositivos juntos",QMessageBox::Ok);
+    }
 }
 
 void MainWindow::on_button_CONSULTAR_clicked()
@@ -307,32 +335,76 @@ void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log);
     if(do_log){
+        if(list_send_cont>=LOG_LIMIT){  //limite de mensajes
+        do_log=FALSE;
+        QMessageBox::StandardButton reply;
+        reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+            if(reply==QMessageBox::Yes){
+                ui->tableWidget_received->clearContents();
+                ui->tableWidget_sent->clearContents();
+                outlog_cont=0;
+                msg_log.clear();
+                list_rec_cont = 0;
+                list_send_cont = 0;
+                ui->tableWidget_received->setRowCount(list_rec_cont);
+                ui->tableWidget_sent->setRowCount(list_send_cont);
+                do_log=TRUE;
+            }
+        }
+        else{
+        list_send_cont++;
+        ui->tableWidget_sent->setRowCount(list_send_cont);
         ui->tableWidget_sent->setItem(outlog_cont, 0, new QTableWidgetItem(abs_msg.dest));
         ui->tableWidget_sent->setItem(outlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
         ui->tableWidget_sent->setItem(outlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
         ui->tableWidget_sent->setItem(outlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_sent->setItem(outlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_sent->setItem(outlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_sent->setItem(outlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_sent->setItem(outlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_sent->setItem(outlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         outlog_cont++;
     }
     agregar_textlog(abs_msg,"Enviado");
+    }
 }
 
 void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log);
     if(do_log){
-        ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.dest));
+        if(list_rec_cont>=LOG_LIMIT){  //limite de mensajes
+        QMessageBox::StandardButton reply;
+        reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+            if(reply==QMessageBox::Yes){
+                ui->tableWidget_received->clearContents();
+                ui->tableWidget_sent->clearContents();
+                outlog_cont=0;
+                msg_log.clear();
+                list_rec_cont = 0;
+                list_send_cont = 0;
+                ui->tableWidget_received->setRowCount(list_rec_cont);
+                ui->tableWidget_sent->setRowCount(list_send_cont);
+                do_log=TRUE;
+            }
+            else{
+                on_button_STOP_clicked();
+            }
+        }
+        else{
+        list_rec_cont++;
+        ui->tableWidget_received->setRowCount(list_rec_cont);
+        ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.orig));
         ui->tableWidget_received->setItem(inlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
         ui->tableWidget_received->setItem(inlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
         ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
         ui->tableWidget_received->setItem(inlog_cont, 4, new QTableWidgetItem(abs_msg.com));
         ui->tableWidget_received->setItem(inlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.curr_time));
+        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+        ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
         inlog_cont++;
+        }
     }
     agregar_textlog(abs_msg,"Recibido");
 }
@@ -341,13 +413,17 @@ void MainWindow::on_button_START_clicked()
 {
     QMessageBox::StandardButton reply;
 
-    if(do_log==TRUE || outlog_cont>0){
+    if(outlog_cont>0 || inlog_cont>0){
         reply=QMessageBox::warning(this,"Aviso de perdida de mensajes","¿Esta seguro de comenzar una nueva sesion de registro de mensajes?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
         if(reply==QMessageBox::Yes){
             ui->tableWidget_received->clearContents();
             ui->tableWidget_sent->clearContents();
             outlog_cont=0;
             msg_log.clear();
+            list_rec_cont = 0;
+            list_send_cont = 0;
+            ui->tableWidget_received->setRowCount(list_rec_cont);
+            ui->tableWidget_sent->setRowCount(list_send_cont);
         }
     }
     do_log=TRUE;
@@ -355,24 +431,10 @@ void MainWindow::on_button_START_clicked()
 
 void MainWindow::on_button_STOP_clicked()
 {
-
-    //do_log=FALSE;
-    this->dest=LACAN_ID_GEN;
-    data_can datos;
-    //datos.var_float = 1.5;
-     datos.var_int = 12e5;
-
-    LACAN_Post(this,LACAN_VAR_IO,datos);
-    this->agregar_log_sent();
-   /* LACAN_Heartbeat(this);
-    this->agregar_log_sent();*/
-
-    LACAN_HB_Handler(7,hb_con,this);
-
-    QColor *rojo = new QColor(255,0,0) ;
-    //ui->tableWidget_received->item(1,1)->setBackgroundColor(*rojo);
-    //ui->tableWidget_sent->item(2,1)->setBackgroundColor(QColor(125,125,125));
-    //ui->tableWidget_received->item(1,1)->setData()
+    do_log=FALSE;
+    for(int i=0;i<50;i++){
+        LACAN_Acknowledge(this,1,LACAN_RES_OK);
+    }
 }
 
 void MainWindow::verificarHB(){
@@ -380,8 +442,10 @@ void MainWindow::verificarHB(){
     //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de
     //tolerancia (DEAD_HB_TIME), esta funcion se encarga de que el programa lo considere inactivo
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
-        if(((*it_hb)->hb_timer.remainingTime()<= 0) && ((*it_hb)->hb_status==ACTIVE)){
+        //ver de cambiar condicion porq el remaining empieza a correr de nuevo cuando entra al slot
+        if(((*it_hb)->hb_timer.remainingTime()> 15000) && ((*it_hb)->hb_status==ACTIVE)){
             (*it_hb)->hb_status=INACTIVE;
+            (*it_hb)->hb_timer.stop();
             erase_device_ui(uint16_t((*it_hb)->device));
         }
     }
@@ -404,10 +468,17 @@ void MainWindow::verificarACK(){
         else{
              if(!((*it_ack)->ack_timer.isActive())){  //si no llego el ack y se vencion el timer
                 (*it_ack)->ack_status=ACK_TIMEOUT;
-                if((*it_ack)->retries<=0){  // si no quedan reintentos
-                    qDebug()<<"Entro a la ventana de generar msgbox";
-                    QMessageBox::warning(this,"Error al enviar","Se ha agotado el tiempo de espera de la respuesta del dispositivo. Por favor comuniquse con un representante. Salu2 :D",QMessageBox::Ok,QMessageBox::Abort);
-
+                if((*it_ack)->retries<=0 && show_miss_ack_flag == 0){  //si no quedan reintentos
+                    if((*it_ack)->show_miss_ack==1){ //si el mensaje se mando desde la mainwindows
+                        show_miss_ack_flag = 1;
+                        QMessageBox::StandardButton reply;
+                        QString name = disp_map.key(((*it_ack)->msg.BYTE0) >> LACAN_BYTE0_RESERVED);
+                        QString mje = "Se ha agotado el tiempo de espera de la respuesta del " + name + ".";
+                        reply = QMessageBox::warning(this,"Error al enviar",mje,QMessageBox::Ok);
+                        if(reply){
+                            show_miss_ack_flag = 0;
+                        }
+                    }
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
                     no_ACK_Handler();
                     msg_ack.erase(it_ack);
@@ -429,28 +500,37 @@ void MainWindow::verificarACK(){
 void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
-    bool newmsgflag=0;
-    static char pila[100]={0};
-    newmsgflag=readport2(pila, *serial_port);
+    uint16_t cant_msg=0;
+    uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
+    static char pila[200]={0};           //esto no hace falta que sea static creo*****************************************************************************
+        cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
-    if(newmsgflag){
+    for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
         int result=0;
         uint prevsize=0;
+        char sub_pila[13]={0}; //para ir guardando los mensajes parciales que pueden estar adentro de la pila. tiene la longitud del tamano maximo de un mensaje del adaptador
 
-        msg=mensaje_recibido2(pila);
+        //sub_pila=pila(first_byte[i],first_byte[i+1]-1);  //extraigo de pila, un solo mensaje
+        int h=0;
+        for(int j=first_byte[i];j<first_byte[i+1];j++){
+            sub_pila[h]=pila[j];
+            h++;
+        } //extraigo de pila, un solo mensaje
+
+        msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
 
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
-        }else{
+        }//else{
             result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
             }
-        }
+        //}
         this->agregar_log_rec(msg_log);
     }
 }
@@ -499,6 +579,11 @@ void MainWindow::erase_device_ui(uint16_t inactiveDev){
     //ui->the_one_true_list_DESTINO->takeItem(row);
 }
 
+void MainWindow::add_device_ui(uint16_t reactivatedDev){
+    QString name = disp_map.key(reactivatedDev);
+    ui->the_one_true_list_DESTINO->addItem(name);
+}
+
 void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
     //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
     //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
@@ -540,7 +625,7 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, v
         LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
     break;
     case LACAN_FUN_ERR:
-    //	return LACAN_ERR_Handler(source,LACAN_queue[queueIndex].BYTE1);
+        LACAN_ERR_Handler(source,mje.BYTE1);
     break;
     case LACAN_FUN_HB:
         LACAN_HB_Handler(source, hb_con, mw);
@@ -549,4 +634,190 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, v
         return LACAN_NO_SUCH_MSG;
     }
     return LACAN_SUCCESS;
+}
+
+void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
+    QString msg_err ="Dispositivo: ";
+    msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
+        QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
+}
+
+void MainWindow::do_stuff(){
+    static int cReconnect=0; // usamos contadores para realizar acciones periodicas con distintos intervalos mediante un solo timer
+    static int cExit=0;
+
+    if(NoUSB){
+        cReconnect++;
+        if(cReconnect>=6){
+            cExit++;
+            cReconnect=0;
+            int retval = serial_port->open(QSerialPort::ReadWrite);
+            if(retval){
+                QMessageBox *connectionRegained= new QMessageBox();
+                connectionRegained->setIcon(QMessageBox::Information);
+                connectionRegained->setStandardButtons(QMessageBox::Ok);
+                connectionRegained->setText("Se ha recuperado la conexion con el adaptador,"
+                                   "\nYorokobe ningendomo.");
+                connectionRegained->setWindowTitle("Conexion recuperada");
+                connectionRegained->exec();
+                cExit=0;
+                NoUSB=false;
+                uint8_t bdr=0x05;
+                sendinit2(*serial_port,bdr);
+            }else{
+                if(cExit<5){
+                    QMessageBox *connectionLost= new QMessageBox();
+                    connectionLost->setIcon(QMessageBox::Warning);
+                    connectionLost->setStandardButtons(QMessageBox::Ok);
+                    connectionLost->setText("Se ha perdido la conexion con el adaptador"
+                                       "\nPor favor revise el puerto USB,"
+                                       "el programa intentara reconectar automaticamente "+ QString::number(5-cExit) + " veces mas.");
+                    connectionLost->setWindowTitle("Error en la reconexion");
+                    connectionLost->exec();
+                }else{
+                    QMessageBox::warning(this, "Ups",
+                                                   "No se pudo reiniciar el puerto luego de 5 intentos,\n la aplicacion se cerrara, chau",
+                                                   QMessageBox::Ok);
+                    QCoreApplication::exit(1);
+                }
+            }
+        }
+
+    }else{
+        LACAN_Heartbeat(this);
+    }
+
+}
+
+void MainWindow::on_button_ESTADO_RED_2_clicked()
+{
+    ByteSend *bytewin = new ByteSend(this);
+    bytewin->setModal(true);
+    bytewin->show();
+}
+
+
+bool MainWindow::device_is_connected(uint8_t id){
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
+        if((*it_hb)->device == id){
+            return (*it_hb)->hb_status;
+        }
+    }
+    return false;
+}
+
+void MainWindow::create_varmap_gen(){
+    /* LACAN_VAR IO;
+    IO.instantanea=LACAN_VAR_IO_INST;
+    IO.setp=LACAN_VAR_IO_SETP;
+    IO.max=LACAN_VAR_GEN_IO_MAX;
+    IO.min=LACAN_VAR_GEN_IO_MIN;*/
+    LACAN_VAR ISD_GEN;
+    ISD_GEN.instantanea=LACAN_VAR_ISD_INST;
+    ISD_GEN.setp=LACAN_VAR_ISD_SETP;
+    ISD_GEN.max=LACAN_VAR_GEN_ISD_MAX;
+    ISD_GEN.min=LACAN_VAR_GEN_ISD_MIN;
+    LACAN_VAR IEF_GEN;
+    IEF_GEN.instantanea=LACAN_VAR_IEF_INST;
+    IEF_GEN.setp=LACAN_VAR_IEF_SETP;
+    IEF_GEN.max=LACAN_VAR_GEN_IEF_MAX;
+    IEF_GEN.min=LACAN_VAR_GEN_IEF_MIN;
+    LACAN_VAR PO_GEN;
+    PO_GEN.instantanea=LACAN_VAR_PO_INST;
+    PO_GEN.setp=LACAN_VAR_PO_SETP;
+    PO_GEN.max=LACAN_VAR_GEN_PO_MAX;
+    PO_GEN.min=LACAN_VAR_GEN_PO_MIN;
+    LACAN_VAR VO_GEN;
+    VO_GEN.instantanea=LACAN_VAR_VO_INST;
+    VO_GEN.setp=LACAN_VAR_VO_SETP;
+    VO_GEN.max=LACAN_VAR_GEN_VO_MAX;
+    VO_GEN.min=LACAN_VAR_GEN_VO_MIN;
+    LACAN_VAR TORQ_GEN;
+    TORQ_GEN.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ_GEN.setp=LACAN_VAR_TORQ_SETP;
+    TORQ_GEN.max=LACAN_VAR_GEN_TORQ_MAX;
+    TORQ_GEN.min=LACAN_VAR_GEN_TORQ_MIN;
+    LACAN_VAR W_GEN;
+    W_GEN.instantanea=LACAN_VAR_W_INST;
+    W_GEN.setp=LACAN_VAR_W_SETP;
+    W_GEN.max=LACAN_VAR_GEN_W_MAX;
+    W_GEN.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR IBAT_GEN;
+    IBAT_GEN.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_GEN.setp=LACAN_VAR_I_BAT_SETP;
+    IBAT_GEN.max=LACAN_VAR_GEN_IBAT_MAX;
+    IBAT_GEN.min=LACAN_VAR_GEN_IBAT_MIN;
+    //varmap_gen["Corriente de Salida"]=IO;
+    varmap_gen["Corriente de ISD"]=ISD_GEN;
+    varmap_gen["Corriente Eficaz"]=IEF_GEN;
+    varmap_gen["Potencia de Salida"]=PO_GEN;
+    varmap_gen["Tension de Salida"]=VO_GEN;
+    varmap_gen["Torque"]=TORQ_GEN;
+    varmap_gen["Velocidad Angular"]=W_GEN;
+    varmap_gen["Corriente de Bateria"]=IBAT_GEN;
+}
+
+void MainWindow::create_varmap_vol(){
+    LACAN_VAR W_VOL;
+    W_VOL.instantanea=LACAN_VAR_W_INST;
+    W_VOL.setp=LACAN_VAR_W_SETP;
+    W_VOL.max=LACAN_VAR_GEN_W_MAX;
+    W_VOL.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR ID_VOL;
+    ID_VOL.instantanea=LACAN_VAR_ID_INST;
+    ID_VOL.setp=LACAN_VAR_ID_SETP;
+    ID_VOL.max=LACAN_VAR_VOL_ID_MAX;
+    ID_VOL.min=LACAN_VAR_VOL_ID_MIN;
+    LACAN_VAR W_STBY_VOL;
+    W_STBY_VOL.instantanea=LACAN_VAR_STANDBY_W_INST;
+    W_STBY_VOL.setp=LACAN_VAR_STANDBY_W_SETP;
+    W_STBY_VOL.max=LACAN_VAR_VOL_STANDBY_W_MAX;
+    W_STBY_VOL.min=LACAN_VAR_VOL_STANDBY_W_MIN;
+    LACAN_VAR PO_VOL;
+    PO_VOL.instantanea=LACAN_VAR_PO_INST;
+    PO_VOL.setp=LACAN_VAR_PO_SETP;
+    //PO_VOL.max=LACAN_VAR_VOL_PO_MAX;
+    //PO_VOL.min=LACAN_VAR_VOL_PO_MIN;
+    LACAN_VAR VO_VOL;
+    VO_VOL.instantanea=LACAN_VAR_VO_INST;
+    VO_VOL.setp=LACAN_VAR_VO_SETP;
+    //VO_VOL.max=LACAN_VAR_VOL_VO_MAX;
+    //VO_VOL.min=LACAN_VAR_VOL_VO_MIN;
+    LACAN_VAR TORQ_VOL;
+    TORQ_VOL.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ_VOL.setp=LACAN_VAR_TORQ_SETP;
+    //TORQ_VOL.max=LACAN_VAR_VOL_TORQ_MAX;
+    //TORQ_VOL.min=LACAN_VAR_VOL_TORQ_MIN;
+    LACAN_VAR IBAT_VOL;
+    IBAT_VOL.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
+    //IBAT_VOL.max=LACAN_VAR_VOL_I_BAT_MAX;
+    //IBAT_VOL.min=LACAN_VAR_VOL_I_BAT_MIN;
+
+    varmap_vol["Corriente de ID"]=ID_VOL;
+    varmap_vol["Velocidad Angular"]=W_VOL;
+    varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
+    varmap_vol["Potencia de Salida"]=PO_VOL;
+    varmap_vol["Torque"]=TORQ_VOL;
+    varmap_vol["Tension de Salida"]=VO_VOL;
+    varmap_vol["Corriente de Bateria"]=IBAT_VOL;
+}
+
+void MainWindow::on_pushButton_clicked(bool checked)
+{
+    dest = LACAN_ID_GEN;
+    data_can val;
+    val.var_float=1.5;
+    LACAN_Post(this,LACAN_VAR_STANDBY_W_SETP,val);
+}
+
+
+void MainWindow::handleSendTimeout(){
+    static int cont=0;
+    if(!stack.empty()){
+        serialsend2(*serial_port,*stack.back());
+        qDebug()<<"ENVIADO";
+        stack.pop_back();
+    }
+
 }

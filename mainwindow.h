@@ -12,6 +12,9 @@
 #include <QMap>
 #include "better_serialfunc.h"
 
+
+#define LOG_LIMIT 500
+
 using namespace std;
 
 namespace Ui {
@@ -39,17 +42,22 @@ public:
 
      void verificar_destino();
 
-     void erase_device_ui(uint16_t source);
+     void erase_device_ui(uint16_t inactiveDev);
+
+     void add_device_ui(uint16_t reactivatedDev);
 
      void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code);
 
      int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw);
 
+     bool device_is_connected(uint8_t id);
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
+
+     void handlePortError(QSerialPort::SerialPortError error);
 
      void add_dev_name(QString);
 
@@ -59,6 +67,9 @@ public slots:
 
      void no_ACK_Handler(void); //FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
 
+     void LACAN_ERR_Handler(uint16_t source,uint16_t err_cod);
+
+     void do_stuff(); //slot en el cual se realizan acciones que requieren de una periocidad fija, tal como el envio del HB
 
 private slots:
 
@@ -76,6 +87,16 @@ private slots:
 
     void on_button_STOP_clicked();
 
+    void on_button_ESTADO_RED_2_clicked();
+
+    void on_pushButton_clicked(bool checked);
+
+    void handleSendTimeout();
+
+private:
+    void create_varmap_gen();
+    void create_varmap_vol();
+
 
 public:
 
@@ -89,16 +110,26 @@ public:
     bool do_log;
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
-
+    bool NoUSB;
     //bool gen_connected=0;
     bool gen_connected=1;
     bool vol_connected=0;
     bool boost_connected=0;
 
-    QMap <QString,uint16_t> varmap;
+    bool show_miss_ack_flag=0;
+
+    uint16_t list_rec_cont = 0;
+    uint16_t list_send_cont = 0;
+
+    QMap <QString,LACAN_VAR> varmap_gen;
+    QMap <QString,LACAN_VAR> varmap_vol;
 
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
+
+
+    QTimer* periodicTimer;
+    vector<LACAN_MSG*> stack;
 };
 
 #endif // MAINWINDOW_H

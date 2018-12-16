@@ -161,12 +161,12 @@
         <item>
          <widget class="QLabel" name="label_tipo">
           <property name="text">
-           <string>Tipo:</string>
+           <string>Modo:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="list_TIPO_SET"/>
+         <widget class="QComboBox" name="list_MOD_SET"/>
         </item>
        </layout>
       </item>

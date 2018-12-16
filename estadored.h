@@ -21,6 +21,7 @@ protected:
     virtual void closeEvent(QCloseEvent *e) override;
 signals:
     void postforGEN_arrived(LACAN_MSG msg);
+    void postforVOL_arrived(LACAN_MSG msg);
 
 private slots:
     void ERpost_Handler(LACAN_MSG msg);
@@ -35,25 +36,32 @@ private slots:
 
     void on_button_vol_clicked();
 
+    void on_button_boost_clicked();
+
 private:
     Ui::EstadoRed *ui;
     MainWindow* mw ;
     QTimer *time_2sec;
 
+    data_can recibed_val;
+
     float gen_vo;
     float gen_io;
     float gen_vel;
     float gen_tor;
+    uint16_t gen_mod;
 
     float boost_vo;
     float boost_io;
     float boost_vi;
     float boost_ii;
+    uint16_t boos_mod;
 
     float vol_vo;
     float vol_io;
     float vol_vel;
     float vol_tor;
+    uint16_t vol_mod;
 
     void refresh_values(void);
     void send_qry(void);

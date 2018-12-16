@@ -23,14 +23,12 @@ public:
 private slots:
     void on_button_ENVIAR_QRY_clicked();
 
-    void VARIABLE_CONSULTA_Changed();
-    void TIPO_CONSULTA_Changed();
-
 private:
     Ui::Consultar *ui;
     uint16_t consulta;
     MainWindow* mw ;
-    void set_TIPO_CONSULTA();
+
+    QMap <QString,LACAN_VAR> varmap;
 };
 
 #endif // CONSULTAR_H

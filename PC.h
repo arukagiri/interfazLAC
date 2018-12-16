@@ -48,63 +48,43 @@
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02
-#define LACAN_VAR_II_MAX        0x04
-#define LACAN_VAR_II_MIN        0x05
-#define LACAN_VAR_II            0x06
+#define LACAN_VAR_II_INST       0x06
 #define LACAN_VAR_II_SETP       0x07
-#define LACAN_VAR_IO_MAX        0x0A
-#define LACAN_VAR_IO_MIN        0x0B
-#define LACAN_VAR_IO            0x0C
+#define LACAN_VAR_IO_INST       0x0C
 #define LACAN_VAR_IO_SETP       0x0D
-#define LACAN_VAR_ISD_MAX       0x14
-#define LACAN_VAR_ISD_MIN       0x15
-#define LACAN_VAR_ISD           0x16
+#define LACAN_VAR_ISD_INST      0x16
 #define LACAN_VAR_ISD_SETP      0x17
-#define LACAN_VAR_IEF_MAX       0x1A
-#define LACAN_VAR_IEF_MIN       0x1B
-#define LACAN_VAR_IEF           0x1C
+#define LACAN_VAR_IEF_INST      0x1C
 #define LACAN_VAR_IEF_SETP      0x1D
-#define LACAN_VAR_PI_MAX        0x24
-#define LACAN_VAR_PI_MIN        0x25
-#define LACAN_VAR_PI            0x26
+#define LACAN_VAR_PI_INST       0x26
 #define LACAN_VAR_PI_SETP       0x27
-#define LACAN_VAR_PO_MAX        0x2A
-#define LACAN_VAR_PO_MIN        0x2B
-#define LACAN_VAR_PO            0x2C
+#define LACAN_VAR_PO_INST       0x2C
 #define LACAN_VAR_PO_SETP       0x2D
-#define LACAN_VAR_VI_MAX        0x34
-#define LACAN_VAR_VI_MIN        0x35
-#define LACAN_VAR_VI            0x36
+#define LACAN_VAR_VI_INST       0x36
 #define LACAN_VAR_VI_SETP       0x37
-#define LACAN_VAR_VO_MAX        0x3A
-#define LACAN_VAR_VO_MIN        0x3B
-#define LACAN_VAR_VO            0x3C
+#define LACAN_VAR_VO_INST       0x3C
 #define LACAN_VAR_VO_SETP       0x3D
-#define LACAN_VAR_W_MAX         0x44
-#define LACAN_VAR_W_MIN         0x45
-#define LACAN_VAR_W             0x46
+#define LACAN_VAR_W_INST        0x46
 #define LACAN_VAR_W_SETP        0x47
-#define LACAN_VAR_BAT_IMAX      0x54
-#define LACAN_VAR_BAT_IMIN      0x55
-#define LACAN_VAR_BAT_I         0x56
-#define LACAN_VAR_BAT_I_SETP    0x57
-#define LACAN_VAR_BAT_VMAX      0x5A
-#define LACAN_VAR_BAT_VMIN      0x5B
-#define LACAN_VAR_BAT_V         0x5C
-#define LACAN_VAR_BAT_V_SETP    0x5D
-#define LACAN_VAR_MOD_POT       0x64 // ver si lo usamos al final
-#define LACAN_VAR_MOD_VEL       0x65
-#define LACAN_VAR_MOD_TORQ      0x66
-#define LACAN_VAR_MOD_MPPT      0x67
+#define LACAN_VAR_I_BAT_INST    0x56
+#define LACAN_VAR_I_BAT_SETP    0x57
+#define LACAN_VAR_V_BAT_INST    0x5C
+#define LACAN_VAR_V_BAT_SETP    0x5D
+#define LACAN_VAR_TORQ_INST     0x6C
+#define LACAN_VAR_TORQ_SETP     0x6D
+#define LACAN_VAR_ID_INST       0x66
+#define LACAN_VAR_ID_SETP       0x67
+#define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
+#define LACAN_VAR_STANDBY_W_SETP 0x6D
 
-#define LACAN_VAR_TORQI_MAX     0x0
-#define LACAN_VAR_TORQI_MIN       0x0
-#define LACAN_VAR_TORQI            0x0
-#define LACAN_VAR_TORQI_SETP       0x0
-#define LACAN_VAR_TORQO_MAX        0x0
-#define LACAN_VAR_TORQO_MIN         0x0
-#define LACAN_VAR_TORQO             0x0
-#define LACAN_VAR_TORQO_SETP        0x0
+#define LACAN_VAR_MOD           0xC0
+
+//Modos
+#define LACAN_VAR_MOD_VEL       0x00
+#define LACAN_VAR_MOD_MPPT      0x01
+#define LACAN_VAR_MOD_TORQ      0x02
+#define LACAN_VAR_MOD_POT       0x03
+#define LACAN_VAR_MOD_INER      0x04
 
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
@@ -130,12 +110,6 @@
 #define LACAN_ERR_INTERNAL_TRIP     0x39
 #define LACAN_ERR_EXTERNAL_TRIP     0x40
 
-// Diccionario de tipos de solicitudes (REQ). 3 bits (0x0 a 0x7)
-#define LACAN_REQ_SET           0x01
-#define LACAN_REQ_DO            0x02
-#define LACAN_REQ_QRY           0x03
-
-
 // C digos de respuesta del protocolo
 #define LACAN_SUCCESS           0
 #define LACAN_FAILURE           -1
@@ -146,6 +120,7 @@
 #define PENDACK         0
 #define RECEIVED        1
 #define ACK_TIMEOUT     2
+
 //Numero de reintentos de ack
 #define RETRIES 2
 
@@ -167,10 +142,10 @@
 
 
 #define HB_TIME 5000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
-#define DEAD_HB_TIME HB_TIME*2+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (10.5 seg)
+#define DEAD_HB_TIME HB_TIME*3+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (15.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
 //#define WAIT_ACK_TIME 500            //tiempo de espera un ack
-#define WAIT_ACK_TIME 1000            //tiempo de espera un ack
+#define WAIT_ACK_TIME 3000            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
 //que variables esta tomando como referencia para realizar el control (de esta manera se puede
@@ -192,14 +167,22 @@ struct LACAN_MSG{
    uint16_t SENTIDO:1;
    uint16_t DLC:4;
    uint16_t ID:11;
-   uint16_t BYTE0:8;
+  /* uint16_t BYTE0:8;
    uint16_t BYTE1:8;
    uint16_t BYTE2:8;
    uint16_t BYTE3:8;
    uint16_t BYTE4:8;
    uint16_t BYTE5:8;
    uint16_t BYTE6:8;
-   uint16_t BYTE7:8;
+   uint16_t BYTE7:8;*/
+  char BYTE0;
+  char BYTE1;
+  char BYTE2;
+  char BYTE3;
+  char BYTE4;
+  char BYTE5;
+  char BYTE6;
+  char BYTE7;
 };
 
 typedef struct LACAN_MSG LACAN_MSG;
@@ -212,6 +195,7 @@ struct  TIMED_MSG{
         QTimer ack_timer;
         uint8_t ack_status;
         uint8_t retries;
+        uint8_t show_miss_ack;
 };
 
 
@@ -232,13 +216,20 @@ typedef struct HB_CONTROL HB_CONTROL;
 //QString fun, com, dest, var_type, var_val, code;
 struct ABSTRACTED_MSG{
 
-    QString fun, com, dest, var_type, var_val, err_code, ack_res, ack_code,curr_time;
+    QString fun, com, dest, orig, var_type, var_val, err_code, ack_res, ack_code,curr_time;
 
 };
 
 struct variable {
   QString tipo;
   uint16_t id;
+};
+
+struct LACAN_VAR {
+  uint16_t instantanea; //ID de instantena
+  uint16_t setp;        //ID de setpoint
+  uint16_t max;         //valor del limite superior
+  uint16_t min;         //valor del limite inferior
 };
 
 #endif // PC_H_INCLUDED

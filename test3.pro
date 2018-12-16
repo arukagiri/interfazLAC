@@ -39,8 +39,12 @@ SOURCES += \
     LACAN_PRO.cpp \
     better_serialfunc.cpp \
     addnewdevdialog.cpp \
-    lacan_limits.cpp \
-    volante.cpp
+    volante.cpp \
+    bytesend.cpp \
+    lacan_detect.cpp \
+    openport.cpp \
+    boost.cpp \
+    senderthread.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -57,10 +61,13 @@ HEADERS += \
     lacan_detect.h \
     better_serialfunc.h \
     addnewdevdialog.h \
-    limtes.h \
     lacan_limits_gen.h \
-    lacan_limits.h \
-    volante.h
+    volante.h \
+    bytesend.h \
+    openport.h \
+    lacan_limits_vol.h \
+    boost.h \
+    senderthread.h
 
 FORMS += \
         mainwindow.ui \
@@ -70,7 +77,11 @@ FORMS += \
     estadored.ui \
     gen_eolico.ui \
     addnewdevdialog.ui \
-    volante.ui
+    volante.ui \
+    bytesend.ui \
+    openport.ui \
+    boost.ui \
+    boost.ui
 
 RESOURCES += \
     imagenes.qrc

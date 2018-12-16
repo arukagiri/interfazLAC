@@ -9,8 +9,10 @@
 
 void serialsend2(QSerialPort& serial_port, LACAN_MSG msg);
 void sendinit2(QSerialPort& serial_port,uint8_t bdr);
-void openport2(uint8_t bdr, QSerialPort *serial_port);
+bool openport2(uint8_t bdr, QSerialPort *serial_port);
 LACAN_MSG mensaje_recibido2(char *pila);
-bool readport2(char *pila, QSerialPort& serial_port);
+
+bool readport(char *pila, QSerialPort& serial_port);
+uint16_t readport2(char *pila, uint16_t *first_byte, QSerialPort& serial_port);
 
 #endif // BETTER_SERIALFUNC_H
