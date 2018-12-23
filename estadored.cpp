@@ -8,6 +8,7 @@
 #include "PC.h"
 #include <QTimer>
 #include "volante.h"
+#include "boost.h"
 #include "lacan_detect.h"
 #include <QString>
 
@@ -21,29 +22,30 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
     time_2sec = new QTimer();
 
-    gen_vo=-9999999;
+  /*  gen_vo=-9999999;
     gen_io=-9999999;
     boost_vo=-9999999;
     boost_io=-9999999;
     vol_vo=-9999999;
-    vol_io=-9999999;
-
+    vol_io=-9999999;*/
 
     ui->label_gen_vo->setText("----");
     ui->label_gen_io->setText("----");
     ui->label_gen_velocidad->setText("----");
     ui->label_gen_torque->setText("----");
-    ui->label_gen_modo->setText("----");
+    ui->label_gen_modo->setText("Modo: ----");
 
     ui->label_vol_vo->setText("----");
     ui->label_vol_io->setText("----");
     ui->label_vol_velocidad->setText("----");
     ui->label_vol_torque->setText("----");
+    ui->label_vol_modo->setText("Modo: ----");
 
     ui->label_boost_vi->setText("----");
     ui->label_boost_ii->setText("----");
     ui->label_boost_vo->setText("----");
     ui->label_boost_io->setText("----");
+    ui->label_boost_modo->setText("Modo: ----");
 
     send_qry();
     set_states();
@@ -67,20 +69,7 @@ void EstadoRed::refresh_values(){
         ui->label_gen_io->setText("----");
         ui->label_gen_velocidad->setText("----");
         ui->label_gen_torque->setText("----");
-        ui->label_gen_modo->setText("----");
-    }
-
-    /*if(mw->boost_connected){
-        ui->label_boost_vo->setText(QString::number(boost_vo));
-        ui->label_boost_io->setText(QString::number(boost_io));
-        ui->label_boost_vi->setText(QString::number(boost_vi));
-        ui->label_boost_ii->setText(QString::number(boost_io));
-    }
-    else{
-        ui->label_boost_vo->setText("----");
-        ui->label_boost_io->setText("----");
-        ui->label_boost_vi->setText("----");
-        ui->label_boost_ii->setText("----");
+        ui->label_gen_modo->setText("Modo: ----");
     }
 
     if(mw->vol_connected){
@@ -88,13 +77,32 @@ void EstadoRed::refresh_values(){
         ui->label_vol_io->setText(QString::number(vol_io));
         ui->label_vol_velocidad->setText(QString::number(vol_vel));
         ui->label_vol_torque->setText(QString::number(vol_tor));
+        ui->label_vol_modo->setText(detect_mode(vol_mod));
     }
     else{
         ui->label_vol_vo->setText("----");
         ui->label_vol_io->setText("----");
         ui->label_vol_velocidad->setText("----");
         ui->label_vol_torque->setText("----");
+        ui->label_vol_modo->setText("Modo: ----");
+    }
+
+    /*if(mw->boost_connected){
+        ui->label_boost_vo->setText(QString::number(boost_vo));
+        ui->label_boost_io->setText(QString::number(boost_io));
+        ui->label_boost_vi->setText(QString::number(boost_vi));
+        ui->label_boost_ii->setText(QString::number(boost_io));
+        ui->label_boost_modo->setText(detect_mode(boost_mod));
+    }
+    else{
+        ui->label_boost_vo->setText("----");
+        ui->label_boost_io->setText("----");
+        ui->label_boost_vi->setText("----");
+        ui->label_boost_ii->setText("----");
+        ui->label_boost_modo->setText("Modo: ----");
     }*/
+
+
 }
 
 void EstadoRed::send_qry(){
@@ -107,20 +115,27 @@ void EstadoRed::send_qry(){
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_W_INST);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        LACAN_Query(mw,LACAN_VAR_TORQ_INST);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         LACAN_Query(mw,LACAN_VAR_MOD);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    }/*
+    }
+
     if(mw->vol_connected){
         mw->dest=LACAN_ID_VOLANTE;
-        LACAN_Query(mw,LACAN_VAR_VO);
+        LACAN_Query(mw,LACAN_VAR_VO_INST);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        LACAN_Query(mw,LACAN_VAR_IO);
+        LACAN_Query(mw,LACAN_VAR_IO_INST);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        LACAN_Query(mw,LACAN_VAR_W);
+        LACAN_Query(mw,LACAN_VAR_W_INST);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        LACAN_Query(mw,LACAN_VAR_MOD_TORQ);
+        LACAN_Query(mw,LACAN_VAR_TORQ_INST);
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        LACAN_Query(mw,LACAN_VAR_MOD);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
+
+    /*
     if(mw->boost_connected){
         mw->dest=LACAN_ID_BOOST;
         LACAN_Query(mw,LACAN_VAR_VO);
@@ -159,64 +174,78 @@ void EstadoRed::set_states(){
 }
 
 void EstadoRed::ERpost_Handler(LACAN_MSG msg){
+
     uint16_t source=msg.ID&LACAN_IDENT_MASK;
+    uint8_t variable=msg.BYTE1;
+
+    recibed_val.var_char[0]=msg.BYTE2;
+    recibed_val.var_char[1]=msg.BYTE3;
+    recibed_val.var_char[2]=msg.BYTE4;
+    recibed_val.var_char[3]=msg.BYTE5;
+
     switch (source) {
-    /*case LACAN_ID_BOOST:
-        switch (msg.BYTE1) {
-        case LACAN_VAR_IO_INST:
-            boost_io=msg.BYTE2;
-            break;
-        case LACAN_VAR_VO_INST:
-            boost_vo=msg.BYTE2;
-            break;
-        default:
-            break;
-        }
-        break;*/
+        case LACAN_ID_GEN:
+            //se la paso a la pantalla del gen, si esta abierta
+            emit postforGEN_arrived(msg);
 
-    case LACAN_ID_GEN:
+            switch (variable) {
+                case LACAN_VAR_IO_INST:
+                    gen_io = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_VO_INST:
+                    gen_vo = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_TORQ_INST:
+                    gen_tor = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_W_INST:
+                    gen_vel = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_MOD:
+                    gen_mod = recibed_val.var_char[0];
+                    break;
+                default:
+                    break;
+            }
+            break;
 
-        //se la paso a la pantalla de gen, si esta abierta
-        emit postforGEN_arrived(msg);
+       case LACAN_ID_VOLANTE:
+        //se la paso a la pantalla del gen, si esta abierta
+        emit postforVOL_arrived(msg);
 
-        switch (msg.BYTE1) {
-        recibed_val.var_char[0]=msg.BYTE2;
-        recibed_val.var_char[1]=msg.BYTE3;
-        recibed_val.var_char[2]=msg.BYTE4;
-        recibed_val.var_char[3]=msg.BYTE5;
-        case LACAN_VAR_IO_INST:
-            gen_io = recibed_val.var_float;
-            break;
-        case LACAN_VAR_VO_INST:
-            gen_vo = recibed_val.var_float;
-            break;
-        case LACAN_VAR_TORQ_INST:
-            gen_tor = recibed_val.var_float;
-            break;
-        case LACAN_VAR_W_INST:
-            gen_vel = recibed_val.var_float;
-            break;
-        case LACAN_VAR_MOD:
-            gen_mod = recibed_val.var_char[0];
-            break;
-        default:
-            break;
+        switch (variable) {
+            case LACAN_VAR_IO_INST:
+                vol_io = recibed_val.var_float;
+                break;
+            case LACAN_VAR_VO_INST:
+                vol_vo = recibed_val.var_float;
+                break;
+            case LACAN_VAR_TORQ_INST:
+                vol_tor = recibed_val.var_float;
+                break;
+            case LACAN_VAR_W_INST:
+                vol_vel = recibed_val.var_float;
+                break;
+            case LACAN_VAR_MOD:
+                vol_mod = recibed_val.var_char[0];
+                break;
+            default:
+                break;
         }
         break;
 
-   /* case LACAN_ID_VOLANTE:
-        switch (msg.BYTE1) {
-        case LACAN_VAR_IO_INST:
-            vol_io=msg.BYTE2;
-            break;
-        case LACAN_VAR_VO_INST:
-            vol_vo=msg.BYTE2;
-            break;
-        default:
-            break;
-        }
-        break;*/
-
+            /*case LACAN_ID_BOOST:
+                switch (variable) {
+                case LACAN_VAR_IO_INST:
+                    boost_io=msg.BYTE2;
+                    break;
+                case LACAN_VAR_VO_INST:
+                    boost_vo=msg.BYTE2;
+                    break;
+                default:
+                    break;
+                }
+                break;*/
     default:
         break;
     }
@@ -229,7 +258,7 @@ void EstadoRed::on_button_vol_clicked()
     volante *vol_win = new volante(mw);
     vol_win->setModal(true);
     vol_win->show();
-   // connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
+    connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
 void EstadoRed::on_button_gen_clicked()
@@ -239,6 +268,15 @@ void EstadoRed::on_button_gen_clicked()
     gen_win->show();
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
+
+void EstadoRed::on_button_boost_clicked()
+{
+    boost *boost_win = new boost(mw);
+    boost_win->setModal(true);
+    boost_win->show();
+   // connect(this, SIGNAL(postforBOOST_arrived(LACAN_MSG)), boost_win, SLOT(GENpost_Handler(LACAN_MSG)));
+}
+
 
 void EstadoRed::closeEvent(QCloseEvent *e){
     mw->change_ERflag();
@@ -251,6 +289,10 @@ EstadoRed::~EstadoRed()
 {
     delete ui;
 }
+
+
+
+
 
 void EstadoRed::on_pushButton_clicked()
 {
@@ -270,3 +312,5 @@ void EstadoRed::on_pushButton_clicked()
     else
         ui->button_vol->setEnabled(true);
 }
+
+

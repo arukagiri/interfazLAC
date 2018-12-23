@@ -1,28 +1,11 @@
 ==================================================================================================================================
-HABLAR CON JOAQUIN:
+INTERFAZ:
 ==================================================================================================================================
-el modo MPPT no envia ninguna consigna?
-
-CORRIENTE DE SALIDA EN EL DB?
-CORRIENTE DE BATERIA Y CORRIENTE CONVERTIDOR
-
-idem para el VOLANTE
+ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
 si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
 actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
 
-==================================================================================================================================
-INTERFAZ:
-
-ver por que se me loguean los qrys..
-
-ventana comandar --> variable IBAT hace caca porque tiene limites negativos
-
-enviar hexadecimales
-==================================================================================================================================
-LISTA DE DISPOSITIVOS
-
-==================================================================================================================================
 REVISAR EN INTERFAZ:
 
 ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows o no
@@ -30,33 +13,19 @@ ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows 
 ver deadtime HB y refresco de ventanas
 
 ==================================================================================================================================
-MICRO	
 ==================================================================================================================================
-Hay que hacer algo con los handlers de:
-ERR
-ACK
-HB
-POST
-
-#define BASE_TORQUE         		// Base torque (N.m)
-#define BASE_FLUX       	
-
-Set Handler:
-TorqueRef = data.iq/BASE_TORQUE;
-
-i = data.iq/BASE_CURRENT; //siempre usamos la misma base para todas las corrientes?
-//tmpValue = data.u32;  ??
-
-
-para setear cada variable tengo que verificar el estado? o solo para setear el troq, w, y potencia
-
-
------------------------------------
-actualizar diccionarios  -> ver variables que no van -> las sacamos?  ==> ver variables del gen, limites
-
-valores de variables xunidad (HVACI_sensorless-setting.h --> bases para normalizar)
-
-manejo de ack---> hace falta el vector de ack?
-
-
 ==================================================================================================================================
+PROBAR EL LUNES:
+
+ver de hacer andar el code compouse
+
+ver de mandarle post/set con distintos float, double lo que sea... 
+por que una vez aunduvo y ahora no anda?
+
+VOLANTE: 
+	-ver variables y limites
+	-ID es ISD?
+	- la ID va siempre seteable, en ambos modos?
+#define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
+
+VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST

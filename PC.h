@@ -72,6 +72,11 @@
 #define LACAN_VAR_V_BAT_SETP    0x5D
 #define LACAN_VAR_TORQ_INST     0x6C
 #define LACAN_VAR_TORQ_SETP     0x6D
+#define LACAN_VAR_ID_INST       0x66
+#define LACAN_VAR_ID_SETP       0x67
+#define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
+#define LACAN_VAR_STANDBY_W_SETP 0x6D
+
 #define LACAN_VAR_MOD           0xC0
 
 //Modos
@@ -79,6 +84,8 @@
 #define LACAN_VAR_MOD_MPPT      0x01
 #define LACAN_VAR_MOD_TORQ      0x02
 #define LACAN_VAR_MOD_POT       0x03
+#define LACAN_VAR_MOD_INER      0x04
+
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)
 #define LACAN_RES_OK                0x00
@@ -160,14 +167,22 @@ struct LACAN_MSG{
    uint16_t SENTIDO:1;
    uint16_t DLC:4;
    uint16_t ID:11;
-   uint16_t BYTE0:8;
+  /* uint16_t BYTE0:8;
    uint16_t BYTE1:8;
    uint16_t BYTE2:8;
    uint16_t BYTE3:8;
    uint16_t BYTE4:8;
    uint16_t BYTE5:8;
    uint16_t BYTE6:8;
-   uint16_t BYTE7:8;
+   uint16_t BYTE7:8;*/
+  char BYTE0;
+  char BYTE1;
+  char BYTE2;
+  char BYTE3;
+  char BYTE4;
+  char BYTE5;
+  char BYTE6;
+  char BYTE7;
 };
 
 typedef struct LACAN_MSG LACAN_MSG;

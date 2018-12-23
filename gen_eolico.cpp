@@ -14,7 +14,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 {
 
     ui->setupUi(this);
-
     mw = qobject_cast<MainWindow*>(this->parent());
 
 //*******************************************************************
@@ -25,9 +24,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 //si paras el timer que corre en la pantalla estado de red, esto anda perfecto
  //creo que cuando mandas los qrys de estado de red te pisan este valor
 //*********************************************************************
-
-    time_2sec = new QTimer();
-
 //COMBO BOX MODO
 
     //ui->combo_modo->addItem("Velocidad (0)",QVariant(0));
@@ -68,6 +64,8 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->label_gen_tor->setText("----");
 
 //TIMER
+
+    time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
     time_2sec->start(10000);      //le pongo 10 para probar, cambiar a 2  <---------------------
 

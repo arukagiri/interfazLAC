@@ -92,6 +92,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>pushButton</tabstop>
+  <tabstop>ports_comboBox</tabstop>
+  <tabstop>update_pushButton</tabstop>
+  <tabstop>autocon_checkBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

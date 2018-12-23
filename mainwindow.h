@@ -89,7 +89,14 @@ private slots:
 
     void on_button_ESTADO_RED_2_clicked();
 
+    void on_pushButton_clicked(bool checked);
+
     void handleSendTimeout();
+
+private:
+    void create_varmap_gen();
+    void create_varmap_vol();
+
 
 public:
 

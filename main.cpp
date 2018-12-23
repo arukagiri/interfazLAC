@@ -18,14 +18,6 @@ int main(int argc, char *argv[])
     OpenPort* op=new OpenPort();
 
     op->show();
-    /*
-    uint16_t bdr=0x05; //baudrate, parte del mensaje de inicializacion del adaptador
-
-    QSerialPort *serial_port = new QSerialPort();
-
-    openport2(bdr,serial_port);
-    */
-
 
     return a.exec();
 }

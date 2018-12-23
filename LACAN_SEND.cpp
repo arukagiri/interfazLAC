@@ -4,6 +4,7 @@
 #include <QTableWidget>
 #include <QString>
 #include <QDebug>
+
 //Implementacion de todas las funciones involucradas en el envio de mensajes segun del tipo que se requiera
 //Cada tipo tiene una cierta cantidad de bytes de datos caracteristica, la cual depende de las funciones del mensaje
 
@@ -106,6 +107,7 @@ int16_t LACAN_Set(MainWindow *mw, uint16_t variable, uint16_t data){
 
 int16_t LACAN_Post(MainWindow* mw, uint16_t  variable, data_can data){
     LACAN_MSG* msg=new LACAN_MSG;
+
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
     msg->DLC=6;

@@ -22,6 +22,11 @@
 #include <QColor>
 #include "lacan_limits_gen.h"
 #include "bytesend.h"
+#include <stdlib.h>
+#include <string.h>
+#include "lacan_limits_vol.h"
+#include <QThread>
+#include "tiempo.h"
 #include "senderthread.h"
 
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
@@ -245,60 +250,18 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     ui->tableWidget_sent->setShowGrid(false);
     ui->tableWidget_sent->setStyleSheet("QTableView {selection-background-color: blue;}");
 
-    /* LACAN_VAR IO;
-    IO.instantanea=LACAN_VAR_IO_INST;
-    IO.setp=LACAN_VAR_IO_SETP;
-    IO.max=LACAN_VAR_GEN_IO_MAX;
-    IO.min=LACAN_VAR_GEN_IO_MIN;*/
-    LACAN_VAR ISD;
-    ISD.instantanea=LACAN_VAR_ISD_INST;
-    ISD.setp=LACAN_VAR_ISD_SETP;
-    ISD.max=LACAN_VAR_GEN_ISD_MAX;
-    ISD.min=LACAN_VAR_GEN_ISD_MIN;
-    LACAN_VAR IEF;
-    IEF.instantanea=LACAN_VAR_IEF_INST;
-    IEF.setp=LACAN_VAR_IEF_SETP;
-    IEF.max=LACAN_VAR_GEN_IEF_MAX;
-    IEF.min=LACAN_VAR_GEN_IEF_MIN;
-    LACAN_VAR PO;
-    PO.instantanea=LACAN_VAR_PO_INST;
-    PO.setp=LACAN_VAR_PO_SETP;
-    PO.max=LACAN_VAR_GEN_PO_MAX;
-    PO.min=LACAN_VAR_GEN_PO_MIN;
-    LACAN_VAR VO;
-    VO.instantanea=LACAN_VAR_VO_INST;
-    VO.setp=LACAN_VAR_VO_SETP;
-    VO.max=LACAN_VAR_GEN_VO_MAX;
-    VO.min=LACAN_VAR_GEN_VO_MIN;
-    LACAN_VAR TORQ;
-    TORQ.instantanea=LACAN_VAR_TORQ_INST;
-    TORQ.setp=LACAN_VAR_TORQ_SETP;
-    TORQ.max=LACAN_VAR_GEN_TORQ_MAX;
-    TORQ.min=LACAN_VAR_GEN_TORQ_MIN;
-    LACAN_VAR W;
-    W.instantanea=LACAN_VAR_W_INST;
-    W.setp=LACAN_VAR_W_SETP;
-    W.max=LACAN_VAR_GEN_W_MAX;
-    W.min=LACAN_VAR_GEN_W_MIN;
-    LACAN_VAR IBAT;
-    IBAT.instantanea=LACAN_VAR_I_BAT_INST;
-    IBAT.setp=LACAN_VAR_I_BAT_SETP;
-    IBAT.max=LACAN_VAR_GEN_IBAT_MAX;
-    IBAT.min=LACAN_VAR_GEN_IBAT_MIN;
-    //varmap_gen["Corriente de Salida"]=IO;
-    varmap_gen["Corriente de ISD"]=ISD;
-    varmap_gen["Corriente Eficaz"]=IEF;
-    varmap_gen["Potencia de Salida"]=PO;
-    varmap_gen["Tension de Salida"]=VO;
-    varmap_gen["Torque"]=TORQ;
-    varmap_gen["Velocidad Angular"]=W;
-    varmap_gen["Corriente de Bateria"]=IBAT;
+    create_varmap_gen();
+    create_varmap_vol();
+
+
+
 
     connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
     //VOLVER A PONER EL PRIMERO, VERSION LULI
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
     //LA MALA
     //connect(serial_port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
+
 }
 
 void MainWindow::handlePortError(QSerialPort::SerialPortError error){
@@ -472,7 +435,6 @@ void MainWindow::on_button_STOP_clicked()
     for(int i=0;i<50;i++){
         LACAN_Acknowledge(this,1,LACAN_RES_OK);
     }
-
 }
 
 void MainWindow::verificarHB(){
@@ -538,28 +500,37 @@ void MainWindow::verificarACK(){
 void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
-    bool newmsgflag=0;
-    static char pila[100]={0};
-    newmsgflag=readport2(pila, *serial_port);
+    uint16_t cant_msg=0;
+    uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
+    static char pila[200]={0};           //esto no hace falta que sea static creo*****************************************************************************
+    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
-    if(newmsgflag){
+    for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
         int result=0;
         uint prevsize=0;
+        char sub_pila[13]={0}; //para ir guardando los mensajes parciales que pueden estar adentro de la pila. tiene la longitud del tamano maximo de un mensaje del adaptador
 
-        msg=mensaje_recibido2(pila);
+        //sub_pila=pila(first_byte[i],first_byte[i+1]-1);  //extraigo de pila, un solo mensaje
+        int h=0;
+        for(int j=first_byte[i];j<first_byte[i+1];j++){
+            sub_pila[h]=pila[j];
+            h++;
+        } //extraigo de pila, un solo mensaje
+
+        msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
 
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
-        }else{
+        }//else{
             result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
             //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
             if(hb_con.size()>prevsize){
                 connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));//VER sin & no compila, ver si anda asi
             }
-        }
+        //}
         this->agregar_log_rec(msg_log);
     }
 }
@@ -713,7 +684,7 @@ void MainWindow::do_stuff(){
         }
 
     }else{
-        //LACAN_Heartbeat(this);
+        LACAN_Heartbeat(this);
     }
 
 }
@@ -735,14 +706,117 @@ bool MainWindow::device_is_connected(uint8_t id){
     return false;
 }
 
+void MainWindow::create_varmap_gen(){
+    /* LACAN_VAR IO;
+    IO.instantanea=LACAN_VAR_IO_INST;
+    IO.setp=LACAN_VAR_IO_SETP;
+    IO.max=LACAN_VAR_GEN_IO_MAX;
+    IO.min=LACAN_VAR_GEN_IO_MIN;*/
+    LACAN_VAR ISD_GEN;
+    ISD_GEN.instantanea=LACAN_VAR_ISD_INST;
+    ISD_GEN.setp=LACAN_VAR_ISD_SETP;
+    ISD_GEN.max=LACAN_VAR_GEN_ISD_MAX;
+    ISD_GEN.min=LACAN_VAR_GEN_ISD_MIN;
+    LACAN_VAR IEF_GEN;
+    IEF_GEN.instantanea=LACAN_VAR_IEF_INST;
+    IEF_GEN.setp=LACAN_VAR_IEF_SETP;
+    IEF_GEN.max=LACAN_VAR_GEN_IEF_MAX;
+    IEF_GEN.min=LACAN_VAR_GEN_IEF_MIN;
+    LACAN_VAR PO_GEN;
+    PO_GEN.instantanea=LACAN_VAR_PO_INST;
+    PO_GEN.setp=LACAN_VAR_PO_SETP;
+    PO_GEN.max=LACAN_VAR_GEN_PO_MAX;
+    PO_GEN.min=LACAN_VAR_GEN_PO_MIN;
+    LACAN_VAR VO_GEN;
+    VO_GEN.instantanea=LACAN_VAR_VO_INST;
+    VO_GEN.setp=LACAN_VAR_VO_SETP;
+    VO_GEN.max=LACAN_VAR_GEN_VO_MAX;
+    VO_GEN.min=LACAN_VAR_GEN_VO_MIN;
+    LACAN_VAR TORQ_GEN;
+    TORQ_GEN.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ_GEN.setp=LACAN_VAR_TORQ_SETP;
+    TORQ_GEN.max=LACAN_VAR_GEN_TORQ_MAX;
+    TORQ_GEN.min=LACAN_VAR_GEN_TORQ_MIN;
+    LACAN_VAR W_GEN;
+    W_GEN.instantanea=LACAN_VAR_W_INST;
+    W_GEN.setp=LACAN_VAR_W_SETP;
+    W_GEN.max=LACAN_VAR_GEN_W_MAX;
+    W_GEN.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR IBAT_GEN;
+    IBAT_GEN.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_GEN.setp=LACAN_VAR_I_BAT_SETP;
+    IBAT_GEN.max=LACAN_VAR_GEN_IBAT_MAX;
+    IBAT_GEN.min=LACAN_VAR_GEN_IBAT_MIN;
+    //varmap_gen["Corriente de Salida"]=IO;
+    varmap_gen["Corriente de ISD"]=ISD_GEN;
+    varmap_gen["Corriente Eficaz"]=IEF_GEN;
+    varmap_gen["Potencia de Salida"]=PO_GEN;
+    varmap_gen["Tension de Salida"]=VO_GEN;
+    varmap_gen["Torque"]=TORQ_GEN;
+    varmap_gen["Velocidad Angular"]=W_GEN;
+    varmap_gen["Corriente de Bateria"]=IBAT_GEN;
+}
+
+void MainWindow::create_varmap_vol(){
+    LACAN_VAR W_VOL;
+    W_VOL.instantanea=LACAN_VAR_W_INST;
+    W_VOL.setp=LACAN_VAR_W_SETP;
+    W_VOL.max=LACAN_VAR_GEN_W_MAX;
+    W_VOL.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR ID_VOL;
+    ID_VOL.instantanea=LACAN_VAR_ID_INST;
+    ID_VOL.setp=LACAN_VAR_ID_SETP;
+    ID_VOL.max=LACAN_VAR_VOL_ID_MAX;
+    ID_VOL.min=LACAN_VAR_VOL_ID_MIN;
+    LACAN_VAR W_STBY_VOL;
+    W_STBY_VOL.instantanea=LACAN_VAR_STANDBY_W_INST;
+    W_STBY_VOL.setp=LACAN_VAR_STANDBY_W_SETP;
+    W_STBY_VOL.max=LACAN_VAR_VOL_STANDBY_W_MAX;
+    W_STBY_VOL.min=LACAN_VAR_VOL_STANDBY_W_MIN;
+    LACAN_VAR PO_VOL;
+    PO_VOL.instantanea=LACAN_VAR_PO_INST;
+    PO_VOL.setp=LACAN_VAR_PO_SETP;
+    //PO_VOL.max=LACAN_VAR_VOL_PO_MAX;
+    //PO_VOL.min=LACAN_VAR_VOL_PO_MIN;
+    LACAN_VAR VO_VOL;
+    VO_VOL.instantanea=LACAN_VAR_VO_INST;
+    VO_VOL.setp=LACAN_VAR_VO_SETP;
+    //VO_VOL.max=LACAN_VAR_VOL_VO_MAX;
+    //VO_VOL.min=LACAN_VAR_VOL_VO_MIN;
+    LACAN_VAR TORQ_VOL;
+    TORQ_VOL.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ_VOL.setp=LACAN_VAR_TORQ_SETP;
+    //TORQ_VOL.max=LACAN_VAR_VOL_TORQ_MAX;
+    //TORQ_VOL.min=LACAN_VAR_VOL_TORQ_MIN;
+    LACAN_VAR IBAT_VOL;
+    IBAT_VOL.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
+    //IBAT_VOL.max=LACAN_VAR_VOL_I_BAT_MAX;
+    //IBAT_VOL.min=LACAN_VAR_VOL_I_BAT_MIN;
+
+    varmap_vol["Corriente de ID"]=ID_VOL;
+    varmap_vol["Velocidad Angular"]=W_VOL;
+    varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
+    varmap_vol["Potencia de Salida"]=PO_VOL;
+    varmap_vol["Torque"]=TORQ_VOL;
+    varmap_vol["Tension de Salida"]=VO_VOL;
+    varmap_vol["Corriente de Bateria"]=IBAT_VOL;
+}
+
+void MainWindow::on_pushButton_clicked(bool checked)
+{
+    dest = LACAN_ID_GEN;
+    data_can val;
+    val.var_float=1.5;
+    LACAN_Post(this,LACAN_VAR_STANDBY_W_SETP,val);
+}
+
+
 void MainWindow::handleSendTimeout(){
     static int cont=0;
-    cont++;
-    if(cont>49){
-        qDebug()<<"ENVIADO";
-    }
     if(!stack.empty()){
         serialsend2(*serial_port,*stack.back());
+        qDebug()<<"ENVIADO";
         stack.pop_back();
     }
 
