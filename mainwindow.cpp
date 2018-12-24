@@ -500,11 +500,13 @@ void MainWindow::verificarACK(){
 void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
-    uint16_t cant_msg=0;
+    uint16_t cant_msg=0, msgLeft=0;
     uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
     static vector<char> pila;
-    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
+
+    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
+    msgLeft = cant_msg;
     for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
         int result=0;
@@ -513,11 +515,17 @@ void MainWindow::handleRead(){
 
         //sub_pila=pila(first_byte[i],first_byte[i+1]-1);  //extraigo de pila, un solo mensaje
         int h=0;
-        for(uint j=first_byte[i];j<first_byte[i+1];j++){
+        for(uint j=0;j<first_byte[1];j++){
             sub_pila[h]=pila.at(j);
             h++;
         } //extraigo de pila, un solo mensaje
         pila.erase(pila.begin()+first_byte[i],pila.begin()+first_byte[i+1]); //borro el mensaje que acabo de copiar a la sub pila
+        //reconfiguro los indices q indican el comienzo de cada mensaje
+        for(uint k=1; k<msgLeft; k++){
+            first_byte[k]=first_byte[k+1];
+        }
+        msgLeft--;
+
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
