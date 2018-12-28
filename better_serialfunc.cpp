@@ -108,21 +108,19 @@ LACAN_MSG mensaje_recibido2(char *sub_pila){
 //Se encarga de leer el puerto, busca un nuevo dato, si ReadChar no lo encuentra regresa automaticamente
 //Verifica los primeros 12bits para verificar que es un mensaje valido, no se contempla la verificacion del final del mensaje
 /*VER si hace falta pasar index_pila, quiza podria ser estatica dentro de readport, haciendo la verificacion del mensaje ahi*/
-uint16_t readport2(vector<char> pila, uint16_t* first_byte, QSerialPort& serial_port){
+uint16_t readport2(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
     qint64 newdataflag = 0;
     char buffer[200];
     uint cantBytes=0;
     uint16_t cant_msg = 0;
     static uint16_t index_buffer=0;
-    uint16_t dlc=0;
+    static uint16_t dlc=0;
     first_byte[0]=0;    //esto es redundante pero fue, guarda la posicion del primer byte del proximo mensaje
+    bool lastMsgIsFull = false;
 
     //ver de poner un while, es posible perder datos de esta forma TESTEAR
     while((newdataflag=serial_port.read(buffer+index_buffer,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
-   /*     QString text = QString::number(buffer[index_buffer]);
-        bool ok = true;
-        int value = text.toInt(&ok, 16);
-        qDebug<<QString::number(value);*/
+        lastMsgIsFull=false;
         cantBytes++;
         qDebug()<<"nuevo byte: "<<QString::number(buffer[index_buffer]);
         index_buffer++;        //ya apunta a la siguiente
@@ -152,14 +150,12 @@ uint16_t readport2(vector<char> pila, uint16_t* first_byte, QSerialPort& serial_
 
         if((index_buffer-first_byte[cant_msg]>=(dlc+5))){
             if(((buffer[dlc+4+first_byte[cant_msg]])&0xFF)==0x55){
-                if(buffer[first_byte[cant_msg]+4]==8){
-                    qDebug()<<"llego ack";
-                }//comprobamos que el mensaje llego entero
-            qDebug()<<"ENTRO UN MENSAJE COMPLETO";
-            //index_buffer=0; //reseteamos variables para volverlas a usar en el proximo mensaje
-            dlc=0;
-            cant_msg++;
-            first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
+                qDebug()<<"ENTRO UN MENSAJE COMPLETO";
+                //index_buffer=0; //reseteamos variables para volverlas a usar en el proximo mensaje
+                dlc=0;
+                cant_msg++;
+                lastMsgIsFull=true;
+                first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
                                                 //guardo la primer direccion del siguiente mensaje, si es que existe (index_buffer ya apunta al proximo)
             }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
             else{
@@ -168,15 +164,19 @@ uint16_t readport2(vector<char> pila, uint16_t* first_byte, QSerialPort& serial_
             }
         }
     }
-    for(uint i=0;i<cantBytes;i++){
-        pila.push_back(buffer[i]);
+    for(uint i=cantBytes;i>0;i--){
+        pila.push_back(buffer[index_buffer-i]);
     }
-    index_buffer=index_buffer-first_byte[cant_msg];
+    if(lastMsgIsFull){
+        index_buffer=0;
+    }else{
+        index_buffer=index_buffer-first_byte[cant_msg];
+    }
     return cant_msg;
 }
 
 
-bool openport2(uint8_t bdr, QSerialPort* serial_port){
+/*bool openport2(uint8_t bdr, QSerialPort* serial_port){
     char* pila= new char[7];
     char retval;
     bool com_detected=0;
@@ -232,4 +232,4 @@ bool openport2(uint8_t bdr, QSerialPort* serial_port){
     wait_portinit->stop();
     return false;
 
-}
+}*/
