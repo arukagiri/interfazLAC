@@ -17,6 +17,6 @@ LACAN_MSG mensaje_recibido2(char *pila);
 //ELIMINAR
 bool readport(char *pila, QSerialPort& serial_port);
 
-uint16_t readport2(vector<char> pila, uint16_t *first_byte, QSerialPort& serial_port);
+uint16_t readport2(vector<char> &pila, uint16_t *first_byte, QSerialPort& serial_port);
 
 #endif // BETTER_SERIALFUNC_H

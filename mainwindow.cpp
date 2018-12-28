@@ -125,13 +125,13 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
             abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
         }
         else{
-        val_union.var_char[0]=char(msg_log.back().BYTE3);
-        val_union.var_char[1]=char(msg_log.back().BYTE4);
-        val_union.var_char[2]=char(msg_log.back().BYTE5);
-        val_union.var_char[3]=char(msg_log.back().BYTE6);
+            val_union.var_char[0]=char(msg_log.back().BYTE3);
+            val_union.var_char[1]=char(msg_log.back().BYTE4);
+            val_union.var_char[2]=char(msg_log.back().BYTE5);
+            val_union.var_char[3]=char(msg_log.back().BYTE6);
 
-        val_float = val_union.var_float;
-        abs_msg.var_val=QString::number(double(val_float));
+            val_float = val_union.var_float;
+            abs_msg.var_val=QString::number(double(val_float));
         }
         break;
 
@@ -374,8 +374,8 @@ void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
     abs_msg=abstract_msg(msg_log);
     if(do_log){
         if(list_rec_cont>=LOG_LIMIT){  //limite de mensajes
-        QMessageBox::StandardButton reply;
-        reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+            QMessageBox::StandardButton reply;
+            reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
             if(reply==QMessageBox::Yes){
                 ui->tableWidget_received->clearContents();
                 ui->tableWidget_sent->clearContents();
@@ -386,24 +386,22 @@ void MainWindow::agregar_log_rec(vector <LACAN_MSG> msg_log){
                 ui->tableWidget_received->setRowCount(list_rec_cont);
                 ui->tableWidget_sent->setRowCount(list_send_cont);
                 do_log=TRUE;
-            }
-            else{
+            }else{
                 on_button_STOP_clicked();
             }
-        }
-        else{
-        list_rec_cont++;
-        ui->tableWidget_received->setRowCount(list_rec_cont);
-        ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.orig));
-        ui->tableWidget_received->setItem(inlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
-        ui->tableWidget_received->setItem(inlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
-        ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
-        ui->tableWidget_received->setItem(inlog_cont, 4, new QTableWidgetItem(abs_msg.com));
-        ui->tableWidget_received->setItem(inlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
-        ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
-        ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
-        ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
-        inlog_cont++;
+        }else{
+            list_rec_cont++;
+            ui->tableWidget_received->setRowCount(list_rec_cont);
+            ui->tableWidget_received->setItem(inlog_cont, 0, new QTableWidgetItem(abs_msg.orig));
+            ui->tableWidget_received->setItem(inlog_cont, 1, new QTableWidgetItem(abs_msg.fun));
+            ui->tableWidget_received->setItem(inlog_cont, 2, new QTableWidgetItem(abs_msg.var_type));
+            ui->tableWidget_received->setItem(inlog_cont, 3, new QTableWidgetItem(abs_msg.var_val));
+            ui->tableWidget_received->setItem(inlog_cont, 4, new QTableWidgetItem(abs_msg.com));
+            ui->tableWidget_received->setItem(inlog_cont, 5, new QTableWidgetItem(abs_msg.ack_code));
+            ui->tableWidget_received->setItem(inlog_cont, 6, new QTableWidgetItem(abs_msg.ack_res));
+            ui->tableWidget_received->setItem(inlog_cont, 7, new QTableWidgetItem(abs_msg.err_code));
+            ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
+            inlog_cont++;
         }
     }
     agregar_textlog(abs_msg,"Recibido");
@@ -500,11 +498,13 @@ void MainWindow::verificarACK(){
 void MainWindow::no_ACK_Handler(void){}
 
 void MainWindow::handleRead(){
-    uint16_t cant_msg=0;
+    uint16_t cant_msg=0, msgLeft=0;
     uint16_t first_byte[33]={0};        //notar que el primer elemento de este vector, siempre es 0
     static vector<char> pila;
-    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
     static uint16_t notsup_count, notsup_gen;
+
+    cant_msg=readport2(pila, first_byte, *serial_port); //devuelve la cantidad de mensajes que se levantaron del puerto
+    msgLeft = cant_msg;
     for(int i=0;i<cant_msg;i++){    //aca hay que ir recorriendo la pila, que puede tener mas de un mensaje
         LACAN_MSG msg;
         int result=0;
@@ -513,11 +513,17 @@ void MainWindow::handleRead(){
 
         //sub_pila=pila(first_byte[i],first_byte[i+1]-1);  //extraigo de pila, un solo mensaje
         int h=0;
-        for(uint j=first_byte[i];j<first_byte[i+1];j++){
+        for(uint j=0;j<first_byte[1];j++){
             sub_pila[h]=pila.at(j);
             h++;
         } //extraigo de pila, un solo mensaje
-        pila.erase(pila.begin()+first_byte[i],pila.begin()+first_byte[i+1]); //borro el mensaje que acabo de copiar a la sub pila
+        pila.erase(pila.begin()+first_byte[0],pila.begin()+first_byte[1]); //borro el mensaje que acabo de copiar a la sub pila
+        //reconfiguro los indices q indican el comienzo de cada mensaje
+        for(uint k=1; k<msgLeft; k++){
+            first_byte[k]=first_byte[k+1]-first_byte[k]+first_byte[k-1];
+        }
+        msgLeft--;
+
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);
         prevsize = hb_con.size();
@@ -816,7 +822,6 @@ void MainWindow::handleSendTimeout(){
     static int cont=0;
     if(!stack.empty()){
         serialsend2(*serial_port,*stack.back());
-        qDebug()<<"ENVIADO";
         stack.pop_back();
     }
 
