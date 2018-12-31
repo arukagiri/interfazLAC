@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>541</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -186,7 +186,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="button_ESTADO_RED_2">
+       <widget class="QPushButton" name="button_ByteSend">
         <property name="text">
          <string>Enviar Bytes</string>
         </property>
