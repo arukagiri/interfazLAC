@@ -1,5 +1,9 @@
 #include "lacan_detect.h"
 
+//Funciones utilizadas para transformar los valores numericos de los mensajes en su equivalente cualitativo String
+//para poder loguearlo y sea entendible para el usuario
+
+//Resultados
 QString detect_res(uint8_t res){
 switch(res){
 case LACAN_RES_OK:
@@ -30,6 +34,7 @@ default:
     return "No especificada/soportada";
 }}
 
+//Errores
 QString detect_err(uint8_t err){
     qDebug()<<"ERROR DENTRO DE DETECT = "<<err;
     switch (err){
@@ -70,6 +75,8 @@ QString detect_err(uint8_t err){
             return "No especificada/soportada";
         }
 }
+
+//Variables
 QString detect_var(uint8_t var){
        switch (var){
        case LACAN_VAR_STATUS:
@@ -156,7 +163,7 @@ QString detect_var(uint8_t var){
 
 }
 
-
+//Comandos
 QString detect_cmd(uint8_t cmd){
     switch(cmd){
     case LACAN_CMD_TRIP:
@@ -191,6 +198,7 @@ QString detect_cmd(uint8_t cmd){
     }
 }
 
+//Modo
 QString detect_mode(uint8_t modo){
     switch (modo){
     case LACAN_VAR_MOD_POT:

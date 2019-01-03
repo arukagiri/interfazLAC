@@ -6,7 +6,6 @@
 #include "estadored.h"
 #include "PC.h"
 #include <QDebug>
-#include "LACAN_SEND.h"
 #include <QtGui>
 #include <QGridLayout>
 #include <QLabel>
@@ -17,7 +16,6 @@
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
-#include "LACAN_REC.h"
 #include "addnewdevdialog.h"
 #include <QColor>
 #include "lacan_limits_gen.h"
@@ -427,68 +425,6 @@ void MainWindow::add_device_ui(uint16_t reactivatedDev){
     ui->the_one_true_list_DESTINO->addItem(name);
 }
 
-//En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
-//se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
-void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
-    dest=source;
-    LACAN_Acknowledge(this,code,LACAN_FAILURE); //Envia un acknowledge anunciando que dicho mensaje es incorrecto
-    //Aumento contadores de errores correspondientes
-    notsup_count++;
-    if(source&LACAN_ID_GEN){
-        notsup_gen++;
-    }
-
-}
-
-//Identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
-int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw){
-    //Extraemos remitente y funcion del mensaje
-    uint16_t source=mje.ID&LACAN_IDENT_MASK;
-    uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
-    uint8_t code;
-
-    //Segun la funcion se procede a manejar el contenido de los mensajes, en caso de mensajes incorrectos se ejecuta la
-    //funcion antes vista. En caso de no identificar la funcion se devuelve un codigo que indica que no existe dicho tipo
-    //de mensaje. En condiciones normales de funcionamiento el codigo devuelto indica un procesamiento exitoso
-    switch(fun){
-    case LACAN_FUN_DO:
-        code=mje.BYTE1;
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
-    break;
-    case LACAN_FUN_SET:
-        code=mje.BYTE1;
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
-    break;
-    case LACAN_FUN_QRY:
-        code=mje.BYTE1;
-        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
-    break;
-    case LACAN_FUN_ACK:
-        LACAN_ACK_Handler(mje.BYTE1, msg_ack);
-    break;
-    case LACAN_FUN_POST:
-        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
-    break;
-    case LACAN_FUN_ERR:
-        LACAN_ERR_Handler(source,mje.BYTE1);
-    break;
-    case LACAN_FUN_HB:
-        LACAN_HB_Handler(source, hb_con, mw);
-        break;
-    default:
-        return LACAN_NO_SUCH_MSG;
-    }
-    return LACAN_SUCCESS;
-}
-
-//VER o esto no queda aca o todo lo de lacan_rec lo traemos a la mainwindows
-//Maneja el caso de la llegada de un mensaje de error
-void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
-    QString msg_err ="Dispositivo: ";
-    msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
-    QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
-}
-
 //Se utiliza para preguntar si un cierto dispositivo, identificado por su ID, esta conectado o no
 bool MainWindow::device_is_connected(uint8_t id){
     //Recorremos el vector de dispositivos en busca de uno que coincida con la ID proporcionada
@@ -589,6 +525,337 @@ void MainWindow::create_varmap_vol(){
     varmap_vol["Corriente de Bateria"]=IBAT_VOL;
 }
 
+/* *Funciones de recepcion de mensajes* */
+
+//En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
+//se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
+void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
+    dest=source;
+    LACAN_Acknowledge(code,LACAN_FAILURE); //Envia un acknowledge anunciando que dicho mensaje es incorrecto
+    //Aumento contadores de errores correspondientes
+    notsup_count++;
+    if(source&LACAN_ID_GEN){
+        notsup_gen++;
+    }
+}
+
+//Identifica el tipo de mensaje recibido para luego darle el correcto tratamiento
+int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16_t& notsup_gen){
+    //Extraemos remitente y funcion del mensaje
+    uint16_t source=mje.ID&LACAN_IDENT_MASK;
+    uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
+    uint8_t code;
+
+    //Segun la funcion se procede a manejar el contenido de los mensajes, en caso de mensajes incorrectos se ejecuta la
+    //funcion antes vista. En caso de no identificar la funcion se devuelve un codigo que indica que no existe dicho tipo
+    //de mensaje. En condiciones normales de funcionamiento el codigo devuelto indica un procesamiento exitoso
+    switch(fun){
+    case LACAN_FUN_DO:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+    break;
+    case LACAN_FUN_SET:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+    break;
+    case LACAN_FUN_QRY:
+        code=mje.BYTE1;
+        LACAN_NOTSUP_Handler(source, notsup_count, notsup_gen,code);
+    break;
+    case LACAN_FUN_ACK:
+        LACAN_ACK_Handler(mje.BYTE1);
+    break;
+    case LACAN_FUN_POST:
+        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
+    break;
+    case LACAN_FUN_ERR:
+        LACAN_ERR_Handler(source,mje.BYTE1);
+    break;
+    case LACAN_FUN_HB:
+        LACAN_HB_Handler(source);
+        break;
+    default:
+        return LACAN_NO_SUCH_MSG;
+    }
+    return LACAN_SUCCESS;
+}
+
+//Maneja el caso de la llegada de un mensaje de error
+void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
+    QString msg_err ="Dispositivo: ";
+    msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
+    QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
+}
+
+//Maneja la llegada de un mensaje del tipo Post
+//VER q vamos a hacer aca
+void MainWindow::LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
+    //VER crear archivo para cada variable e ir guardando en bloc de notas
+    static uint post_cont = 0;
+    post_cont++;
+    qDebug()<<"Entro a la handler de POST "<<post_cont<<" veces";
+}
+
+//Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
+void MainWindow::LACAN_ACK_Handler(uint16_t BYTE1){
+    static uint ack_cont = 0;
+    ack_cont++;
+    qDebug()<<"Entro a la handler de ACK "<<ack_cont<<" veces";
+    //Recorro el vector que almacena los mensajes que requieren ACK para identificar al que coincide con el
+    //ACK entrante para asi cambiar su estado de ACK a recibido
+    for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
+        if((*it_ack)->msg.BYTE1==BYTE1){
+            (*it_ack)->ack_status=RECEIVED;
+            (*it_ack)->ack_timer.start(DEAD_MSJ_ACK_TIME);//Resetea el tiempo del mensaje para borrarlo luego segun un tiempo limite
+            break;
+        }
+    }
+}
+
+//Maneja la llegada de los HB
+void MainWindow::LACAN_HB_Handler(uint16_t source){
+    static uint hb_cont = 0;
+    static vector<int> ignored;//Vector que se utiliza para almacenar dispositivos conectados pero que el usuario no quiere agregar a la red (en principio)
+    bool devFound=false;
+    bool stalkerFound=false;
+    hb_cont++;
+    qDebug()<<"Entro a la handler de HB "<<hb_cont<<" veces";
+    //Recorro el vector de dispositivos conectados para encontrar el que coincide con el ID del HB entrante
+    for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin();it_hb<hb_con.end();it_hb++){
+        if((*it_hb)->device==source){
+            //Una vez encontrado, cambia el estado en caso de que haya estado inactivo y lo vuelvo a agregar a la lista de la UI
+            if((*it_hb)->hb_status==INACTIVE){
+                (*it_hb)->hb_status=ACTIVE;
+                add_device_ui(source);
+            }
+            //Reseteo el timer y anuncio que el dispositivo fue encontrado y debe salirse del loop de busqueda
+            (*it_hb)->hb_timer.start(DEAD_HB_TIME);
+            devFound=true;
+            break;
+        }
+    }
+    //Si no se encontro el dispositivo en el vector de conectados se busca en los ignorados
+    if(!devFound){
+        for(vector<int>::iterator it_ig=ignored.begin();it_ig<ignored.end();it_ig++){
+            if((*it_ig)==source){
+                //En caso de encontrar el dispositivo en este vector se anuncia que tenemos un dispositivo ignorado insistente
+                stalkerFound=true;
+                break;
+            }
+        }
+    }
+    //Si no se encontro en ningun lado, se pregunta al usuario si quiere agregar este dispositivo
+    if(!(devFound||stalkerFound)){
+        QMessageBox *addnewdev= new QMessageBox(this);
+        addnewdev->setIcon(QMessageBox::Question);
+        addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        addnewdev->setDefaultButton(QMessageBox::Yes);
+        addnewdev->setText("Ha llegado un Heartbeat de un dispositivo"
+                           " desconocido,\nDesea agregarlo a la red?\n"
+                           "En caso afirmativo se le pedira que ingrese"
+                           " un nombre para el mismo.");
+        addnewdev->setWindowTitle("Nuevo dispositivo encontrado");
+        int reply = addnewdev->exec();
+        //Si el usuario acepta se lo agrega, caso contrario se lo suma a los ignorados
+        switch (reply) {
+        case (QMessageBox::Yes):
+        {
+            add_new_device(source);
+            break;
+        }
+        case (QMessageBox::No):
+        {
+            ignored.push_back(source);
+            break;
+        }
+        }
+    }
+}
+
+/* *Funciones de envio de mensajes* */
+
+//Implementacion de todas las funciones involucradas en el envio de mensajes segun del tipo que se requiera
+//Cada tipo tiene una cierta cantidad de bytes de datos caracteristica, la cual depende de las funciones del mensaje,
+//pero en principio el funcionamiento de cada uno es similar pudiendose identificar dos categorias de mensaje distintas
+//en las cuales se agrega otra funcionalidad. Estas son marcadas por los mensajes que requieren ACK y los que no
+
+//Envia mensajes de error a partir de un codigo de error proporcionado
+int16_t MainWindow::LACAN_Error(uint16_t errCode){
+    LACAN_MSG* msg=new LACAN_MSG;
+    //Se arma la ID del mensaje mediante el identificador de funcion(6 bits mas significativos) y
+    //el de dispositivo (5 bits menos significativos)
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_ERR<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;  //el LACAN_ID_STANDARD_MASK es para que los 5 bits de la izquierda se pongan en 0
+    msg->DLC=2;
+    msg->BYTE0=LACAN_ID_BROADCAST << LACAN_BYTE0_RESERVED;//direccion de destino, corrida una cierta cantidad de bits reservados
+    msg->BYTE1=errCode;//codigo de error a enviar
+
+    //Se agrega el mensaje a la pila de envio y a la de mensajes a loguear
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    return LACAN_SUCCESS; // si el mensaje fue correctamente enviado se devuelve success, ver implementacion de codigos de fracaso
+}
+
+//Envia mensajes de Heartbeat para anunciar a los demas dispositivos la existencia de la PC
+int16_t MainWindow::LACAN_Heartbeat(){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_HB<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=1;
+    msg->BYTE0=LACAN_ID_BROADCAST << LACAN_BYTE0_RESERVED;
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    return LACAN_SUCCESS;
+}
+
+//Utilizada para enviar los mensajes de ACK correspondiente a mensajes recibidos que lo requieran
+//VER en principio no necesarios desde la PC (no llegan nunca QUERY, SET O DO)
+int16_t MainWindow::LACAN_Acknowledge(uint16_t code, uint16_t result){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_ACK<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=3;
+    msg->BYTE0=dest << LACAN_BYTE0_RESERVED;
+    msg->BYTE1=code;
+    msg->BYTE2=result;
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    return LACAN_SUCCESS;
+}
+
+//Encargada de enviar mensajes de POST
+//VER en principio no necesarios desde la PC
+int16_t MainWindow::LACAN_Post(uint16_t  variable, data_can data){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=6;
+    msg->BYTE0=uint16_t(dest << LACAN_BYTE0_RESERVED);
+    msg->BYTE1=variable;
+    msg->BYTE2=uint16_t(data.var_char[0]);
+    msg->BYTE3=uint16_t(data.var_char[1]);
+    msg->BYTE4=uint16_t(data.var_char[2]);
+    msg->BYTE5=uint16_t(data.var_char[3]);
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    return LACAN_SUCCESS;
+}
+
+int16_t MainWindow::LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_SET<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=7;
+    msg->BYTE0=uint16_t(dest << LACAN_BYTE0_RESERVED);
+    msg->BYTE1=code;	//Se implementa un codigo en los mensajes que requieren un ack, asi de esta manera poder identificar a que mensaje hacen referencia
+    msg->BYTE2=variable;
+    msg->BYTE3=uint16_t(data.var_char[0]);
+    msg->BYTE4=uint16_t(data.var_char[1]);
+    msg->BYTE5=uint16_t(data.var_char[2]);
+    msg->BYTE6=uint16_t(data.var_char[3]);
+
+    //Se considera que no se acumularan nunca 250 mensajes en espera de acknowledge
+    if(code>=250)
+        code=0;
+    else
+        code++;
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    //Al requerir ACK son un tipo especial de mensaje que requiere de temporizacion para detectar la no llegada
+    //del reconocimiento de llegada, en cuyo caso se considera perdido el mensaje y luego de un cierto numero de reintentos
+    //pasa a considerarse un problema de conexion con el dispositivo de destino
+    TIMED_MSG* new_msg= new TIMED_MSG;
+
+    if(show_ack == true){
+        new_msg->show_miss_ack = true;
+    }
+    new_msg->msg=*msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.setSingleShot(true);
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->retries = RETRIES;
+
+    //Se agrega a la pila de mensajes que esperan un ACK
+    msg_ack.push_back(new_msg);
+
+    return LACAN_SUCCESS;
+}
+
+int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_QRY<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=3;
+    msg->BYTE0=uint16_t(dest << LACAN_BYTE0_RESERVED);
+    msg->BYTE1=code;
+    msg->BYTE2=variable;
+
+    if(code>=250)
+        code=0;
+    else
+        code++;
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    TIMED_MSG* new_msg=new TIMED_MSG();
+
+    if(show_ack == true){
+        new_msg->show_miss_ack = true;
+    }
+
+    new_msg->msg=*msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.setSingleShot(true);
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->retries = RETRIES;
+
+    msg_ack.push_back(new_msg);
+
+    return LACAN_SUCCESS;
+}
+
+int16_t MainWindow::LACAN_Do(uint16_t cmd, uint8_t show_ack){
+    LACAN_MSG* msg=new LACAN_MSG;
+
+    msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_DO<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
+    msg->DLC=3;
+    msg->BYTE0=uint16_t(dest << LACAN_BYTE0_RESERVED);
+    msg->BYTE1=code;
+    msg->BYTE2=cmd;
+
+    if((code)>=250)
+        code=0;
+    else
+        code++;
+
+    stack.push_back(msg);
+    msg_log.push_back(*msg);
+
+    TIMED_MSG* new_msg= new TIMED_MSG;
+
+    if(show_ack == true){
+        new_msg->show_miss_ack = true;
+    }
+    new_msg->msg=*msg;
+    new_msg->ack_status=PENDACK;
+    new_msg->ack_timer.start(WAIT_ACK_TIME);
+    new_msg->ack_timer.setSingleShot(true);
+    new_msg->retries = RETRIES;
+
+    msg_ack.push_back(new_msg);
+
+    return LACAN_SUCCESS;
+}
+
 /***Slots***/
 
 /***Slots Propietarios***/
@@ -602,7 +869,12 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
         //Si habia algun usb conectado antes del error muestro el cartel (puede ocurrir que la señal de error se
         //emita mas de una vez, con esto evitamos el spamming de ventanas)
         if(!NoUSB){
-            QMessageBox::warning(this, "Ups","Error con el puerto USB serie",QMessageBox::Ok);
+            QMessageBox *noConnection= new QMessageBox();
+            noConnection->setIcon(QMessageBox::Warning);
+            noConnection->setStandardButtons(QMessageBox::Ok);
+            noConnection->setText("Error con el puerto USB serie");
+            noConnection->setWindowTitle("Ups");
+            noConnection->show();
         }
 
         NoUSB=true;
@@ -738,7 +1010,7 @@ void MainWindow::handleRead(){
             emit postforER_arrived(msg);
         }
         //Proceso el mensaje
-        result=LACAN_Msg_Handler(msg,hb_con,msg_ack,notsup_count,notsup_gen,disp_map,this);
+        result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
         //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
         //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
         //(el ultimo) con el slot
@@ -823,7 +1095,7 @@ void MainWindow::do_stuff(){
 
     }else{
         //Si hay un USB conectado, se envia el HB como es debido, una vez por ciclo
-        LACAN_Heartbeat(this);
+        LACAN_Heartbeat();
     }
 
 }
@@ -936,7 +1208,7 @@ void MainWindow::on_pushButton_clicked(bool checked)
     dest = LACAN_ID_GEN;
     data_can val;
     val.var_float=1.5;
-    LACAN_Post(this,LACAN_VAR_STANDBY_W_SETP,val);
+    LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
 }
 
 
