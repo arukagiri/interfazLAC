@@ -927,7 +927,7 @@ void MainWindow::verificarACK(){
                  //Si no llega el ACK de un mensaje original, se intentaran 3 reenvios de dicho mensaje en caso de
                  //una perdida de mensajes esporadica (aunque no deberia ocurrir)
                 if((*it_ack)->retries<=0 && show_miss_ack_flag == false){  //Si no quedan reintentos
-                    if((*it_ack)->show_miss_ack==1){ //Y el mensaje se mando desde la mainwindows
+                    if((*it_ack)->show_miss_ack==true){ //Y el mensaje se mando desde la mainwindows
                         //Se levanta una bandera para indicar que se debe enunciar el no recibimiento de ACK
                         show_miss_ack_flag = true;
                         //Se muestra una ventana para comunicarle al usuario que el dispositivo con el cual se quiere
@@ -1176,6 +1176,7 @@ void MainWindow::on_button_START_clicked()
             ui->tableWidget_received->clearContents();
             ui->tableWidget_sent->clearContents();
             outlog_cont=0;
+            inlog_cont=0;
             msg_log.clear();
             //VER
             //list_rec_cont = 0;

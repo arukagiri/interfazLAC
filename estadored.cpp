@@ -4,7 +4,6 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QLabel>
-#include "LACAN_SEND.h"
 #include "PC.h"
 #include <QTimer>
 #include "volante.h"
@@ -111,29 +110,29 @@ void EstadoRed::send_qry(){
         //VER Antes no tenia ningun argumento correspondiente a showAck y andaba...
         //se lo tuve q poner al pasar todo a la MW
         mw->dest=LACAN_ID_GEN;
-        mw->LACAN_Query(LACAN_VAR_VO_INST, true);
+        mw->LACAN_Query(LACAN_VAR_VO_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_IO_INST, true);
+        mw->LACAN_Query(LACAN_VAR_IO_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_W_INST, true);
+        mw->LACAN_Query(LACAN_VAR_W_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_TORQ_INST, true);
+        mw->LACAN_Query(LACAN_VAR_TORQ_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_MOD, true);
+        mw->LACAN_Query(LACAN_VAR_MOD, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
     if(mw->vol_connected){
         mw->dest=LACAN_ID_VOLANTE;
-        mw->LACAN_Query(LACAN_VAR_VO_INST, true);
+        mw->LACAN_Query(LACAN_VAR_VO_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_IO_INST, true);
+        mw->LACAN_Query(LACAN_VAR_IO_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_W_INST, true);
+        mw->LACAN_Query(LACAN_VAR_W_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_TORQ_INST, true);
+        mw->LACAN_Query(LACAN_VAR_TORQ_INST, false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
-        mw->LACAN_Query(LACAN_VAR_MOD,true);
+        mw->LACAN_Query(LACAN_VAR_MOD,false);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
     }
 }

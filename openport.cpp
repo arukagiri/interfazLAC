@@ -66,12 +66,15 @@ void OpenPort::on_pushButton_clicked()
     //uint8_t bdr2=0x09; //50Kbps
     sendinit2(*serial_port,bdr);
 
+    this->close();
+
     if(!retval){
         int ret = QMessageBox::warning(this, "Ups",
                                        "No se pudo conectar con el puerto",
                                        QMessageBox::Ok);
+        //return;
     }
-    this->close();
+
     MainWindow* mw=new MainWindow(*serial_port);
     mw->show();
 }

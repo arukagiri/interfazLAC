@@ -3,7 +3,6 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMessageBox>
-#include "LACAN_SEND.h"
 #include "PC.h"
 #include <QDebug>
 #include <QWidget>

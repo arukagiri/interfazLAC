@@ -117,27 +117,27 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
 
 void volante::send_qry(){
 
-    mw->LACAN_Query(LACAN_VAR_VO_INST,true);  //vol_veo
+    mw->LACAN_Query(LACAN_VAR_VO_INST,false);  //vol_veo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_IO_INST,true);  //vol_io
+    mw->LACAN_Query(LACAN_VAR_IO_INST,false);  //vol_io
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_I_BAT_INST,true);   //vol_ibat
+    mw->LACAN_Query(LACAN_VAR_I_BAT_INST,false);   //vol_ibat
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_W_INST,true);   //vol_vel
+    mw->LACAN_Query(LACAN_VAR_W_INST,false);   //vol_vel
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_TORQ_INST,true);   //vol_ibat
+    mw->LACAN_Query(LACAN_VAR_TORQ_INST,false);   //vol_ibat
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_PO_INST,true);   //vol_po
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-
-    mw->LACAN_Query(LACAN_VAR_W_SETP,true);   //sped_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_ID_SETP,true);   //id_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_STANDBY_W_SETP,true);   //standby_ref
+    mw->LACAN_Query(LACAN_VAR_PO_INST,false);   //vol_po
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 
-    mw->LACAN_Query(LACAN_VAR_MOD,true);   //modo
+    mw->LACAN_Query(LACAN_VAR_W_SETP,false);   //sped_ref
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->LACAN_Query(LACAN_VAR_ID_SETP,false);   //id_ref
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->LACAN_Query(LACAN_VAR_STANDBY_W_SETP,false);   //standby_ref
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+
+    mw->LACAN_Query(LACAN_VAR_MOD,false);   //modo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
@@ -164,7 +164,7 @@ void volante::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->dest=LACAN_ID_VOLANTE;
-    mw->LACAN_Do(cmd,true);
+    mw->LACAN_Do(cmd,false);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -173,7 +173,7 @@ void volante::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->dest=LACAN_ID_VOLANTE;
-    mw->LACAN_Do(cmd,true);
+    mw->LACAN_Do(cmd,false);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }

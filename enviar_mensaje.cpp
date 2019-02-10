@@ -2,7 +2,6 @@
 #include "ui_enviar_mensaje.h"
 #include <QtCore>
 #include <QtGui>
-#include "LACAN_SEND.h"
 #include <QDebug>
 #include <QMap>
 
