@@ -60,7 +60,7 @@ public:
 
      int LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16_t& notsup_gen);
 
-     void LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data);
+     void LACAN_POST_Handler(uint16_t source,uint16_t variable, data_can data);
 
      void LACAN_ACK_Handler(uint16_t BYTE1);
 
