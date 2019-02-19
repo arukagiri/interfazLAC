@@ -16,8 +16,6 @@ Comandar::Comandar(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowTitle("Comandar");
-    this->setFixedSize(ui->verticalLayout_2->sizeHint());
-    this->setLayout(ui->verticalLayout_2);
 
     mw = qobject_cast<MainWindow*>(this->parent());
 

@@ -244,6 +244,26 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -273,18 +293,17 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="grid_sent">
-          <item row="0" column="0">
-           <widget class="QTableWidget" name="tableWidget_sent">
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>350</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QTableWidget" name="tableWidget_sent">
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>350</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="grid_sent"/>
         </item>
        </layout>
       </widget>
