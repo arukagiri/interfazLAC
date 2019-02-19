@@ -545,7 +545,6 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
     uint16_t source=mje.ID&LACAN_IDENT_MASK;
     uint16_t fun=mje.ID>>LACAN_IDENT_BITS;
     uint8_t code;
-
     //Segun la funcion se procede a manejar el contenido de los mensajes, en caso de mensajes incorrectos se ejecuta la
     //funcion antes vista. En caso de no identificar la funcion se devuelve un codigo que indica que no existe dicho tipo
     //de mensaje. En condiciones normales de funcionamiento el codigo devuelto indica un procesamiento exitoso
@@ -566,7 +565,12 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
         LACAN_ACK_Handler(mje.BYTE1);
     break;
     case LACAN_FUN_POST:
-        LACAN_POST_Handler(source,mje.BYTE1,mje.BYTE2);
+        data_can data;
+        data.var_char[0] = mje.BYTE2;
+        data.var_char[1] = mje.BYTE3;
+        data.var_char[2] = mje.BYTE4;
+        data.var_char[3] = mje.BYTE5;
+        LACAN_POST_Handler(source,mje.BYTE1,data);
     break;
     case LACAN_FUN_ERR:
         LACAN_ERR_Handler(source,mje.BYTE1);
@@ -589,11 +593,11 @@ void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
 
 //Maneja la llegada de un mensaje del tipo Post
 //VER q vamos a hacer aca
-void MainWindow::LACAN_POST_Handler(uint16_t source,uint16_t variable, uint16_t data){
+void MainWindow::LACAN_POST_Handler(uint16_t source,uint16_t variable, data_can data){
     //VER crear archivo para cada variable e ir guardando en bloc de notas
     static uint post_cont = 0;
     post_cont++;
-    qDebug()<<"Entro a la handler de POST "<<post_cont<<" veces";
+    qDebug()<<"Entro a la handler de POST "<<post_cont<<" veces"<<". El valor es: "<<data.var_float;
 }
 
 //Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
