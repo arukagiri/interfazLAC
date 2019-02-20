@@ -16,7 +16,7 @@ enum ERRORES  {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,IN
 enum RESULTADOS {OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
 
 
-Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
+Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
 
     QDialog(parent),
     ui(new Ui::Enviar_Mensaje)
@@ -35,6 +35,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_MENSAJE->addItem("ACKNOWLEDGE");
 
     mw = qobject_cast<MainWindow*>(this->parent());
+    dest=destMw;
 
     ui->list_DESTINO->addItem("Broadcast",QVariant(LACAN_ID_BROADCAST));
     ui->list_DESTINO->addItem("Generador Eolico",QVariant(LACAN_ID_GEN));
@@ -43,7 +44,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
 
   //  ui->list_DESTINO->setCurrentIndex(mw->dest);
-    switch(mw->dest){
+    switch(dest){
     case LACAN_ID_BROADCAST:
         qDebug()<<"broad";
         break;
@@ -482,16 +483,16 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
-        mw->LACAN_Do(cmd,1);
+        mw->LACAN_Do(cmd,1,dest);
         break;
     case SET:
-        mw->LACAN_Set(var,data,1);
+        mw->LACAN_Set(var,data,1,dest);
         break;
     case QRY:
-        mw->LACAN_Query(var,1);
+        mw->LACAN_Query(var,1,dest);
         break;
     case POST:
-        mw->LACAN_Post(var,data);
+        mw->LACAN_Post(var,data,dest);
         break;
     case HB:
         mw->LACAN_Heartbeat();
@@ -500,7 +501,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
         mw->LACAN_Error(err_cod);
         break;
     case ACK:
-        mw->LACAN_Acknowledge(ack_cod,res);
+        mw->LACAN_Acknowledge(ack_cod,res,dest);
         break;
     }
 
@@ -524,5 +525,5 @@ Enviar_Mensaje::~Enviar_Mensaje()
 
 void Enviar_Mensaje::on_list_DESTINO_currentIndexChanged(int index)
 {
-    mw->dest=ui->list_DESTINO->itemData(index).toInt();
+    dest=ui->list_DESTINO->itemData(index).toInt();
 }

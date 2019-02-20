@@ -201,7 +201,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     do_log=false;
     ERflag= false;
     NoUSB=false;
-    dest=LACAN_ID_BROADCAST;
     outlog_cont=0;
     inlog_cont=0;
     //Se inicializa el timer con el cual se van a realizar acciones periodicas en el slot do_stuff, siendo la principal
@@ -219,10 +218,15 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 
     //Inicializacion de los dispositivos que se muestran como conectados en la lista de la UI, si pasa un tiempo
     //esecificado sin enviar HB sera dado de baja
-    ui->the_one_true_list_DESTINO->addItem("Broadcast");
+
+    QListWidgetItem* bc = new QListWidgetItem("Broadcast");
+
+    ui->the_one_true_list_DESTINO->addItem(bc);
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
     ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
     ui->the_one_true_list_DESTINO->addItem("Boost");
+
+    ui->the_one_true_list_DESTINO->setCurrentItem(bc);
 
     //Mapeo del nombre de los dispositivos conectados con su respectivo ID
     disp_map["Broadcast"]=LACAN_ID_BROADCAST;
@@ -295,8 +299,9 @@ MainWindow::~MainWindow()
 }
 
 //Funcion que verifica el destino segun lo que este seleccionado en la lista
-void MainWindow::verificar_destino(){
-    dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
+uint16_t MainWindow::verificar_destino(){
+    uint16_t dest=0;
+    return dest=disp_map[(ui->the_one_true_list_DESTINO->currentItem()->text())];
 }
 
 //Funcion para agregar los mensajes de salida al log correspondiente que se encuentra en la UI
@@ -530,8 +535,8 @@ void MainWindow::create_varmap_vol(){
 //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,
 //se ejecuta esta funcion para monitorear el flujo de mensajes recibidos no soportados
 void MainWindow::LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code){
-    dest=source;
-    LACAN_Acknowledge(code,LACAN_FAILURE); //Envia un acknowledge anunciando que dicho mensaje es incorrecto
+    uint16_t dest=source;
+    LACAN_Acknowledge(code,LACAN_FAILURE, dest); //Envia un acknowledge anunciando que dicho mensaje es incorrecto
     //Aumento contadores de errores correspondientes
     notsup_count++;
     if(source&LACAN_ID_GEN){
@@ -716,7 +721,7 @@ int16_t MainWindow::LACAN_Heartbeat(){
 
 //Utilizada para enviar los mensajes de ACK correspondiente a mensajes recibidos que lo requieran
 //VER en principio no necesarios desde la PC (no llegan nunca QUERY, SET O DO)
-int16_t MainWindow::LACAN_Acknowledge(uint16_t code, uint16_t result){
+int16_t MainWindow::LACAN_Acknowledge(uint16_t code, uint16_t result, uint16_t dest){
     LACAN_MSG* msg=new LACAN_MSG;
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_ACK<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -733,7 +738,7 @@ int16_t MainWindow::LACAN_Acknowledge(uint16_t code, uint16_t result){
 
 //Encargada de enviar mensajes de POST
 //VER en principio no necesarios desde la PC
-int16_t MainWindow::LACAN_Post(uint16_t  variable, data_can data){
+int16_t MainWindow::LACAN_Post(uint16_t  variable, data_can data, uint16_t dest){
     LACAN_MSG* msg=new LACAN_MSG;
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_POST<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -751,7 +756,7 @@ int16_t MainWindow::LACAN_Post(uint16_t  variable, data_can data){
     return LACAN_SUCCESS;
 }
 
-int16_t MainWindow::LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack){
+int16_t MainWindow::LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack, uint16_t dest){
     LACAN_MSG* msg=new LACAN_MSG;
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_SET<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -793,7 +798,7 @@ int16_t MainWindow::LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack
     return LACAN_SUCCESS;
 }
 
-int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack){
+int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack, uint16_t dest){
     LACAN_MSG* msg=new LACAN_MSG;
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_QRY<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -827,7 +832,7 @@ int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack){
     return LACAN_SUCCESS;
 }
 
-int16_t MainWindow::LACAN_Do(uint16_t cmd, uint8_t show_ack){
+int16_t MainWindow::LACAN_Do(uint16_t cmd, uint8_t show_ack, uint16_t dest){
     LACAN_MSG* msg=new LACAN_MSG;
 
     msg->ID=(LACAN_LOCAL_ID | LACAN_FUN_DO<<LACAN_IDENT_BITS)&LACAN_ID_STANDARD_MASK;
@@ -1123,9 +1128,9 @@ void MainWindow::on_button_COMANDAR_clicked()
 {
     //Se verifica el destino y corrobora que no sea un Boradcast (lo cual seria inconsistente con este comando)
     //antes de abrir la correspondiente ventana
-    verificar_destino();
+    uint16_t dest = verificar_destino();
     if(dest  != LACAN_ID_BROADCAST){
-        Comandar *comwin = new Comandar(this);//Creamos la ventana
+        Comandar *comwin = new Comandar(this,dest);//Creamos la ventana
         comwin->setModal(true);//La hacemos modal (no se puede hacer click en otra ventana hasta cerrar esta)
         comwin->show();//Mostramos la ventana
     }
@@ -1137,8 +1142,8 @@ void MainWindow::on_button_COMANDAR_clicked()
 //Ventana Consultar
 void MainWindow::on_button_CONSULTAR_clicked()
 {
-    verificar_destino();
-    Consultar *conswin = new Consultar(this);
+    uint16_t dest = verificar_destino();
+    Consultar *conswin = new Consultar(this,dest);
     conswin->setModal(true);
     conswin->show();
 }
@@ -1147,8 +1152,8 @@ void MainWindow::on_button_CONSULTAR_clicked()
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
 
-    verificar_destino();
-    Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
+    uint16_t dest = verificar_destino();
+    Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
 
     envwin->setModal(true);
     envwin->show();
@@ -1208,12 +1213,13 @@ void MainWindow::on_button_STOP_clicked()
 }
 
 //FOR TESTING
+/*
 void MainWindow::on_pushButton_clicked(bool checked)
 {
     dest = LACAN_ID_GEN;
     data_can val;
     val.var_float=1.5;
     LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
-}
+}*/
 
 

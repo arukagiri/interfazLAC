@@ -14,7 +14,7 @@ class Consultar : public QDialog
     Q_OBJECT
 
 public:
-    explicit Consultar(QWidget *parent = 0);
+    explicit Consultar(QWidget *parent, uint16_t dest);
 
 
     ~Consultar();
@@ -26,6 +26,7 @@ private:
     Ui::Consultar *ui;
     uint16_t consulta;
     MainWindow* mw ;
+    uint16_t dest;
 
     QMap <QString,LACAN_VAR> varmap;
 };

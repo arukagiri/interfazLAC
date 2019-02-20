@@ -17,7 +17,7 @@ class Comandar : public QDialog
     Q_OBJECT
 
 public:
-    explicit Comandar(QWidget *parent);
+    explicit Comandar(QWidget *parent, uint16_t dest);
     //explicit Comandar(uint16_t destino, QWidget *parent);
     ~Comandar();
 
@@ -27,7 +27,7 @@ private:
     uint16_t cmd;
     uint16_t mode_set;
     MainWindow* mw;
-
+    uint16_t dest;
     void set_tipo();
     void SET_ACTUAL_VAR();
 

@@ -11,7 +11,7 @@
 //enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
 
 
-Consultar::Consultar(QWidget *parent) :
+Consultar::Consultar(QWidget *parent, uint16_t destMw) :
 
     QDialog(parent),
     ui(new Ui::Consultar)
@@ -22,9 +22,9 @@ Consultar::Consultar(QWidget *parent) :
     //this->setLayout(ui->verticalLayout_2);
 
     mw = qobject_cast<MainWindow*>(this->parent());
+    dest=destMw;
 
-
-    switch(mw->dest){
+    switch(dest){
     case LACAN_ID_GEN:
         ui->label_DESTINO_QRY->setText("Generador Eolico");
 
@@ -115,11 +115,10 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
         consulta = varmap[var_selectedstr].setp;
 
     int prevsize=mw->msg_ack.size();
-    mw->LACAN_Query(consulta,1);
+    mw->LACAN_Query(consulta,1,dest);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
-
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
     mw->agregar_log_sent();
 
