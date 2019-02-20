@@ -2,14 +2,9 @@
 INTERFAZ:
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
-
-
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
 
-
-
 ==================================================================================================================================
-
 
 revisar ventanas de c/disp
 cambiar flags para activar disp con vector de conectados
@@ -21,3 +16,7 @@ VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
 VER VENTANA EMVIAR BYTE(CARTEL DE ERROR)
 ver volante
+
+estandarizar decimales en la UI
+refresco menor en ventanas y revisar valores erroneos 
+limites inferiores en variables qt
