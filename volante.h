@@ -34,7 +34,7 @@ private:
     uint16_t actual_mode;
 
     MainWindow* mw ;
-
+    uint16_t dest=LACAN_ID_VOLANTE;
     uint16_t cmd;
     data_can val;
     QString text_val; //ver si esto se usa

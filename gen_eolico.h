@@ -29,7 +29,7 @@ private:
     Ui::Gen_Eolico *ui;
     uint16_t actual_mode;
     MainWindow* mw ;
-
+    uint16_t dest = LACAN_ID_GEN;
     uint16_t cmd;
     data_can val;
     QString text_val;

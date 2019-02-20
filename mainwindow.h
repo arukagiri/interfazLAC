@@ -34,15 +34,15 @@ public:
 
      int16_t LACAN_Heartbeat();
 
-     int16_t LACAN_Acknowledge(uint16_t code, uint16_t result);
+     int16_t LACAN_Acknowledge(uint16_t code, uint16_t result, uint16_t dest);
 
-     int16_t LACAN_Post(uint16_t  variable, data_can data);
+     int16_t LACAN_Post(uint16_t  variable, data_can data, uint16_t dest);
 
-     int16_t LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack);
+     int16_t LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack, uint16_t dest);
 
-     int16_t LACAN_Query(uint16_t variable,uint8_t show_ack);
+     int16_t LACAN_Query(uint16_t variable,uint8_t show_ack, uint16_t dest);
 
-     int16_t LACAN_Do(uint16_t cmd, uint8_t show_ack);
+     int16_t LACAN_Do(uint16_t cmd, uint8_t show_ack, uint16_t dest);
 
      void erase_device_ui(uint16_t inactiveDev);
 
@@ -105,7 +105,7 @@ private slots:
 
     void on_button_ByteSend_clicked();
 
-    void on_pushButton_clicked(bool checked);
+    //void on_pushButton_clicked(bool checked);
 
     void handleSendTimeout();
 
@@ -115,12 +115,12 @@ private:
 
     void create_varmap_vol();
 
-    void verificar_destino();//VER
+    uint16_t verificar_destino();
 
 public:
 
     QSerialPort *serial_port;
-    uint16_t dest;
+    //uint16_t dest;
     vector <LACAN_MSG> msg_log;
     uint8_t code=0;
     vector <TIMED_MSG*> msg_ack;

@@ -16,7 +16,7 @@ class Enviar_Mensaje : public QDialog
     Q_OBJECT
 
 public:
-    explicit Enviar_Mensaje(QWidget *parent);
+    explicit Enviar_Mensaje(QWidget *parent, uint16_t dest);
 
     ~Enviar_Mensaje();
 
@@ -30,7 +30,7 @@ private:
     uint16_t cmd;
     uint16_t err_cod;
     uint16_t res;
-
+    uint16_t dest;
     void set_TIPO_VAR();
 
     QMap <QString,LACAN_VAR> varmap;

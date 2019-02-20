@@ -9,7 +9,7 @@
 #include <QMap>
 
 //PARA LA MAIN WINDOWS
-Comandar::Comandar(QWidget *parent) :
+Comandar::Comandar(QWidget *parent, uint16_t destMw) :
     QDialog(parent),
     ui(new Ui::Comandar)
 {
@@ -18,8 +18,9 @@ Comandar::Comandar(QWidget *parent) :
     this->setWindowTitle("Comandar");
 
     mw = qobject_cast<MainWindow*>(this->parent());
+    dest=destMw;
 
-    switch(mw->dest){
+    switch(dest){
         case LACAN_ID_GEN:
             ui->label_DESTINO->setText("Generador Eolico");
 
@@ -91,7 +92,7 @@ void Comandar::on_button_ENVIAR_clicked()
     uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
-        mw->LACAN_Do(cmd,1);
+        mw->LACAN_Do(cmd,1,dest);
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
@@ -105,7 +106,7 @@ void Comandar::on_button_ENVIAR_clicked()
 
         data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
         }
-        mw->LACAN_Set(var_set,data,1);
+        mw->LACAN_Set(var_set,data,1,dest);
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }
