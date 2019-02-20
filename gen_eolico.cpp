@@ -66,7 +66,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
     time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-    time_2sec->start(10000);      //le pongo 10 para probar, cambiar a 2  <---------------------
+    time_2sec->start(2000);      //le pongo 10 para probar, cambiar a 2  <---------------------
 
 
     //****************en la inicializacion hay que preguntar el modo tambien

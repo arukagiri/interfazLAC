@@ -348,6 +348,7 @@ void MainWindow::agregar_log_sent(){
     }
     //No importan las configuraciones para el caso del log en el txt, este siempre debe estar vigente
     agregar_textlog(abs_msg,"Enviado");
+    ui->tableWidget_sent->scrollToBottom();
 }
 
 void MainWindow::agregar_log_rec(){
@@ -386,6 +387,7 @@ void MainWindow::agregar_log_rec(){
         }
     }
     agregar_textlog(abs_msg,"Recibido");
+    ui->tableWidget_received->scrollToBottom();
 }
 
 //VER esto se implementa al final?
