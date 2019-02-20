@@ -30,25 +30,41 @@ public:
 
      Ui::MainWindow *ui;
 
-     void add_new_device(uint16_t source);
+     int16_t LACAN_Error(uint16_t errCode);
 
-     void change_ERflag(void);
+     int16_t LACAN_Heartbeat();
 
-     static void set_item(int,int, QString item);
+     int16_t LACAN_Acknowledge(uint16_t code, uint16_t result);
 
-     void agregar_log_sent();
+     int16_t LACAN_Post(uint16_t  variable, data_can data);
 
-     void agregar_log_rec(vector <LACAN_MSG> msg_log);
+     int16_t LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack);
 
-     void verificar_destino();
+     int16_t LACAN_Query(uint16_t variable,uint8_t show_ack);
+
+     int16_t LACAN_Do(uint16_t cmd, uint8_t show_ack);
 
      void erase_device_ui(uint16_t inactiveDev);
 
      void add_device_ui(uint16_t reactivatedDev);
 
+     void add_new_device(uint16_t source);
+
+     void change_ERflag(void);
+
+     void agregar_log_sent();
+
+     void agregar_log_rec();
+
      void LACAN_NOTSUP_Handler(uint16_t source, uint16_t& notsup_count, uint16_t& notsup_gen, uint8_t code);
 
-     int LACAN_Msg_Handler(LACAN_MSG &mje, vector<HB_CONTROL*>& hb_con, vector<TIMED_MSG*>& msg_ack, uint16_t& notsup_count, uint16_t& notsup_gen, QMap<QString,uint16_t> disp_map, MainWindow *mw);
+     int LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16_t& notsup_gen);
+
+     void LACAN_POST_Handler(uint16_t source,uint16_t variable, data_can data);
+
+     void LACAN_ACK_Handler(uint16_t BYTE1);
+
+     void LACAN_HB_Handler(uint16_t source);
 
      bool device_is_connected(uint8_t id);
 
@@ -65,13 +81,13 @@ public slots:
 
      void verificarHB();
 
-     void no_ACK_Handler(void); //FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
+     void no_ACK_Handler(void); //VER: FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
 
      void LACAN_ERR_Handler(uint16_t source,uint16_t err_cod);
 
-     void do_stuff(); //slot en el cual se realizan acciones que requieren de una periocidad fija, tal como el envio del HB
-
 private slots:
+
+    void do_stuff();
 
     void handleRead();
 
@@ -87,16 +103,19 @@ private slots:
 
     void on_button_STOP_clicked();
 
-    void on_button_ESTADO_RED_2_clicked();
+    void on_button_ByteSend_clicked();
 
     void on_pushButton_clicked(bool checked);
 
     void handleSendTimeout();
 
 private:
+
     void create_varmap_gen();
+
     void create_varmap_vol();
 
+    void verificar_destino();//VER
 
 public:
 
@@ -111,23 +130,18 @@ public:
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
     bool NoUSB;
-    //bool gen_connected=0;
-    bool gen_connected=1;
-    bool vol_connected=0;
-    bool boost_connected=0;
-
-    bool show_miss_ack_flag=0;
+    //VER
+    bool gen_connected=true;
+    bool vol_connected=false;
+    bool boost_connected=false;
+    bool show_miss_ack_flag=false;
 
     uint16_t list_rec_cont = 0;
     uint16_t list_send_cont = 0;
-
     QMap <QString,LACAN_VAR> varmap_gen;
     QMap <QString,LACAN_VAR> varmap_vol;
-
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
-
-
     QTimer* periodicTimer;
     vector<LACAN_MSG*> stack;
 };

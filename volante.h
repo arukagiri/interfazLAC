@@ -12,7 +12,6 @@
 #include <QMessageBox>
 #include <QtCore>
 #include <QtGui>
-#include "LACAN_SEND.h"
 #include "lacan_limits_vol.h"
 
 namespace Ui {

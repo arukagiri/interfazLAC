@@ -1,6 +1,5 @@
 #include "consultar.h"
 #include "ui_consultar.h"
-#include "LACAN_SEND.h"
 #include "PC.h"
 #include <QDebug>
 #include <iostream>
@@ -116,7 +115,7 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
         consulta = varmap[var_selectedstr].setp;
 
     int prevsize=mw->msg_ack.size();
-    LACAN_Query(mw,consulta,1);
+    mw->LACAN_Query(consulta,1);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
 

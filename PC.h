@@ -188,7 +188,7 @@ struct LACAN_MSG{
 typedef struct LACAN_MSG LACAN_MSG;
 
 //Estructura armada para poder manejar de manera conjunta el manejo de los mensajes que esperan un ack, est
-//provista del mensaje propiamente dicho, un timer para controlar los tiempos caracteristicos del ack(ver LACAN_PRO.h)
+//provista del mensaje propiamente dicho, un timer para controlar los tiempos caracteristicos del ack
 //y un campo de estado, las posibilidades del mismo se encuentran mas arriba como "Estados de acknowledge del mensaje TIMED_MSG"
 struct  TIMED_MSG{
         LACAN_MSG msg;
@@ -203,7 +203,7 @@ typedef struct TIMED_MSG TIMED_MSG;
 
 
 //Se procede con un una idea parecida al TIMED_MSG para controlar el estado de los nodos en la red, en este caso tenemos un
-//identificador de dispositivo en vez de un mensaje, el temporizador(ver LACAN_PRO.h) y el campo de estado(m s en
+//identificador de dispositivo en vez de un mensaje, el temporizador y el campo de estado(m s en
 //"Estados de los dispositivos segun heartbeat" arriba) cumplen las mismas funciones
 struct  HB_CONTROL{
         QTimer hb_timer;

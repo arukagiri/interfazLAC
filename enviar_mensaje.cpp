@@ -2,7 +2,6 @@
 #include "ui_enviar_mensaje.h"
 #include <QtCore>
 #include <QtGui>
-#include "LACAN_SEND.h"
 #include <QDebug>
 #include <QMap>
 
@@ -483,25 +482,25 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
-        LACAN_Do(mw, cmd,1);
+        mw->LACAN_Do(cmd,1);
         break;
     case SET:
-        LACAN_Set(mw,var,data,1);
+        mw->LACAN_Set(var,data,1);
         break;
     case QRY:
-        LACAN_Query(mw,var,1);
+        mw->LACAN_Query(var,1);
         break;
     case POST:
-        LACAN_Post(mw,var,data);
+        mw->LACAN_Post(var,data);
         break;
     case HB:
-        LACAN_Heartbeat(mw);
+        mw->LACAN_Heartbeat();
         break;
     case ERR:
-        LACAN_Error(mw,err_cod);
+        mw->LACAN_Error(err_cod);
         break;
     case ACK:
-        LACAN_Acknowledge(mw,ack_cod,res);      //ver req type
+        mw->LACAN_Acknowledge(ack_cod,res);
         break;
     }
 

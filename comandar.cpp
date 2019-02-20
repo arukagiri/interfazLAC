@@ -3,7 +3,6 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMessageBox>
-#include "LACAN_SEND.h"
 #include "PC.h"
 #include <QDebug>
 #include <QWidget>
@@ -94,7 +93,7 @@ void Comandar::on_button_ENVIAR_clicked()
     uint prevsize= mw->msg_ack.size();
 
     if(ui->radio_DO->isChecked()){
-        LACAN_Do(mw,cmd,1);
+        mw->LACAN_Do(cmd,1);
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
@@ -105,12 +104,10 @@ void Comandar::on_button_ENVIAR_clicked()
         }
         else{
         SET_ACTUAL_VAR();
-        double doub;
 
-        doub = ui->spin_valor->value();
-        data.var_int=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+        data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
         }
-        LACAN_Set(mw,var_set,data,1);
+        mw->LACAN_Set(var_set,data,1);
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }

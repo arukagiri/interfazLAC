@@ -2,7 +2,6 @@
 #define CONSULTAR_H
 #include <QDialog>
 #include "PC.h"
-#include "LACAN_SEND.h"
 #include "mainwindow.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
