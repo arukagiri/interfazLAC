@@ -22,7 +22,7 @@ public:
 private slots:
     void on_dlc_currentIndexChanged(int index);
 
-    void on_pushButton_clicked();
+    void on_sendButton_clicked();
 
 private:
     Ui::ByteSend *ui;

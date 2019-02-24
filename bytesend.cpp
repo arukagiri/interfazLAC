@@ -48,28 +48,74 @@ ByteSend::ByteSend(QWidget *parent) :
 
 }
 
-void ByteSend::on_pushButton_clicked(){
+void ByteSend::on_sendButton_clicked(){
 
     LACAN_MSG msg;
     uint8_t byteID1, byteID2;
+    int base=16;//queremos enviar los datos como hexadecimales
 
-    byteID1=text2int( ui->id1->text());
-    byteID2=text2int(ui->id2->text());
+    bool okID1=true;
+    bool okID2=true;
+
+    byteID1=ui->id1->text().toInt(&okID1,base);
+    byteID2=ui->id2->text().toInt(&okID2,base);
+
     msg.ID=(byteID2<<8 | byteID1)&LACAN_ID_STANDARD_MASK;   //los pongo al reves porque el adaptador me los davuelta
 
     msg.DLC = actual_dlc;
 
-    msg.BYTE0=text2int(ui->data0->text());
-    msg.BYTE1=text2int(ui->data1->text());
-    msg.BYTE2=text2int(ui->data2->text());
-    msg.BYTE3=text2int(ui->data3->text());
-    msg.BYTE4=text2int(ui->data4->text());
-    msg.BYTE5=text2int(ui->data5->text());
-    msg.BYTE6=text2int(ui->data6->text());
-    msg.BYTE7=text2int(ui->data7->text());
+    bool okDLC=true;
 
-    serialsend2(*(mw->serial_port),msg);
-    //mw->msg_log.push_back(msg);
+    switch(actual_dlc){
+        case 8:
+            msg.BYTE7=ui->data7->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 7:
+            msg.BYTE6=ui->data6->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 6:
+            msg.BYTE5=ui->data5->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 5:
+            msg.BYTE4=ui->data4->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 4:
+            msg.BYTE3=ui->data3->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 3:
+            msg.BYTE2=ui->data2->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 2:
+            msg.BYTE1=ui->data1->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+        [[clang::fallthrough]]; case 1:
+            msg.BYTE0=ui->data0->text().toInt(&okDLC,base);
+            if(!okDLC){
+                break;
+            }
+    }
+    if(okDLC&&okID1&&okID2){
+        serialsend2(*(mw->serial_port),msg);
+        //mw->msg_log.push_back(msg);
+    }else{
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::warning(this,"Error","Error al enviar el mensaje");
+    }
+    this->close();
 }
 
 void ByteSend::on_dlc_currentIndexChanged(int index){
@@ -155,20 +201,4 @@ ByteSend::~ByteSend(){
     delete ui;
 }
 
-uint8_t ByteSend::text2int(const QString letras){
-    const QString text = letras;
-    bool ok = true;
-    int value = text.toInt(&ok, 16);
-    if ( ok )
-    {
-        return value;
-    }
-    else{
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::warning(this,"Error","Error al enviar el mensaje");
-        if(reply){
-            this->close();
-        }
-    }
-}
 
