@@ -1198,20 +1198,21 @@ void MainWindow::on_button_START_clicked()
     }
     //Levantamos la flag que indica que los mensajes deben ser logueados
     do_log=TRUE;
+    ui->logButton->setChecked(true);
 }
 
+//Detiene el log de mensajes
+void MainWindow::on_button_STOP_clicked()
+{
+    ui->logButton->setChecked(false);
+    do_log=FALSE;
+}
 //Ventana Envio de mensajes
 void MainWindow::on_button_ByteSend_clicked()
 {
     ByteSend *bytewin = new ByteSend(this);
     bytewin->setModal(true);
     bytewin->show();
-}
-
-//Detiene el log de mensajes
-void MainWindow::on_button_STOP_clicked()
-{
-    do_log=FALSE;
 }
 
 //FOR TESTING
@@ -1225,3 +1226,33 @@ void MainWindow::on_pushButton_clicked(bool checked)
 }*/
 
 
+
+void MainWindow::on_logButton_clicked()
+{
+    if(ui->logButton->isChecked()){
+        do_log=TRUE;
+    }else{
+        do_log=FALSE;
+    }
+}
+
+void MainWindow::on_refreshButton_clicked()
+{
+    QMessageBox::StandardButton reply;
+    //Si ya hay algo en el log se le pregunta al usuario si desea comenzar una nueva sesion, lo cual borra la anterior
+    if(outlog_cont>0 || inlog_cont>0){
+        reply=QMessageBox::warning(this,"Aviso de perdida de mensajes","¿Esta seguro de comenzar una nueva sesion de registro de mensajes?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
+        if(reply==QMessageBox::Yes){
+            ui->tableWidget_received->clearContents();
+            ui->tableWidget_sent->clearContents();
+            outlog_cont=0;
+            inlog_cont=0;
+            msg_log.clear();
+            //VER
+            //list_rec_cont = 0;
+            //list_send_cont = 0;
+            ui->tableWidget_received->setRowCount(0);
+            ui->tableWidget_sent->setRowCount(0);
+        }
+    }
+}

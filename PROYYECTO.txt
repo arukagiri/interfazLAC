@@ -8,13 +8,11 @@ VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar B
 
 revisar ventanas de c/disp
 cambiar flags para activar disp con vector de conectados
-cambiar funciones de envio en mw para tomar destino como parametro
 mil carteles con algunos errores
 empezar a limpiar codigo de warnings
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
-VER VENTANA EMVIAR BYTE(CARTEL DE ERROR)
 ver volante
 
 estandarizar decimales en la UI

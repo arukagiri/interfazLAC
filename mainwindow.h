@@ -109,6 +109,10 @@ private slots:
 
     void handleSendTimeout();
 
+    void on_logButton_clicked();
+
+    void on_refreshButton_clicked();
+
 private:
 
     void create_varmap_gen();
