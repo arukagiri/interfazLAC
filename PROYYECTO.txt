@@ -6,15 +6,25 @@ VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar B
 
 ==================================================================================================================================
 
+
 revisar ventanas de c/disp
-cambiar flags para activar disp con vector de conectados
 mil carteles con algunos errores
 empezar a limpiar codigo de warnings
 
+
+
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
-ver volante
+limites inferiores en variables qt  <------------------ BA
+ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF
+no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER
 
-estandarizar decimales en la UI
-refresco menor en ventanas y revisar valores erroneos 
-limites inferiores en variables qt
+
+==================================================================================================================================
+PANTALLA DB_GEN:
+
+cambias el modo, deshabilitas todo, pones aply, te deja cambiar las otras cosas
+
+ver que pasa cuando el micro me manda un modo nuevo... no deberia pasar, pero si llega a pasar de ultima tiro un cartel y le clavo un refresh values, refresh mode y demas
+
+==================================================================================================================================

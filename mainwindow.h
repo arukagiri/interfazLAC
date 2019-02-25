@@ -134,10 +134,6 @@ public:
     vector <HB_CONTROL*> hb_con;
     bool ERflag;
     bool NoUSB;
-    //VER
-    bool gen_connected=true;
-    bool vol_connected=false;
-    bool boost_connected=false;
     bool show_miss_ack_flag=false;
 
     uint16_t list_rec_cont = 0;

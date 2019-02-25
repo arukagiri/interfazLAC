@@ -71,7 +71,7 @@ void EstadoRed::refresh_values(){
         ui->label_gen_modo->setText("Modo: ----");
     }
 
-    if(mw->vol_connected){
+    if(mw->device_is_connected(LACAN_ID_VOLANTE)){
         ui->label_vol_vo->setText(QString::number(vol_vo));
         ui->label_vol_io->setText(QString::number(vol_io));
         ui->label_vol_velocidad->setText(QString::number(vol_vel));
@@ -86,7 +86,7 @@ void EstadoRed::refresh_values(){
         ui->label_vol_modo->setText("Modo: ----");
     }
 
-    /*if(mw->boost_connected){
+    /*if(mw->device_is_connected(LACAN_ID_BOOST)){
         ui->label_boost_vo->setText(QString::number(boost_vo));
         ui->label_boost_io->setText(QString::number(boost_io));
         ui->label_boost_vi->setText(QString::number(boost_vi));
@@ -107,7 +107,7 @@ void EstadoRed::refresh_values(){
 void EstadoRed::send_qry(){
 
     uint16_t dest=0;
-    if(mw->gen_connected){
+    if(mw->device_is_connected(LACAN_ID_GEN)){
         //VER Antes no tenia ningun argumento correspondiente a showAck y andaba...
         //se lo tuve q poner al pasar todo a la MW
         dest=LACAN_ID_GEN;
@@ -123,7 +123,7 @@ void EstadoRed::send_qry(){
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
-    if(mw->vol_connected){
+    if(mw->device_is_connected(LACAN_ID_VOLANTE)){
         dest=LACAN_ID_VOLANTE;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
@@ -150,13 +150,13 @@ void EstadoRed::var_changed(uint16_t var, uint16_t data){
 }
 
 void EstadoRed::set_states(){
-    if(mw->gen_connected){ui->button_gen->setEnabled(true);}
+    if(mw->device_is_connected(LACAN_ID_GEN)){ui->button_gen->setEnabled(true);}
     else{ui->button_gen->setDisabled(true);}
 
-    if(mw->vol_connected){ui->button_vol->setEnabled(true);}
+    if(mw->device_is_connected(LACAN_ID_VOLANTE)){ui->button_vol->setEnabled(true);}
     else{ui->button_vol->setDisabled(true);}
 
-    if(mw->boost_connected){ui->button_boost->setEnabled(true);}
+    if(mw->device_is_connected(LACAN_ID_BOOST)){ui->button_boost->setEnabled(true);}
     else{ui->button_boost->setDisabled(true);}
 
 }

@@ -42,7 +42,7 @@ volante::volante(QWidget *parent) :
 }
 
 void volante::timer_handler(){
-    if(mw->vol_connected){         //***********esto hay que modificarlo con lo de luli
+    if(mw->device_is_connected(LACAN_ID_VOLANTE)){        //***********esto hay que modificarlo con lo de luli
         refresh_values();       //actualiza los valores de la pantalla
         send_qry();             //y vuelve a preguntar con los actuales
     }
