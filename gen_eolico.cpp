@@ -15,15 +15,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
-//*******************************************************************
-//*****               se cambia el destino                   ********
-//*******************************************************************
-//mw->dest=LACAN_ID_GE
-//2 es la ID del GEN. cuando debugueo me pone 3, en la funcion, no 2
-//si paras el timer que corre en la pantalla estado de red, esto anda perfecto
- //creo que cuando mandas los qrys de estado de red te pisan este valor
-//*********************************************************************
-//COMBO BOX MODO
 
     //ui->combo_modo->addItem("Velocidad (0)",QVariant(0));
     //ui->combo_modo->addItem("Potencia (1)",QVariant(1));
@@ -66,16 +57,14 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
     time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-    time_2sec->start(10000);      //le pongo 10 para probar, cambiar a 2  <---------------------
+    time_2sec->start(2000);
 
 
     //****************en la inicializacion hay que preguntar el modo tambien
-    //y desp de la inicializacion hay que volver ap reguntar?
-
 }
 
 void Gen_Eolico::timer_handler(){
-    if(mw->gen_connected){         //***********esto hay que modificarlo con lo de luli
+    if(mw->device_is_connected(LACAN_ID_GEN)){         //***********esto hay que modificarlo con lo de luli
         refresh_values();       //actualiza los valores de la pantalla
         send_qry();             //y vuelve a preguntar con los actuales
     }
@@ -284,15 +273,18 @@ void Gen_Eolico::refresh_values(){
     if(!lim_ibat_click)
         ui->spin_lim_ibat->setValue(lim_ibat);
 
-    ui->label_gen_vo->setText(QString::number(gen_vo));
-    ui->label_gen_io->setText(QString::number(gen_io));
-    ui->label_gen_ibat->setText(QString::number(gen_ibat));
-    ui->label_gen_po->setText(QString::number(gen_po));
-    ui->label_gen_tor->setText(QString::number(gen_tor));
-    ui->label_gen_vel->setText(QString::number(gen_vel));
+    ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
+    ui->label_gen_io->setText(QString::number(gen_io,'f',2));
+    ui->label_gen_ibat->setText(QString::number(gen_ibat,'f',2));
+    ui->label_gen_po->setText(QString::number(gen_po,'f',2));
+    ui->label_gen_tor->setText(QString::number(gen_tor,'f',2));
+    ui->label_gen_vel->setText(QString::number(gen_vel,'f',2));
 }
 
 //VER SI ANDA EL TEMA DEL CODE (mw->code)
+//entre  "mw->LACAN_Do(cmd,false,dest);" donde se crea el vecotor de ack que espera la respuesta  y
+// "connect(&(mw->msg_ack.back()->ack_timer)..." que uso el .back (osea el ultimo que asumo que se creo en el envio anteior)
+//quiza podria llegar otro ack y hacer pura caca
 void Gen_Eolico::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
@@ -309,12 +301,9 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     mw->agregar_log_sent();
 }
 
-//VER SI ANDA EL TEMA DEL CODE (mw->code)
+
 void Gen_Eolico::on_pushButton_comandar_clicked()
 {
-   //Comandar *comwin = new Comandar(LACAN_ID_GEN,this);
-   //Comandar *comwin = new Comandar(LACAN_ID_GEN,mw);+
-
    Comandar *comwin = new Comandar(mw,dest);
    comwin->setModal(true);
    comwin->show();
@@ -382,31 +371,31 @@ void Gen_Eolico::new_mode(){
 void Gen_Eolico::set_limits_gen(){
     ui->spin_lim_ibat->setMaximum(LACAN_VAR_GEN_IBAT_MAX);
     ui->spin_lim_ibat->setMinimum(LACAN_VAR_GEN_IBAT_MIN);
-    ui->spin_lim_ibat->setDecimals(3);
+    ui->spin_lim_ibat->setDecimals(2);
 
     ui->spin_lim_vdc->setMaximum(LACAN_VAR_GEN_VO_MAX);
     ui->spin_lim_vdc->setMinimum(LACAN_VAR_GEN_VO_MIN);
-    ui->spin_lim_vdc->setDecimals(3);
+    ui->spin_lim_vdc->setDecimals(2);
 
     ui->spin_speed_ref->setMaximum(LACAN_VAR_GEN_W_MAX);
     ui->spin_speed_ref->setMinimum(LACAN_VAR_GEN_W_MIN);
-    ui->spin_speed_ref->setDecimals(3);
+    ui->spin_speed_ref->setDecimals(2);
 
     ui->spin_pot_ref->setMaximum(LACAN_VAR_GEN_PO_MAX);
     ui->spin_pot_ref->setMinimum(LACAN_VAR_GEN_PO_MIN);
-    ui->spin_pot_ref->setDecimals(3);
+    ui->spin_pot_ref->setDecimals(2);
 
     ui->spin_torque_ref->setMaximum(LACAN_VAR_GEN_TORQ_MAX);
     ui->spin_torque_ref->setMinimum(LACAN_VAR_GEN_TORQ_MIN);
-    ui->spin_torque_ref->setDecimals(3);
+    ui->spin_torque_ref->setDecimals(2);
 
     ui->spin_lim_ief->setMaximum(LACAN_VAR_GEN_IEF_MAX);
     ui->spin_lim_ief->setMinimum(LACAN_VAR_GEN_IEF_MIN);
-    ui->spin_lim_ief->setDecimals(3);
+    ui->spin_lim_ief->setDecimals(2);
 
     ui->spin_isd_ref->setMaximum(LACAN_VAR_GEN_ISD_MAX);
     ui->spin_isd_ref->setMinimum(LACAN_VAR_GEN_ISD_MIN);
-    ui->spin_isd_ref->setDecimals(3);
+    ui->spin_isd_ref->setDecimals(2);
 
 }
 

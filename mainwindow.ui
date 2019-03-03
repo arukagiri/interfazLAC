@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>589</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -230,6 +230,50 @@
        </spacer>
       </item>
       <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Log Switch:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="logButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border:none;</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="imagenes.qrc">
+          <normaloff>:/Imagenes/offSwitch.png</normaloff>
+          <normalon>:/Imagenes/onSwitch.png</normalon>:/Imagenes/offSwitch.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>80</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="refreshButton">
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="button_START">
         <property name="text">
          <string>Start</string>
@@ -273,18 +317,17 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="grid_sent">
-          <item row="0" column="0">
-           <widget class="QTableWidget" name="tableWidget_sent">
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>350</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QTableWidget" name="tableWidget_sent">
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>350</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="grid_sent"/>
         </item>
        </layout>
       </widget>
@@ -359,6 +402,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="imagenes.qrc"/>
+ </resources>
  <connections/>
 </ui>

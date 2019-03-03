@@ -42,6 +42,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_DESTINO->addItem("Volante de Inercia",QVariant(LACAN_ID_VOLANTE));
     ui->list_DESTINO->addItem("Boost",QVariant(LACAN_ID_BOOST));
 
+    ui->spin_valor->setMaximum(1000);
 
   //  ui->list_DESTINO->setCurrentIndex(mw->dest);
     switch(dest){

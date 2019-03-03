@@ -1,31 +1,30 @@
 ==================================================================================================================================
 INTERFAZ:
-==================================================================================================================================
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
-si el tiempo que tarda en contestar el ack es del orden de los 2 segundos... deberia cambiar las ventanas de estado de red y de gen para que
-actualicen mas o menos cada 5 seg (tarda 2 el ack mas 2 mas que tarda en llegar la rta del qry)
-
-REVISAR EN INTERFAZ:
-
-ver el tema del destino de los mensajes, si se seleccionan desde la mainwindows o no
-
-ver deadtime HB y refresco de ventanas
-
-==================================================================================================================================
-==================================================================================================================================
-==================================================================================================================================
-PROBAR EL LUNES:
-
-ver de hacer andar el code compouse
-
-ver de mandarle post/set con distintos float, double lo que sea... 
-por que una vez aunduvo y ahora no anda?
-
-VOLANTE: 
-	-ver variables y limites
-	-ID es ISD?
-	- la ID va siempre seteable, en ambos modos?
-#define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
-
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
+
+==================================================================================================================================
+
+
+revisar ventanas de c/disp
+mil carteles con algunos errores
+empezar a limpiar codigo de warnings
+
+
+
+VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
+
+limites inferiores en variables qt  <------------------ BA
+ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF
+no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER
+
+
+==================================================================================================================================
+PANTALLA DB_GEN:
+
+cambias el modo, deshabilitas todo, pones aply, te deja cambiar las otras cosas
+
+ver que pasa cuando el micro me manda un modo nuevo... no deberia pasar, pero si llega a pasar de ultima tiro un cartel y le clavo un refresh values, refresh mode y demas
+
+==================================================================================================================================
