@@ -113,6 +113,8 @@ private slots:
 
     void on_refreshButton_clicked();
 
+    void on_filterButton_clicked();
+
 private:
 
     void create_varmap_gen();

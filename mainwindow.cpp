@@ -1256,3 +1256,37 @@ void MainWindow::on_refreshButton_clicked()
         }
     }
 }
+
+void MainWindow::on_filterButton_clicked()
+{
+    QString filter = ui->searchBar->text();
+    for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_received->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_received->item( i, j );
+            if( item->text().contains(filter) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_received->setRowHidden( i, !match );
+    }
+
+    for( int i = 0; i < ui->tableWidget_sent->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_sent->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_sent->item( i, j );
+            if( item->text().contains(filter) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_sent->setRowHidden( i, !match );
+    }
+}

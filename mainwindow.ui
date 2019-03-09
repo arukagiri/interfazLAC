@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>894</width>
-    <height>737</height>
+    <height>763</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -499,6 +499,16 @@ border: 1px solid black;</string>
           <widget class="QPushButton" name="button_STOP">
            <property name="text">
             <string>Stop</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchBar"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="filterButton">
+           <property name="text">
+            <string>Filtrar</string>
            </property>
           </widget>
          </item>
