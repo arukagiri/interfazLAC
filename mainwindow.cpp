@@ -1157,8 +1157,8 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
     uint16_t dest = verificar_destino();
     Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
 
-    envwin->setModal(true);
-    envwin->show();
+    //envwin->setModal(true);
+    //envwin->show();
 }
 
 //Ventana Estado de red

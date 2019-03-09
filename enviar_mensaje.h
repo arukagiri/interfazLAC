@@ -33,8 +33,9 @@ private:
     uint16_t dest;
     void set_TIPO_VAR();
 
-    QMap <QString,LACAN_VAR> varmap;
-
+    QMap<QString,LACAN_VAR> varmap;
+    QMap<QString,uint16_t> d_map;
+    QMap<QString,uint16_t> msg_map;
 
 private slots:
     void MENSAJE_changed(void);
@@ -50,12 +51,12 @@ private slots:
     void VAR_Changed();
     void TIPO_Changed();
     void CMD_Changed();
-    //void DEST_Changed();
+    void DEST_Changed();
     void ERR_Changed();
     void RESULT_Changed();
 
     void on_button_ENVIAR_MENSAJE_clicked();
-    void on_list_DESTINO_currentIndexChanged(int index);
+    //void on_list_DESTINO_currentIndexChanged(int index);
 };
 
 #endif // ENVIAR_MENSAJE_H

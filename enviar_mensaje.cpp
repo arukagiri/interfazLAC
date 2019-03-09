@@ -20,12 +20,24 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
 
     QDialog(parent),
     ui(new Ui::Enviar_Mensaje)
-{
+{    
     ui->setupUi(this);
     this->setWindowTitle("Enviar mensaje");
     this->setFixedSize(ui->verticalLayout->sizeHint());
     this->setLayout(ui->verticalLayout);
-    //en el mismo orden que la enum de arriba, si no no anda
+
+
+    mw = qobject_cast<MainWindow*>(this->parent());
+    dest=destMw;
+
+    msg_map["DO"]=LACAN_FUN_DO;
+    msg_map["SET"]=LACAN_FUN_SET;
+    msg_map["QUERY"]=LACAN_FUN_QRY;
+    msg_map["POST"]=LACAN_FUN_POST;
+    msg_map["ERROR"]=LACAN_FUN_ERR;
+    msg_map["HEARTBEAT"]=LACAN_FUN_HB;
+    msg_map["ACKNOWLEDGE"]=LACAN_FUN_ACK;
+
     ui->list_MENSAJE->addItem("DO");
     ui->list_MENSAJE->addItem("SET");
     ui->list_MENSAJE->addItem("QUERY");
@@ -34,33 +46,10 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_MENSAJE->addItem("HEARTBEAT");
     ui->list_MENSAJE->addItem("ACKNOWLEDGE");
 
-    mw = qobject_cast<MainWindow*>(this->parent());
-    dest=destMw;
-
-    ui->list_DESTINO->addItem("Broadcast",QVariant(LACAN_ID_BROADCAST));
-    ui->list_DESTINO->addItem("Generador Eolico",QVariant(LACAN_ID_GEN));
-    ui->list_DESTINO->addItem("Volante de Inercia",QVariant(LACAN_ID_VOLANTE));
-    ui->list_DESTINO->addItem("Boost",QVariant(LACAN_ID_BOOST));
-
-    ui->spin_valor->setMaximum(1000);
-
-  //  ui->list_DESTINO->setCurrentIndex(mw->dest);
-    switch(dest){
-    case LACAN_ID_BROADCAST:
-        qDebug()<<"broad";
-        break;
-    case LACAN_ID_GEN:
-        ui->list_DESTINO->setCurrentIndex(GEN_EOL);
-        qDebug()<<"gen";
-        break;
-    case LACAN_ID_VOLANTE:
-        ui->list_DESTINO->setCurrentIndex(VOL);
-        break;
-    case LACAN_ID_BOOST:
-        ui->list_DESTINO->setCurrentIndex(BOOST);
-        break;
-    }
-
+    ui->list_DESTINO->addItem("Broadcast");
+    ui->list_DESTINO->addItem("Generador");
+    ui->list_DESTINO->addItem("Volante");
+    ui->list_DESTINO->addItem("Boost");
 
     ui->list_VARIABLE->addItem("Corriente de Entrada");
     ui->list_VARIABLE->addItem("Corriente de Salida");
@@ -77,7 +66,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_TIPO->addItem("Minima");
     ui->list_TIPO->addItem("Set Point");
 
-
     ui->list_COMANDO->addItem("Start");
     ui->list_COMANDO->addItem("Stop");
     ui->list_COMANDO->addItem("Reset");
@@ -87,7 +75,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_COMANDO->addItem("Desacoplar");
     ui->list_COMANDO->addItem("Magnetizar");
     ui->list_COMANDO->addItem("Trip");
-
 
     ui->list_ERROR->addItem("Generic Error");
     ui->list_ERROR->addItem("Over Voltage");
@@ -110,20 +97,20 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_RESULTADO->addItem("DENIED");
     ui->list_RESULTADO->addItem("GENERIC_FAILURE");
 
-   // QMap <uint16_t,string> msgmap;
-    //msgmap[lacan_]
-
+    ui->spin_valor->setMaximum(1000);
 
     connect(ui->list_MENSAJE,SIGNAL(currentTextChanged(QString)),this,SLOT(MENSAJE_changed()));
-    DO_selected();
     connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(VAR_Changed()));
     connect(ui->list_TIPO,SIGNAL(currentTextChanged(QString)),this,SLOT(TIPO_Changed()));
     connect(ui->list_COMANDO,SIGNAL(currentTextChanged(QString)),this,SLOT(CMD_Changed()));
-    //connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
+    connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
     connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
     connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
 
+    DO_selected();
 
+    this->setModal(true);
+    this->show();
 
 }
 
@@ -274,7 +261,20 @@ void Enviar_Mensaje::VAR_Changed(){
 void Enviar_Mensaje::TIPO_Changed(){
     QString var_selectedstr;
     var_selectedstr=ui->list_VARIABLE->currentText()+" "+ui->list_TIPO->currentText();
-    var = varmap[var_selectedstr].setp;
+    switch(ui->list_TIPO->currentIndex()){
+    case MAX:
+        var = varmap[var_selectedstr].max;
+        break;
+    case MIN:
+        var = varmap[var_selectedstr].min;
+        break;
+    case SETP:
+        var = varmap[var_selectedstr].setp;
+        break;
+    case INST:
+        var = varmap[var_selectedstr].instantanea;
+        break;
+    }
 }
 
 
@@ -352,26 +352,28 @@ void Enviar_Mensaje::CMD_Changed(){
     }
 }
 
-/*void Enviar_Mensaje::DEST_Changed(){
+void Enviar_Mensaje::DEST_Changed(){
 
     switch(ui->list_DESTINO->currentIndex()){
         case BROAD:
-            mw->dest=LACAN_ID_BROADCAST;
+            dest=LACAN_ID_BROADCAST;
             break;
         case GEN_EOL:
-            mw->dest=LACAN_ID_GEN;
+            varmap = mw->varmap_gen;
+            dest=LACAN_ID_GEN;
             break;
         case VOL:
-            mw->dest=LACAN_ID_VOLANTE;
+            varmap = mw->varmap_vol;
+            dest=LACAN_ID_VOLANTE;
             break;
         case BOOST:
-            mw->dest=LACAN_ID_BOOST;
+            dest=LACAN_ID_BOOST;
             break;
         default:
             break;
 
+    }
 }
-}*/
 
 void Enviar_Mensaje::RESULT_Changed(){
     switch(ui->list_RESULTADO->currentIndex()){
@@ -474,10 +476,6 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     data.var_float = ui->spin_valor->value();
 
     float probando=data.var_float;
-    qDebug()<<"=============";
-    qDebug()<<probando;
-    qDebug()<<"=============";
-
 
     uint16_t ack_cod = ui->spin_codigo->value();
     uint prevsize=mw->msg_ack.size();
@@ -523,8 +521,8 @@ Enviar_Mensaje::~Enviar_Mensaje()
 {
     delete ui;
 }
-
+/*
 void Enviar_Mensaje::on_list_DESTINO_currentIndexChanged(int index)
 {
     dest=ui->list_DESTINO->itemData(index).toInt();
-}
+}*/

@@ -15,6 +15,10 @@ empezar a limpiar codigo de warnings
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
+ver si es necesario un qmap para los comandos de cada dispositivo URGENTE
+ver si hay q armar la deteccion de errores en cada disp (obvio q no)
+ver de agregar varmap para broadcast
+
 limites inferiores en variables qt  <------------------ BA
 ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF
 no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER

@@ -17,5 +17,7 @@
         <file>Imagenes/Trama_CAN.png</file>
         <file>Imagenes/offSwitch.png</file>
         <file>Imagenes/onSwitch.png</file>
+        <file>Imagenes/network.png</file>
+        <file>Imagenes/aami2-50-512.png</file>
     </qresource>
 </RCC>
