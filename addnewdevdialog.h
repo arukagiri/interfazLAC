@@ -14,8 +14,8 @@ class AddNewDevDialog : public QDialog
 
 public:
     QString devname;
-    explicit AddNewDevDialog(QWidget *parent = 0);
-    virtual ~AddNewDevDialog() override;
+    explicit AddNewDevDialog(QWidget *parent);
+    ~AddNewDevDialog();
 
 signals:
     void dev_name_set(QString);

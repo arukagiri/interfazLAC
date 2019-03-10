@@ -369,7 +369,7 @@ void MainWindow::agregar_log_rec(){
                 ui->tableWidget_sent->setRowCount(list_send_cont);
                 do_log=TRUE;
             }else{
-                on_button_STOP_clicked();
+                on_logButton_clicked();
             }
         }else{
             //list_rec_cont++;
@@ -986,11 +986,9 @@ void MainWindow::handleRead(){
     //Se procesa cada mensaje en cada ciclo
     for(int i=0;i<cant_msg;i++){
         LACAN_MSG msg;
-        int result=0;
         uint prevsize=0;
         char sub_pila[13]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
 
-        int h=0;
         //Copio un mensaje de la pila al buffer(el primero que llego)
         for(uint j=0;j<first_byte[1];j++){
             //sub_pila[h]=pila.at(j);
@@ -1021,6 +1019,7 @@ void MainWindow::handleRead(){
             emit postforER_arrived(msg);
         }
         //Proceso el mensaje
+        int result;
         result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
         //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
         //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
@@ -1157,8 +1156,8 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
     uint16_t dest = verificar_destino();
     Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
 
-    //envwin->setModal(true);
-    //envwin->show();
+    envwin->setModal(true);
+    envwin->show();
 }
 
 //Ventana Estado de red
@@ -1175,7 +1174,7 @@ void MainWindow::on_button_ESTADO_RED_clicked()
     ERflag=true;
     connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
 }
-
+/*
 //Comienza el logeo de mensajes en la Main Windows
 void MainWindow::on_button_START_clicked()
 {
@@ -1206,7 +1205,7 @@ void MainWindow::on_button_STOP_clicked()
 {
     ui->logButton->setChecked(false);
     do_log=FALSE;
-}
+}*/
 //Ventana Envio de mensajes
 void MainWindow::on_button_ByteSend_clicked()
 {
@@ -1257,7 +1256,7 @@ void MainWindow::on_refreshButton_clicked()
     }
 }
 
-void MainWindow::on_filterButton_clicked()
+void MainWindow::on_searchBar_textChanged(const QString &arg1)
 {
     QString filter = ui->searchBar->text();
     for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
@@ -1266,7 +1265,7 @@ void MainWindow::on_filterButton_clicked()
         for( int j = 0; j < ui->tableWidget_received->columnCount(); ++j )
         {
             QTableWidgetItem *item = ui->tableWidget_received->item( i, j );
-            if( item->text().contains(filter) )
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
             {
                 match = true;
                 break;
@@ -1281,7 +1280,7 @@ void MainWindow::on_filterButton_clicked()
         for( int j = 0; j < ui->tableWidget_sent->columnCount(); ++j )
         {
             QTableWidgetItem *item = ui->tableWidget_sent->item( i, j );
-            if( item->text().contains(filter) )
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
             {
                 match = true;
                 break;

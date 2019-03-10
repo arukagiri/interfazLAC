@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(QSerialPort &serial_port0,QWidget *parent = 0);
+    explicit MainWindow(QSerialPort &serial_port0,QWidget *parent = nullptr);
     ~MainWindow();
 
      Ui::MainWindow *ui;
@@ -99,9 +99,9 @@ private slots:
 
     void on_button_ESTADO_RED_clicked();
 
-    void on_button_START_clicked();
+    //void on_button_START_clicked();
 
-    void on_button_STOP_clicked();
+    //void on_button_STOP_clicked();
 
     void on_button_ByteSend_clicked();
 
@@ -113,7 +113,7 @@ private slots:
 
     void on_refreshButton_clicked();
 
-    void on_filterButton_clicked();
+    void on_searchBar_textChanged(const QString &arg1);
 
 private:
 

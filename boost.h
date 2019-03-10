@@ -12,7 +12,7 @@ class boost : public QDialog
     Q_OBJECT
 
 public:
-    explicit boost(QWidget *parent = nullptr);
+    explicit boost(QWidget *parent);
     ~boost();
 
 private:

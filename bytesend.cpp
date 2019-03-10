@@ -112,8 +112,7 @@ void ByteSend::on_sendButton_clicked(){
         serialsend2(*(mw->serial_port),msg);
         //mw->msg_log.push_back(msg);
     }else{
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::warning(this,"Error","Error al enviar el mensaje");
+        QMessageBox::warning(this,"Error","Error al enviar el mensaje");
     }
     this->close();
 }

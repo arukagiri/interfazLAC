@@ -19,5 +19,6 @@
         <file>Imagenes/onSwitch.png</file>
         <file>Imagenes/network.png</file>
         <file>Imagenes/aami2-50-512.png</file>
+        <file>Imagenes/lacan.png</file>
     </qresource>
 </RCC>

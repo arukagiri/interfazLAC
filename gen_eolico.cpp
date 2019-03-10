@@ -169,55 +169,52 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
       recibed_val.var_char[2]=msg.BYTE4;
       recibed_val.var_char[3]=msg.BYTE5;
         switch (msg.BYTE1) {
-
         case LACAN_VAR_MOD:
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(actual_mode);
             new_mode();
-        break;
-
+            break;
         case LACAN_VAR_VO_INST:
             gen_vo = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_IO_INST:
             gen_io = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_PO_INST:
             gen_po = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_W_INST:
             gen_vel = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_TORQ_INST:
             gen_tor = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_I_BAT_INST:
             gen_ibat = recibed_val.var_float;
-        break;
-
+            break;
         case LACAN_VAR_VO_SETP:
             lim_vdc = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_W_SETP:
             speed_ref=recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_TORQ_SETP:
             torque_ref=recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_PO_SETP:
             pot_ref = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_I_BAT_SETP: //o la de setpoint
             lim_ibat = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_IEF_SETP:
             lim_ief = recibed_val.var_float;
-        break;
+            break;
         case LACAN_VAR_ISD_SETP:
             isd_ref = recibed_val.var_float;
-        break;
-    default:
-        break;
+            break;
+        default:
+            break;
     }
 }
 

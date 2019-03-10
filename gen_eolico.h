@@ -19,7 +19,7 @@ class Gen_Eolico : public QDialog
     Q_OBJECT
 
 public:
-    explicit Gen_Eolico(QWidget *parent = 0);
+    explicit Gen_Eolico(QWidget *parent);
     ~Gen_Eolico();
 
 protected:

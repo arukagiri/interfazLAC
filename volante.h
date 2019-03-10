@@ -23,7 +23,7 @@ class volante : public QDialog
     Q_OBJECT
 
 public:
-    explicit volante(QWidget *parent = 0);
+    explicit volante(QWidget *parent);
     ~volante();
 
 protected:

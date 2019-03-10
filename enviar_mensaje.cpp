@@ -109,9 +109,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
 
     DO_selected();
 
-    this->setModal(true);
-    this->show();
-
 }
 
 void Enviar_Mensaje::MENSAJE_changed(){
@@ -474,8 +471,6 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
     data_can data;
     data.var_float = ui->spin_valor->value();
-
-    float probando=data.var_float;
 
     uint16_t ack_cod = ui->spin_codigo->value();
     uint prevsize=mw->msg_ack.size();

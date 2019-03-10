@@ -22,6 +22,8 @@ public:
 private slots:
     void on_button_ENVIAR_QRY_clicked();
 
+    void on_list_VARIABLE_QRY_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::Consultar *ui;
     uint16_t consulta;

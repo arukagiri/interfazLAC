@@ -35,7 +35,7 @@ void OpenPort::on_autocon_checkBox_stateChanged(int arg)
 
 void OpenPort::on_pushButton_clicked()
 {
-    QSerialPort* serial_port;
+    QSerialPort* serial_port=new QSerialPort();
     int retval=false;
     if(ui->autocon_checkBox->isChecked()){
         //sale del foreach con retval=1 solo si encontro un puerto que se puede abrir
@@ -69,7 +69,7 @@ void OpenPort::on_pushButton_clicked()
     this->close();
 
     if(!retval){
-        int ret = QMessageBox::warning(this, "Ups",
+        QMessageBox::warning(this, "Ups",
                                        "No se pudo conectar con el puerto",
                                        QMessageBox::Ok);
         //return;

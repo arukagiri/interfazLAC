@@ -108,13 +108,16 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
 {
     QString var_selectedstr;
     var_selectedstr=ui->list_VARIABLE_QRY->currentText();
-    qDebug()<<var_selectedstr;
-    if(ui->list_TIPO_QRY->currentIndex()==0)    //Instantanea
-        consulta = varmap[var_selectedstr].instantanea;
-    else
-        consulta = varmap[var_selectedstr].setp;
+    if(var_selectedstr=="Modo"){
+        consulta = LACAN_VAR_MOD;
+    }else{
+        if(ui->list_TIPO_QRY->currentIndex()==0)    //Instantanea
+            consulta = varmap[var_selectedstr].instantanea;
+        else
+            consulta = varmap[var_selectedstr].setp;
+    }
 
-    int prevsize=mw->msg_ack.size();
+    uint prevsize=mw->msg_ack.size();
     mw->LACAN_Query(consulta,1,dest);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
@@ -129,4 +132,11 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
 Consultar::~Consultar()
 {
     delete ui;
+}
+
+void Consultar::on_list_VARIABLE_QRY_currentIndexChanged(const QString &arg1)
+{
+    if(arg1=="Modo"){
+        ui->list_TIPO_QRY->setEnabled(false);
+    }
 }

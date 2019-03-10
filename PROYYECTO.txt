@@ -16,8 +16,12 @@ empezar a limpiar codigo de warnings
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
 ver si es necesario un qmap para los comandos de cada dispositivo URGENTE
+ver de chequear la posibilidad de variables negativas URGENTE
 ver si hay q armar la deteccion de errores en cada disp (obvio q no)
 ver de agregar varmap para broadcast
+ver switches que matchean con ids discontinuas (gen_eolico.cpp linea 172, volante.cpp linea 78)
+revisar varias variables sin usar (gen_eolico.cpp volante.cpp)
+revisar slots y funciones sin usar (volante.cpp)
 
 limites inferiores en variables qt  <------------------ BA
 ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF

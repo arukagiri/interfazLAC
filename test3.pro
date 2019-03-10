@@ -74,7 +74,6 @@ FORMS += \
     volante.ui \
     bytesend.ui \
     openport.ui \
-    boost.ui \
     boost.ui
 
 RESOURCES += \

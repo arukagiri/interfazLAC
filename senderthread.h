@@ -14,7 +14,7 @@ class SenderThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit SenderThread(QObject *parent = nullptr);
+    explicit SenderThread(QObject *parent);
     virtual void run() override;
     tiempo senderTimer;
 signals:
