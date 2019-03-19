@@ -28,6 +28,7 @@ protected:
 private:
     Ui::Gen_Eolico *ui;
     uint16_t actual_mode;
+    uint16_t previous_mode;
     MainWindow* mw ;
     uint16_t dest = LACAN_ID_GEN;
     uint16_t cmd;
@@ -39,6 +40,8 @@ private:
     void new_mode();
     void refresh_values();
     void send_qry();
+    bool verificar_min();
+    QString str_min;
 
     //variables para guardar el valor a mostrar
 
@@ -81,6 +84,8 @@ private slots:
     void timer_handler();
 
     void mode_changed();
+
+    void verificar_mode_changed();
 
     void GENpost_Handler(LACAN_MSG msg);
 

@@ -175,14 +175,14 @@ struct LACAN_MSG{
    uint16_t BYTE5:8;
    uint16_t BYTE6:8;
    uint16_t BYTE7:8;*/
-  char BYTE0;
-  char BYTE1;
-  char BYTE2;
-  char BYTE3;
-  char BYTE4;
-  char BYTE5;
-  char BYTE6;
-  char BYTE7;
+  uchar BYTE0;
+  uchar BYTE1;
+  uchar BYTE2;
+  uchar BYTE3;
+  uchar BYTE4;
+  uchar BYTE5;
+  uchar BYTE6;
+  uchar BYTE7;
 };
 
 typedef struct LACAN_MSG LACAN_MSG;

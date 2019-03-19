@@ -11,6 +11,8 @@ revisar ventanas de c/disp
 mil carteles con algunos errores
 empezar a limpiar codigo de warnings
 
+ver en el micro el tema del envio de post.. rotate y toda esa wea
+
 
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
@@ -23,16 +25,16 @@ ver switches que matchean con ids discontinuas (gen_eolico.cpp linea 172, volant
 revisar varias variables sin usar (gen_eolico.cpp volante.cpp)
 revisar slots y funciones sin usar (volante.cpp)
 
-limites inferiores en variables qt  <------------------ BA
-ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF
+limites inferiores en variables qt  <------------------ BA   (OK. FALTA PROBAR)
 no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER
 
 
 ==================================================================================================================================
-PANTALLA DB_GEN:
+PANTALLA DB_GEN: 
 
-cambias el modo, deshabilitas todo, pones aply, te deja cambiar las otras cosas
+cambias el modo, deshabilitas todo, pones aply, te deja cambiar las otras cosas  (OK. FALTA PROBAR)
 
-ver que pasa cuando el micro me manda un modo nuevo... no deberia pasar, pero si llega a pasar de ultima tiro un cartel y le clavo un refresh values, refresh mode y demas
+ver que pasa cuando el micro me manda un modo nuevo... no deberia pasar, 
+pero si llega a pasar de ultima tiro un cartel y le clavo un refresh values, refresh mode y demas  (ESTA HECHO PARA QUE SE TE CAMBIE EL MODO AUTOMATICAMENTE, SI QUERES AGREGO UN CARTEL TMB)
 
 ==================================================================================================================================
