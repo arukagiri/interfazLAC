@@ -28,6 +28,7 @@ private:
     uint16_t mode_set;
     MainWindow* mw;
     uint16_t dest;
+    uint16_t minimo;
     void set_tipo();
     void SET_ACTUAL_VAR();
 

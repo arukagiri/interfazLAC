@@ -91,22 +91,41 @@ void Comandar::on_button_ENVIAR_clicked()
 {
     uint prevsize= mw->msg_ack.size();
 
+
     if(ui->radio_DO->isChecked()){
         mw->LACAN_Do(cmd,1,dest);
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
-        data.var_char[0]=mode_set;
-        data.var_char[1]=0;
-        data.var_char[2]=0;
-        data.var_char[3]=0;
+            data.var_char[0]=mode_set;
+            data.var_char[1]=0;
+            data.var_char[2]=0;
+            data.var_char[3]=0;
+            mw->LACAN_Set(var_set,data,1,dest);
+            mw->agregar_log_sent();
         }
         else{
-        SET_ACTUAL_VAR();
+            if(ui->spin_valor->value()>minimo){
+                data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+                mw->LACAN_Set(var_set,data,1,dest);
+                mw->agregar_log_sent();
+            }
+            else{
+                QMessageBox::StandardButton reply;
+                QString str = "El valor minimo para esta variable es ";
+                str.append(QString::number(minimo));
+                str.append(". Confirma que desea enviar este valor?");
+                reply = QMessageBox::question(this,"Valor Minimo",str, QMessageBox::Yes | QMessageBox::No );
+                if(reply==QMessageBox::Yes){
+                    data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+                    mw->LACAN_Set(var_set,data,1,dest);
+                    mw->agregar_log_sent();
+                }
+                //else{
 
-        data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+                //}
+            }
         }
-        mw->LACAN_Set(var_set,data,1,dest);
     }else{
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }
@@ -115,7 +134,7 @@ void Comandar::on_button_ENVIAR_clicked()
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
-    mw->agregar_log_sent();
+
 
     this->close();
 }
@@ -151,6 +170,7 @@ void Comandar::SET_ACTUAL_VAR(){
    var_set = varmap[var_selectedstr].setp;
    ui->spin_valor->setMaximum(varmap[var_selectedstr].max);
    ui->spin_valor->setMinimum(varmap[var_selectedstr].min);
+   minimo=varmap[var_selectedstr].min;
 }
 
 
