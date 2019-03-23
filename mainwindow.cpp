@@ -252,6 +252,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev->hb_status=ACTIVE;
     newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
+
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
