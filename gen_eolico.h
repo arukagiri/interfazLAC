@@ -27,9 +27,9 @@ protected:
 
 private:
     Ui::Gen_Eolico *ui;
+    MainWindow* mw ;
     uint16_t actual_mode;
     uint16_t previous_mode;
-    MainWindow* mw ;
     uint16_t dest = LACAN_ID_GEN;
     uint16_t cmd;
     data_can val;
@@ -40,23 +40,21 @@ private:
     void new_mode();
     void refresh_values();
     void send_qry();
-    bool verificar_min();
-    QString str_min;
 
     //variables para guardar el valor a mostrar
 
     data_can recibed_val;
-    float iconv;         //para insertar solo numeros
+
+    //Variables de SetPoint
+    float pot_ref;
+    float speed_ref;
+    float torque_ref;
     float isd_ref;
     float lim_ibat;
     float lim_ief;
     float lim_vdc;
-    float pot_ref;
-    float speed_ref;
-    float torque_ref;
-    float vdc;
-    float ibat;
 
+    //Variables de Salida
     float gen_vo;
     float gen_io;
     float gen_po;
@@ -64,18 +62,6 @@ private:
     float gen_vel;
     float gen_tor;
 
-    //cuando se edita un valor
-    void set_spin_click(bool state);
-    bool speed_ref_click;
-    bool pot_ref_click;
-    bool lim_vdc_click;
-    bool iconv_click;
-    bool lim_ief_click;
-    bool torque_ref_click;
-    bool isd_ref_click;
-    bool lim_ibat_click;
-
-    void set_limits_gen();
 
 
 
@@ -89,21 +75,9 @@ private slots:
 
     void GENpost_Handler(LACAN_MSG msg);
 
-    void enviar_variables_generales();
-
-    void on_pushButton_apply_clicked();
-    void on_pushButton_cancel_clicked();
     void on_pushButton_comandar_clicked();
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
-    void on_spin_lim_ibat_valueChanged(double arg1);
-    void on_spin_lim_vdc_valueChanged(double arg1);
-    void on_spin_speed_ref_valueChanged(double arg1);
-    void on_spin_pot_ref_valueChanged(double arg1);
-    void on_spin_iconv_valueChanged(double arg1);
-    void on_spin_lim_ief_valueChanged(double arg1);
-    void on_spin_torque_ref_valueChanged(double arg1);
-    void on_spin_isd_ref_valueChanged(double arg1);
     void on_combo_modo_currentIndexChanged(int index);
 };
 

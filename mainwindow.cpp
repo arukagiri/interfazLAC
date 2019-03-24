@@ -593,7 +593,7 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
 
 //Maneja el caso de la llegada de un mensaje de error
 void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
-    QString msg_err ="Dispositivo: ";
+    QString msg_err ="Luli, no te asustes. Este es un mensaje de error pero no es un error de QT. Lo que esta ocurriendo es que algo se cago, probablemente si miras el code Compuse no esta andando el micro. Y nada el resto todo pillo Salu2. \n Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
     QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }

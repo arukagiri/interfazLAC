@@ -4,6 +4,10 @@ ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
 
+check edicion -> cambiar modo y variables
+envio el modo y espero confirmacion del cambio
+si el nuevo_mode coincide con el que envie para setear (osea que llego en un post) envio el resto de las variables
+si no, vuelvo al estado anterior (vence timeout)
 ==================================================================================================================================
 
 
@@ -17,15 +21,12 @@ ver en el micro el tema del envio de post.. rotate y toda esa wea
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
-ver si es necesario un qmap para los comandos de cada dispositivo URGENTE
 ver de chequear la posibilidad de variables negativas URGENTE
-ver si hay q armar la deteccion de errores en cada disp (obvio q no)
 ver de agregar varmap para broadcast
 ver switches que matchean con ids discontinuas (gen_eolico.cpp linea 172, volante.cpp linea 78)
 revisar varias variables sin usar (gen_eolico.cpp volante.cpp)
 revisar slots y funciones sin usar (volante.cpp)
 
-limites inferiores en variables qt  <------------------ BA   (OK. FALTA PROBAR)
 no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER
 
 
