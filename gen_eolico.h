@@ -46,21 +46,21 @@ private:
     data_can recibed_val;
 
     //Variables de SetPoint
-    float pot_ref;
-    float speed_ref;
-    float torque_ref;
-    float isd_ref;
-    float lim_ibat;
-    float lim_ief;
-    float lim_vdc;
+    float pot_ref = 0.0;
+    float speed_ref = 0.0;
+    float torque_ref = 0.0;
+    float isd_ref = 0.0;
+    float lim_ibat = 0.0;
+    float lim_ief = 0.0;
+    float lim_vdc = 0.0;
 
     //Variables de Salida
-    float gen_vo;
-    float gen_io;
-    float gen_po;
-    float gen_ibat;
-    float gen_vel;
-    float gen_tor;
+    float gen_vo = 0.0;
+    float gen_io = 0.0;
+    float gen_po = 0.0;
+    float gen_ibat = 0.0;
+    float gen_vel = 0.0;
+    float gen_tor = 0.0;
 
 
 

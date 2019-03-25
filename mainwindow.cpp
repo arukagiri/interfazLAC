@@ -1011,6 +1011,11 @@ void MainWindow::handleRead(){
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
 
+        qDebug()<<"========================";
+        qDebug()<<msg.BYTE0;
+        qDebug()<<msg.DLC;
+        qDebug()<<msg.ID;
+
         prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
 
         //Si el mensaje es un POST y esta activa la ventana estado de red, emito la señal para que este

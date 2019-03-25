@@ -155,8 +155,8 @@
   <widget class="QLabel" name="label_lim_iconv">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>90</y>
+     <x>310</x>
+     <y>80</y>
      <width>47</width>
      <height>20</height>
     </rect>
@@ -285,8 +285,8 @@
   <widget class="QLabel" name="label_vdc_2">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>130</y>
+     <x>140</x>
+     <y>120</y>
      <width>30</width>
      <height>16</height>
     </rect>
@@ -298,8 +298,8 @@
   <widget class="QLabel" name="label_iconv">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>150</y>
+     <x>320</x>
+     <y>140</y>
      <width>27</width>
      <height>16</height>
     </rect>
@@ -386,7 +386,7 @@
     <string>ibat</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>600</x>

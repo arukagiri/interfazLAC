@@ -11,6 +11,8 @@ mil carteles con algunos errores
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
+ver filtro de mensaje cuando llegan mensajes nuevos
+
 ==================================================================================================================================
 FINAL:
 no loguear los mensajes de pantalla de estado de red ni de generador  

@@ -161,13 +161,13 @@ void Gen_Eolico::send_qry(){
 void Gen_Eolico::refresh_values(){
 
     //Variables de SET
-    ui->label_torque_ref->setText(QString::number(torque_ref,'f',2));
-    ui->label_speed_ref->setText(QString::number(speed_ref,'f',2));
-    ui->label_pot_ref->setText(QString::number(pot_ref,'f',2));
-    ui->label_lim_vdc->setText(QString::number(lim_vdc,'f',2));
-    ui->label_lim_ief->setText(QString::number(lim_ief,'f',2));
-    ui->label_isd_ref->setText(QString::number(isd_ref,'f',2));
-    ui->label_lim_ibat->setText(QString::number(lim_ibat,'f',2));
+    ui->label_gen_torque_ref->setText(QString::number(torque_ref,'f',2));
+    ui->label_gen_speed_ref->setText(QString::number(speed_ref,'f',2));
+    ui->label_gen_pot_ref->setText(QString::number(pot_ref,'f',2));
+    ui->label_gen_lim_vdc_ref->setText(QString::number(lim_vdc,'f',2));
+    ui->label_gen_lim_ief_ref->setText(QString::number(lim_ief,'f',2));
+    ui->label_gen_isd_ref->setText(QString::number(isd_ref,'f',2));
+    ui->label_gen_lim_ibat_ref->setText(QString::number(lim_ibat,'f',2));
 
     //Variables de Salida
     ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
