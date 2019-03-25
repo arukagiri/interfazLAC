@@ -41,7 +41,8 @@ SOURCES += \
     lacan_detect.cpp \
     openport.cpp \
     boost.cpp \
-    senderthread.cpp
+    senderthread.cpp \
+    readerthread.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -61,7 +62,8 @@ HEADERS += \
     openport.h \
     lacan_limits_vol.h \
     boost.h \
-    senderthread.h
+    senderthread.h \
+    readerthread.h
 
 FORMS += \
         mainwindow.ui \

@@ -26,6 +26,7 @@
 #include <QThread>
 #include "tiempo.h"
 #include "senderthread.h"
+#include "readerthread.h"
 
 /***Funciones genericas***/
 //Carga de mensajes al log en un txt, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
@@ -288,8 +289,11 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     create_varmap_gen();
     create_varmap_vol();
 
+    ReaderThread* readerth = new ReaderThread(*serial_port);
+    readerth->start();
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
-    connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
+    connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
+    connect(readerth, SIGNAL(receivedMsg(LACAN_MSG)), this, SLOT(handleProcessedMsg(LACAN_MSG)));
     //Conecto la señal que indica un error en el puerto serie con nuestro slot para manejarla
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
 }
@@ -974,8 +978,8 @@ void MainWindow::verificarACK(){
 }
 
 //Es la encargada de manejar la señal del sistema que indica que hay datos por leer en el buffer del puerto serie
-void MainWindow::handleRead(){
-    uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
+void MainWindow::handleProcessedMsg(LACAN_MSG msg){
+    /*uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
     uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
     static uint16_t notsup_count, notsup_gen;
@@ -1018,19 +1022,30 @@ void MainWindow::handleRead(){
         //mensaje lo maneje esa ventana
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
-        }
-        //Proceso el mensaje
-        int result;
-        result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
-        //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
-        //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
-        //(el ultimo) con el slot
-        if(hb_con.size()>prevsize){
-            connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
-        }
-        //Agrego el mensaje al log de recibidos (y a su vez al txt)
-        agregar_log_rec();
+        }*/
+
+    msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
+
+    int prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
+
+    //Si el mensaje es un POST y esta activa la ventana estado de red, emito la señal para que este
+    //mensaje lo maneje esa ventana
+    if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
+        emit postforER_arrived(msg);
     }
+    //Proceso el mensaje
+    static uint16_t notsup_count, notsup_gen;
+    int result;
+    result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
+    //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
+    //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
+    //(el ultimo) con el slot
+    if(hb_con.size()>prevsize){
+        connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
+    }
+    //Agrego el mensaje al log de recibidos (y a su vez al txt)
+    agregar_log_rec();
+
 }
 
 //Seteo del nombre del nuevo dispositivo segun se ingreso y lo termino de agragar al procesamiento de la aplicacion
