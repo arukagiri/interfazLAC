@@ -598,7 +598,7 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
 
 //Maneja el caso de la llegada de un mensaje de error
 void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
-    QString msg_err ="Dispositivo: ";
+    QString msg_err ="Luli, no te asustes. Este es un mensaje de error pero no es un error de QT. Lo que esta ocurriendo es que algo se cago, probablemente si miras el code Compuse no esta andando el micro. Y nada el resto todo pillo Salu2. \n Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
     QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }
@@ -1015,6 +1015,11 @@ void MainWindow::handleProcessedMsg(LACAN_MSG msg){
         //Transformo el mensaje de bytes al tipo de dato LACAN_MSG para trabajarlo mas facilmente
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
+
+        qDebug()<<"========================";
+        qDebug()<<msg.BYTE0;
+        qDebug()<<msg.DLC;
+        qDebug()<<msg.ID;
 
         prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
 

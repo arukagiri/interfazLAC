@@ -16,8 +16,8 @@
   <widget class="QLabel" name="DB_GEN">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>10</y>
+     <x>100</x>
+     <y>0</y>
      <width>1001</width>
      <height>610</height>
     </rect>
@@ -50,11 +50,13 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_isd_ref"/>
+     <widget class="QLabel" name="label_gen_isd_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
-   <zorder>spin_isd_ref</zorder>
-   <zorder>label_isd_ref</zorder>
   </widget>
   <widget class="QWidget" name="layoutWidget_3">
    <property name="geometry">
@@ -146,24 +148,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_12">
-        <item>
-         <widget class="QPushButton" name="pushButton_apply">
-          <property name="text">
-           <string>Apply</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_cancel">
-          <property name="text">
-           <string>Cancel</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
      </layout>
     </item>
    </layout>
@@ -171,8 +155,8 @@
   <widget class="QLabel" name="label_lim_iconv">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>90</y>
+     <x>310</x>
+     <y>80</y>
      <width>47</width>
      <height>20</height>
     </rect>
@@ -199,7 +183,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_torque_ref"/>
+     <widget class="QLabel" name="label_gen_torque_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -221,16 +209,18 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_pot_ref"/>
+     <widget class="QLabel" name="label_gen_pot_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
-   <zorder>spin_pot_ref</zorder>
-   <zorder>label_pot_ref</zorder>
   </widget>
   <widget class="QLabel" name="label_variables_salida">
    <property name="geometry">
     <rect>
-     <x>540</x>
+     <x>600</x>
      <y>30</y>
      <width>121</width>
      <height>16</height>
@@ -258,11 +248,13 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_speed_ref"/>
+     <widget class="QLabel" name="label_gen_speed_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
-   <zorder>spin_speed_ref</zorder>
-   <zorder>label_speed_ref</zorder>
   </widget>
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
@@ -282,17 +274,19 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_lim_ief"/>
+     <widget class="QLabel" name="label_gen_lim_ief_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
-   <zorder>spin_lim_ief</zorder>
-   <zorder>label_lim_ief</zorder>
   </widget>
   <widget class="QLabel" name="label_vdc_2">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>130</y>
+     <x>140</x>
+     <y>120</y>
      <width>30</width>
      <height>16</height>
     </rect>
@@ -304,8 +298,8 @@
   <widget class="QLabel" name="label_iconv">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>150</y>
+     <x>320</x>
+     <y>140</y>
      <width>27</width>
      <height>16</height>
     </rect>
@@ -313,68 +307,6 @@
    <property name="text">
     <string>Iconv</string>
    </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>541</x>
-     <y>51</y>
-     <width>170</width>
-     <height>55</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Tension de salida (V):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Corriente de salida (A):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Corriente Bat. (A):</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="label_gen_vo">
-        <property name="text">
-         <string>tension</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_gen_io">
-        <property name="text">
-         <string>corriente </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_gen_ibat">
-        <property name="text">
-         <string>ibat</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
   </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -394,7 +326,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_lim_vdc"/>
+     <widget class="QLabel" name="label_gen_lim_vdc_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -416,7 +352,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QDoubleSpinBox" name="spin_lim_ibat"/>
+     <widget class="QLabel" name="label_gen_lim_ibat_ref">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -446,63 +386,121 @@
     <string>ibat</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>734</x>
+     <x>600</x>
      <y>50</y>
-     <width>161</width>
-     <height>55</height>
+     <width>339</width>
+     <height>57</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_9">
+   <layout class="QHBoxLayout" name="horizontalLayout_10">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="label_14">
-        <property name="text">
-         <string>Potencia (kW):</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Tension de salida (V):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Corriente de salida (A):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Corriente Bat. (A):</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Velocidad (rpm):</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>Torque (Nm):</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_gen_vo">
+          <property name="text">
+           <string>tension</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_gen_io">
+          <property name="text">
+           <string>corriente </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_gen_ibat">
+          <property name="text">
+           <string>ibat</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
-       <widget class="QLabel" name="label_gen_po">
-        <property name="text">
-         <string>Potencia (kW):</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Potencia (kW):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Velocidad (rpm):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Torque (Nm):</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_gen_vel">
-        <property name="text">
-         <string>velocidad</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_gen_tor">
-        <property name="text">
-         <string>torque</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_gen_po">
+          <property name="text">
+           <string>Potencia (kW):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_gen_vel">
+          <property name="text">
+           <string>velocidad</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_gen_tor">
+          <property name="text">
+           <string>torque</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

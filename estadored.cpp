@@ -21,13 +21,6 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
     time_2sec = new QTimer();
 
-  /*  gen_vo=-9999999;
-    gen_io=-9999999;
-    boost_vo=-9999999;
-    boost_io=-9999999;
-    vol_vo=-9999999;
-    vol_io=-9999999;*/
-
     ui->label_gen_vo->setText("----");
     ui->label_gen_io->setText("----");
     ui->label_gen_velocidad->setText("----");
@@ -57,10 +50,10 @@ EstadoRed::EstadoRed(QWidget *parent) :
 void EstadoRed::refresh_values(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        ui->label_gen_vo->setText(QString::number(gen_vo));
-        ui->label_gen_io->setText(QString::number(gen_io));
-        ui->label_gen_velocidad->setText(QString::number(gen_vel));
-        ui->label_gen_torque->setText(QString::number(gen_tor));
+        ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
+        ui->label_gen_io->setText(QString::number(gen_io,'f',2));
+        ui->label_gen_velocidad->setText(QString::number(gen_vel,'f',2));
+        ui->label_gen_torque->setText(QString::number(gen_tor,'f',2));
         ui->label_gen_modo->setText(detect_mode(gen_mod));
     }
     else{
@@ -72,10 +65,10 @@ void EstadoRed::refresh_values(){
     }
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
-        ui->label_vol_vo->setText(QString::number(vol_vo));
-        ui->label_vol_io->setText(QString::number(vol_io));
-        ui->label_vol_velocidad->setText(QString::number(vol_vel));
-        ui->label_vol_torque->setText(QString::number(vol_tor));
+        ui->label_vol_vo->setText(QString::number(vol_vo,'f',2));
+        ui->label_vol_io->setText(QString::number(vol_io,'f',2));
+        ui->label_vol_velocidad->setText(QString::number(vol_vel,'f',2));
+        ui->label_vol_torque->setText(QString::number(vol_tor,'f',2));
         ui->label_vol_modo->setText(detect_mode(vol_mod));
     }
     else{
@@ -87,10 +80,10 @@ void EstadoRed::refresh_values(){
     }
 
     /*if(mw->device_is_connected(LACAN_ID_BOOST)){
-        ui->label_boost_vo->setText(QString::number(boost_vo));
-        ui->label_boost_io->setText(QString::number(boost_io));
-        ui->label_boost_vi->setText(QString::number(boost_vi));
-        ui->label_boost_ii->setText(QString::number(boost_io));
+        ui->label_boost_vo->setText(QString::number(boost_vo,'f',2));
+        ui->label_boost_io->setText(QString::number(boost_io,'f',2));
+        ui->label_boost_vi->setText(QString::number(boost_vi,'f',2));
+        ui->label_boost_ii->setText(QString::number(boost_io,'f',2));
         ui->label_boost_modo->setText(detect_mode(boost_mod));
     }
     else{

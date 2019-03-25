@@ -5,41 +5,26 @@
 #include <QtGui>
 #include <QTimer>
 #include "PC.h"
-#include "lacan_limits_gen.h"
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Gen_Eolico)
 {
-
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
+
+//Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
     ui->combo_modo->addItem("Potencia (1)",QVariant(LACAN_VAR_MOD_POT));
     ui->combo_modo->addItem("Torque (2)",QVariant(LACAN_VAR_MOD_TORQ));
     ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
+    connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
     mode_changed();
 
-    connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
 
-//SPIN
-
-    ui->spin_isd_ref->setValue(0);
-    ui->spin_lim_ibat->setValue(0);
-    ui->spin_lim_ief->setValue(0);
-    ui->spin_lim_vdc->setValue(0);
-    ui->spin_pot_ref->setValue(0);
-    ui->spin_speed_ref->setValue(0);
-    ui->spin_torque_ref->setValue(0);
-
-    set_limits_gen();
-
-    new_mode();             //para que queden en grises los que correspondan
-    set_spin_click(false);  //todo desclickeado. Cuando algo es clickeado, deja de refrescar, para que pueda escribir
-
-//LABELS
+//Inicializacion de Labels
     ui->label_gen_io->setText("----");
     ui->label_gen_vo->setText("----");
     ui->label_gen_ibat->setText("----");
@@ -47,14 +32,21 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->label_gen_vel->setText("----");
     ui->label_gen_tor->setText("----");
 
-//TIMER
+    ui->label_gen_isd_ref->setText("----");
+    ui->label_gen_lim_ibat_ref->setText("----");
+    ui->label_gen_lim_ief_ref->setText("----");
+    ui->label_gen_lim_vdc_ref->setText("----");
+    ui->label_gen_pot_ref->setText("----");
+    ui->label_gen_speed_ref->setText("----");
+    ui->label_gen_torque_ref->setText("----");
 
+
+//TIMER ENCARGADO DE REFRESCAR LOS VALORES Y DE ENVIAR LAS NUEVAS CONSULTAS
     time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-    time_2sec->start(2000);
+    time_2sec->start(2000); //velocidad de refresco (en ms)
 
-
-    //****************en la inicializacion hay que preguntar el modo tambien
+    send_qry(); //envio las primeras consultas
 }
 
 void Gen_Eolico::timer_handler(){
@@ -71,112 +63,14 @@ void Gen_Eolico::timer_handler(){
     }
 }
 
-void Gen_Eolico::on_pushButton_apply_clicked(){
-    QMessageBox::StandardButton reply;
-    QString str="Esta seguro que desea aplicar los cambios?";
-    //str.append(ui->combo_modo->currentText());
-    if(verificar_min()){str.append(str_min);}
-    reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
-    if(reply==QMessageBox::Yes){
-        enviar_variables_generales(); //envio las variables que no dependen del modo
 
-        //version 1, en la version 2 ya no se envia el modo
-        //envio el modo actual
-        /*
-        data_can modo;
-        modo.var_char[0] = actual_mode;
-        modo.var_char[1] = 0;
-        modo.var_char[2] = 0;
-        modo.var_char[3] = 0;
-        mw->LACAN_Set(LACAN_VAR_MOD,modo,false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-        mw->agregar_log_sent();*/
-
-        //Envio la variable de setpoint, dependiendo del modo
-        switch(actual_mode){
-            case LACAN_VAR_MOD_TORQ: //torque
-                qDebug()<<"TORQUE";
-                val.var_float=ui->spin_torque_ref->value();
-                mw->LACAN_Set(LACAN_VAR_TORQ_SETP,val,false,dest);
-                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-                mw->agregar_log_sent();
-                break;
-            case LACAN_VAR_MOD_MPPT: //mppt
-                qDebug()<<"MPPT";
-                //val.var_float=ui->spin_torque_ref->value();
-                //LACAN_Set(mw,LACAN_VAR_TORQ_SETP,val,1);
-                //connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-                //mw->agregar_log_sent();
-                break;
-            case LACAN_VAR_MOD_VEL: //velocidad      //no me deja poner este primero..
-                qDebug()<<"VELOCIDAD";
-                val.var_float=ui->spin_speed_ref->value();
-                mw->LACAN_Set(LACAN_VAR_W_SETP,val,false,dest);
-                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-                mw->agregar_log_sent();
-                break;
-            case LACAN_VAR_MOD_POT: //potencia
-                qDebug()<<"POTENCIA";
-                val.var_float=ui->spin_pot_ref->value();
-                mw->LACAN_Set(LACAN_VAR_PO_SETP,val,false,dest);
-                connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-                mw->agregar_log_sent();
-                break;
-            default:
-               break;
-                }
-        }
-    else{
-    on_pushButton_cancel_clicked(); //ver si esto conviene borrarlo asdasd
-                                    //si lo dejamos, cuando pones que no estas seguro perdes los cambios
-                                    //si lo sacamos capaz te guarde los cambios hasta que apretas cancelar
-    }
-}
-
-
-void Gen_Eolico::on_pushButton_cancel_clicked(){
-    set_spin_click(false);
-    refresh_values();
-
-    //version1
-    //ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(previous_mode));
-    //actual_mode=previous_mode;//se vuelve al modo actual
-    //new_mode();                                     //habilitar los campos correspondientes al modo actual
-}
-
-
-//En esta funcion se envia el set de las variables que son comunes a todos los modos
-void Gen_Eolico::enviar_variables_generales(){
-    data_can val;
-
-    val.var_float=ui->spin_isd_ref->value();
-    mw->LACAN_Set(LACAN_VAR_ISD_SETP,val,false,dest);
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->agregar_log_sent();
-
-    val.var_float=ui->spin_lim_ibat->value();
-    mw->LACAN_Set(LACAN_VAR_I_BAT_SETP,val,false,dest);
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->agregar_log_sent();
-
-    val.var_float=ui->spin_lim_ief->value();
-    mw->LACAN_Set(LACAN_VAR_IEF_SETP,val,false,dest);
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->agregar_log_sent();
-
-    val.var_float=ui->spin_lim_vdc->value();
-    mw->LACAN_Set(LACAN_VAR_VO_SETP,val,false,dest);
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->agregar_log_sent();
-}
-
-//me fijo que variable es la que llego, y le asigno el valor correspondiente, a la variable propia de la clase
+//Me fijo que variable es la que llego, y le asigno el valor correspondiente, a la variable propia de la clase
 void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
       recibed_val.var_char[0]=msg.BYTE2;
       recibed_val.var_char[1]=msg.BYTE3;
       recibed_val.var_char[2]=msg.BYTE4;
       recibed_val.var_char[3]=msg.BYTE5;
-        switch (msg.BYTE1) {
+      switch (msg.BYTE1) {
         case LACAN_VAR_VO_INST:
             gen_vo = recibed_val.var_float;
             break;
@@ -200,6 +94,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
             break;
         case LACAN_VAR_W_SETP:
             speed_ref=recibed_val.var_float;
+            //prev_speed_ref=speed_ref;
             break;
         case LACAN_VAR_TORQ_SETP:
             torque_ref=recibed_val.var_float;
@@ -227,10 +122,10 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
     }
 }
 
-//consulto todas las variables del gen
+//Consulto todas las variables del GENERADOR
 void Gen_Eolico::send_qry(){
 
-    mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //gen_veo
+    mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //gen_vo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //gen_io
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -262,23 +157,19 @@ void Gen_Eolico::send_qry(){
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
-//se actualizan los valores de los spins que no estan siendo editados en este momento
+//Se actualizan todos los valores del GENERADOR
 void Gen_Eolico::refresh_values(){
-    if(!speed_ref_click)
-        ui->spin_speed_ref->setValue(speed_ref);
-    if(!pot_ref_click)
-        ui->spin_pot_ref->setValue(pot_ref);
-    if(!lim_vdc_click)
-        ui->spin_lim_vdc->setValue(lim_vdc);
-    if(!lim_ief_click)
-        ui->spin_lim_ief->setValue(lim_ief);
-    if(!torque_ref_click)
-        ui->spin_torque_ref->setValue(torque_ref);
-    if(!isd_ref_click)
-        ui->spin_isd_ref->setValue(isd_ref);
-    if(!lim_ibat_click)
-        ui->spin_lim_ibat->setValue(lim_ibat);
 
+    //Variables de SET
+    ui->label_gen_torque_ref->setText(QString::number(torque_ref,'f',2));
+    ui->label_gen_speed_ref->setText(QString::number(speed_ref,'f',2));
+    ui->label_gen_pot_ref->setText(QString::number(pot_ref,'f',2));
+    ui->label_gen_lim_vdc_ref->setText(QString::number(lim_vdc,'f',2));
+    ui->label_gen_lim_ief_ref->setText(QString::number(lim_ief,'f',2));
+    ui->label_gen_isd_ref->setText(QString::number(isd_ref,'f',2));
+    ui->label_gen_lim_ibat_ref->setText(QString::number(lim_ibat,'f',2));
+
+    //Variables de Salida
     ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
     ui->label_gen_io->setText(QString::number(gen_io,'f',2));
     ui->label_gen_ibat->setText(QString::number(gen_ibat,'f',2));
@@ -286,7 +177,6 @@ void Gen_Eolico::refresh_values(){
     ui->label_gen_tor->setText(QString::number(gen_tor,'f',2));
     ui->label_gen_vel->setText(QString::number(gen_vel,'f',2));
 }
-
 
 
 //VER SI ANDA EL TEMA DEL CODE (mw->code)
@@ -316,7 +206,6 @@ void Gen_Eolico::on_pushButton_comandar_clicked()
    comwin->setModal(true);
    comwin->show();
 }
-
 
 void Gen_Eolico::verificar_mode_changed(){
     QMessageBox::StandardButton reply;
@@ -349,21 +238,8 @@ void Gen_Eolico::verificar_mode_changed(){
 }
 
 void Gen_Eolico::mode_changed(){
-    new_mode();
-    set_spin_click(false);  //poner los valores reales en el spin
+    new_mode();             //poner los valores reales en el spin
     refresh_values();       //todo desclickeado
-}
-
-//te dice si los spin esta clickeado o no (state=true o state=false)
-void Gen_Eolico::set_spin_click(bool state){
-    speed_ref_click=state;
-    pot_ref_click=state;
-    lim_vdc_click=state;
-    iconv_click=state;
-    lim_ief_click=state;
-    torque_ref_click=state;
-    isd_ref_click=state;
-    lim_ibat_click=state;
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual
@@ -373,64 +249,38 @@ void Gen_Eolico::new_mode(){
     switch (actual_mode) {
     case LACAN_VAR_MOD_VEL:     //Velocidad
         qDebug()<<"Entro a velocidad";
-        ui->spin_pot_ref->setDisabled(true);
-        ui->spin_speed_ref->setEnabled(true);
-        ui->spin_torque_ref->setDisabled(true);
+        ui->label_pot_ref->setDisabled(true);
+        ui->label_speed_ref->setEnabled(true);
+        ui->label_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_POT:     //Potencia
         qDebug()<<"Entro a potencia";
-        ui->spin_pot_ref->setEnabled(true);
-        ui->spin_speed_ref->setDisabled(true);
-        ui->spin_torque_ref->setDisabled(true);
+        ui->label_pot_ref->setEnabled(true);
+        ui->label_speed_ref->setDisabled(true);
+        ui->label_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_TORQ:     //Torque
         qDebug()<<"Entro a Torke";
-        ui->spin_pot_ref->setDisabled(true);
-        ui->spin_speed_ref->setDisabled(true);
-        ui->spin_torque_ref->setEnabled(true);
+        ui->label_pot_ref->setDisabled(true);
+        ui->label_speed_ref->setDisabled(true);
+        ui->label_torque_ref->setEnabled(true);
         break;
     case LACAN_VAR_MOD_MPPT:     //MPPT
 
         qDebug()<<"Entro a Mppt";
-        ui->spin_pot_ref->setDisabled(true);
-        ui->spin_speed_ref->setDisabled(true);
-        ui->spin_torque_ref->setDisabled(true);
+        ui->label_pot_ref->setDisabled(true);
+        ui->label_speed_ref->setDisabled(true);
+        ui->label_torque_ref->setDisabled(true);
         break;
     default:
         break;
     }
 }
 
-//setea los limites de los spinbox, al construir la clase
-void Gen_Eolico::set_limits_gen(){
-    ui->spin_lim_ibat->setMaximum(LACAN_VAR_GEN_IBAT_MAX);
-    ui->spin_lim_ibat->setMinimum(LACAN_VAR_GEN_IBAT_MIN);
-    ui->spin_lim_ibat->setDecimals(2);
-
-    ui->spin_lim_vdc->setMaximum(LACAN_VAR_GEN_VO_MAX);
-    ui->spin_lim_vdc->setMinimum(LACAN_VAR_GEN_VO_MIN);
-    ui->spin_lim_vdc->setDecimals(2);
-
-    ui->spin_speed_ref->setMaximum(LACAN_VAR_GEN_W_MAX);
-    ui->spin_speed_ref->setMinimum(LACAN_VAR_GEN_W_MIN);
-    ui->spin_speed_ref->setDecimals(2);
-
-    ui->spin_pot_ref->setMaximum(LACAN_VAR_GEN_PO_MAX);
-    ui->spin_pot_ref->setMinimum(LACAN_VAR_GEN_PO_MIN);
-    ui->spin_pot_ref->setDecimals(2);
-
-    ui->spin_torque_ref->setMaximum(LACAN_VAR_GEN_TORQ_MAX);
-    ui->spin_torque_ref->setMinimum(LACAN_VAR_GEN_TORQ_MIN);
-    ui->spin_torque_ref->setDecimals(2);
-
-    ui->spin_lim_ief->setMaximum(LACAN_VAR_GEN_IEF_MAX);
-    ui->spin_lim_ief->setMinimum(LACAN_VAR_GEN_IEF_MIN);
-    ui->spin_lim_ief->setDecimals(2);
-
-    ui->spin_isd_ref->setMaximum(LACAN_VAR_GEN_ISD_MAX);
-        ui->spin_isd_ref->setMinimum(LACAN_VAR_GEN_ISD_MIN);
-    ui->spin_isd_ref->setDecimals(2);
-
+void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
+{
+   previous_mode = actual_mode;     //guardo el modo anterior por si el usuario cancela el cambio
+   actual_mode = ui->combo_modo->itemData(index).toInt();
 }
 
 void Gen_Eolico::closeEvent(QCloseEvent *e){
@@ -444,102 +294,3 @@ Gen_Eolico::~Gen_Eolico()
     delete ui;
 }
 
-void Gen_Eolico::on_spin_lim_ibat_valueChanged(double arg1)
-{
-    lim_ibat = true;
-}
-
-
-void Gen_Eolico::on_spin_lim_vdc_valueChanged(double arg1)
-{
-    lim_vdc_click = true;
-}
-
-void Gen_Eolico::on_spin_speed_ref_valueChanged(double arg1)
-{
-    speed_ref_click = true;
-}
-
-
-void Gen_Eolico::on_spin_pot_ref_valueChanged(double arg1)
-{
-    pot_ref_click = true;
-}
-
-void Gen_Eolico::on_spin_iconv_valueChanged(double arg1)
-{
-    iconv_click = true;
-}
-
-void Gen_Eolico::on_spin_lim_ief_valueChanged(double arg1)
-{
-    lim_ief_click = true;
-}
-
-void Gen_Eolico::on_spin_torque_ref_valueChanged(double arg1)
-{
-    torque_ref_click = true;
-}
-
-void Gen_Eolico::on_spin_isd_ref_valueChanged(double arg1)
-{
-    isd_ref_click = true;
-}
-
-
-
-void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
-{
-   previous_mode = actual_mode;
-   actual_mode = ui->combo_modo->itemData(index).toInt();
-}
-
-bool Gen_Eolico::verificar_min(){
-    str_min = " Se enviaran los valores minimos para las variables:";
-    bool coma=0;
-    if(ui->spin_isd_ref->value()<=LACAN_VAR_GEN_ISD_MIN){
-        if(coma){str_min.append(",");}
-        str_min.append(" ISD Ref: ");
-        str_min.append(QString::number(ui->spin_isd_ref->value()));
-        coma=1;
-    }
-    if(ui->spin_lim_ibat->value()<=LACAN_VAR_GEN_IBAT_MIN){
-        if(coma){str_min.append(",");}
-        str_min.append(" Lim Ibat: ");
-        str_min.append(QString::number(ui->spin_lim_ibat->value()));
-        coma=1;
-    }
-    if(ui->spin_lim_ief->value()<=LACAN_VAR_GEN_IEF_MIN){
-        if(coma){str_min.append(",");}
-        str_min.append(" Lim Ief: ");
-        str_min.append(QString::number(ui->spin_lim_ief->value()));
-        coma=1;
-    }
-    if(ui->spin_lim_vdc->value()<=LACAN_VAR_GEN_VO_MIN){
-        if(coma){str_min.append(",");}
-        str_min.append(" Lim Vdc: ");
-        str_min.append(QString::number(ui->spin_lim_vdc->value()));
-        coma=1;
-    }
-    if(ui->spin_torque_ref->value()<=LACAN_VAR_GEN_TORQ_MIN && actual_mode == LACAN_VAR_MOD_TORQ){
-        if(coma){str_min.append(",");}
-        str_min.append(" Torque Ref: ");
-        str_min.append(QString::number(ui->spin_torque_ref->value()));
-        coma=1;
-    }
-    if(ui->spin_speed_ref->value()<=LACAN_VAR_GEN_W_MIN && actual_mode == LACAN_VAR_MOD_VEL){
-        if(coma){str_min.append(",");}
-        str_min.append(" Speed Ref: ");
-        str_min.append(QString::number(ui->spin_speed_ref->value()));
-        coma=1;
-    }
-    if(ui->spin_pot_ref->value()<=LACAN_VAR_GEN_PO_MIN && actual_mode == LACAN_VAR_MOD_POT){
-        if(coma){str_min.append(",");}
-        str_min.append(" Pot Ref: ");
-        str_min.append(QString::number(ui->spin_pot_ref->value()));
-        coma=1;
-    }
-
-
-    return coma?true:false;
-}
