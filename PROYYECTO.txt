@@ -6,14 +6,9 @@ VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar B
 
 ==================================================================================================================================
 
-
 revisar ventanas de c/disp
 mil carteles con algunos errores
 empezar a limpiar codigo de warnings
-
-ver en el micro el tema del envio de post.. rotate y toda esa wea
-
-
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
