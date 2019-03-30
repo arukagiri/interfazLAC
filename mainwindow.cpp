@@ -26,6 +26,7 @@
 #include <QThread>
 #include "tiempo.h"
 #include "senderthread.h"
+#include "readerthread.h"
 
 /***Funciones genericas***/
 //Carga de mensajes al log en un txt, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
@@ -252,6 +253,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev->hb_status=ACTIVE;
     newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
+
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
@@ -287,8 +289,13 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     create_varmap_gen();
     create_varmap_vol();
 
+    ReaderThread* readerth = new ReaderThread(*serial_port);
+    readerth->start();
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
-    connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
+    connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
+    connect(readerth, SIGNAL(receivedMsg(LACAN_MSG)), this, SLOT(handleProcessedMsg(LACAN_MSG)));
+    connect(readerth, SIGNAL(msgLost()), this, SLOT(refreshLostMsgCount(uint)));
+
     //Conecto la señal que indica un error en el puerto serie con nuestro slot para manejarla
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
 }
@@ -593,7 +600,7 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
 
 //Maneja el caso de la llegada de un mensaje de error
 void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
-    QString msg_err ="Dispositivo: ";
+    QString msg_err ="Luli, no te asustes. Este es un mensaje de error pero no es un error de QT. Lo que esta ocurriendo es que algo se cago, probablemente si miras el code Compuse no esta andando el micro. Y nada el resto todo pillo Salu2. \n Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
     QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }
@@ -896,6 +903,9 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
 
 }
 
+void MainWindow::refreshLostMsgCount(uint totalAmountLost){
+    ui->msgLost_label->setText(QString(totalAmountLost));
+}
 
 //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
 //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de
@@ -973,8 +983,8 @@ void MainWindow::verificarACK(){
 }
 
 //Es la encargada de manejar la señal del sistema que indica que hay datos por leer en el buffer del puerto serie
-void MainWindow::handleRead(){
-    uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
+void MainWindow::handleProcessedMsg(LACAN_MSG msg){
+    /*uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
     uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
     static uint16_t notsup_count, notsup_gen;
@@ -1011,25 +1021,41 @@ void MainWindow::handleRead(){
         msg=mensaje_recibido2(sub_pila);
         msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
 
+        qDebug()<<"========================";
+        qDebug()<<msg.BYTE0;
+        qDebug()<<msg.DLC;
+        qDebug()<<msg.ID;
+
         prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
 
         //Si el mensaje es un POST y esta activa la ventana estado de red, emito la señal para que este
         //mensaje lo maneje esa ventana
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
-        }
-        //Proceso el mensaje
-        int result;
-        result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
-        //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
-        //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
-        //(el ultimo) con el slot
-        if(hb_con.size()>prevsize){
-            connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
-        }
-        //Agrego el mensaje al log de recibidos (y a su vez al txt)
-        agregar_log_rec();
+        }*/
+
+    msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
+
+    int prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
+
+    //Si el mensaje es un POST y esta activa la ventana estado de red, emito la señal para que este
+    //mensaje lo maneje esa ventana
+    if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
+        emit postforER_arrived(msg);
     }
+    //Proceso el mensaje
+    static uint16_t notsup_count, notsup_gen;
+    int result;
+    result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
+    //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
+    //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
+    //(el ultimo) con el slot
+    if(hb_con.size()>prevsize){
+        connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
+    }
+    //Agrego el mensaje al log de recibidos (y a su vez al txt)
+    agregar_log_rec();
+
 }
 
 //Seteo del nombre del nuevo dispositivo segun se ingreso y lo termino de agragar al procesamiento de la aplicacion

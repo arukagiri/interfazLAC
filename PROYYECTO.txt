@@ -1,38 +1,19 @@
 ==================================================================================================================================
 INTERFAZ:
+
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
+ver de chequear la posibilidad de variables negativas URGENTE
 
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
+ver de agregar varmap para broadcast
 
-==================================================================================================================================
-
-
-revisar ventanas de c/disp
-mil carteles con algunos errores
-empezar a limpiar codigo de warnings
-
-
+cambiar variable para deshabilitar boton de gen en estado de red
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
-ver si es necesario un qmap para los comandos de cada dispositivo URGENTE
-ver de chequear la posibilidad de variables negativas URGENTE
-ver si hay q armar la deteccion de errores en cada disp (obvio q no)
-ver de agregar varmap para broadcast
-ver switches que matchean con ids discontinuas (gen_eolico.cpp linea 172, volante.cpp linea 78)
-revisar varias variables sin usar (gen_eolico.cpp volante.cpp)
-revisar slots y funciones sin usar (volante.cpp)
-
-limites inferiores en variables qt  <------------------ BA
-ventana consultar -> modo instantaneo y modo de setpoint  <----------- FF
-no loguear los mensajes de pantalla de estado de red ni de generador  <----------- ER
-
+ver filtro de mensaje cuando llegan mensajes nuevos
 
 ==================================================================================================================================
-PANTALLA DB_GEN:
-
-cambias el modo, deshabilitas todo, pones aply, te deja cambiar las otras cosas
-
-ver que pasa cuando el micro me manda un modo nuevo... no deberia pasar, pero si llega a pasar de ultima tiro un cartel y le clavo un refresh values, refresh mode y demas
-
-==================================================================================================================================
+FINAL:
+no loguear los mensajes de pantalla de estado de red ni de generador  
+empezar a limpiar codigo de warnings

@@ -72,6 +72,7 @@ signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
+     void refreshLostMsgCount(uint totalAmountLost);
 
      void handlePortError(QSerialPort::SerialPortError error);
 
@@ -89,7 +90,7 @@ private slots:
 
     void do_stuff();
 
-    void handleRead();
+    void handleProcessedMsg(LACAN_MSG msg);
 
     void on_button_COMANDAR_clicked();
 
