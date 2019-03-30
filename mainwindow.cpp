@@ -294,6 +294,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
     connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
     connect(readerth, SIGNAL(receivedMsg(LACAN_MSG)), this, SLOT(handleProcessedMsg(LACAN_MSG)));
+    connect(readerth, SIGNAL(msgLost()), this, SLOT(refreshLostMsgCount(uint)));
+
     //Conecto la señal que indica un error en el puerto serie con nuestro slot para manejarla
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
 }
@@ -901,6 +903,9 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
 
 }
 
+void MainWindow::refreshLostMsgCount(uint totalAmountLost){
+    ui->msgLost_label->setText(QString(totalAmountLost));
+}
 
 //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
 //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de

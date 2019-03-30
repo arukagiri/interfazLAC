@@ -72,6 +72,7 @@ signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
+     void refreshLostMsgCount(uint totalAmountLost);
 
      void handlePortError(QSerialPort::SerialPortError error);
 

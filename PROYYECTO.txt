@@ -7,15 +7,7 @@ ver de chequear la posibilidad de variables negativas URGENTE
 VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
 ver de agregar varmap para broadcast
 
-<<<<<<< HEAD
-==================================================================================================================================
-
-revisar ventanas de c/disp
-mil carteles con algunos errores
-empezar a limpiar codigo de warnings
-=======
-mil carteles con algunos errores
->>>>>>> 3873b5208257775d6e651df2683b97515a764c5f
+cambiar variable para deshabilitar boton de gen en estado de red
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 

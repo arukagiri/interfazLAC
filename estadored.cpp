@@ -133,7 +133,7 @@ void EstadoRed::send_qry(){
 
 void EstadoRed::timer_handler(){
     refresh_values();
-    //send_qry();
+    send_qry();
     set_states();
 }
 

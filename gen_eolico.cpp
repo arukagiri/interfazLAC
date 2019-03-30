@@ -284,9 +284,9 @@ void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
 }
 
 void Gen_Eolico::closeEvent(QCloseEvent *e){
-    //time_2sec->stop();
-    //delete time_2sec;
-    //    QDialog::closeEvent(e);
+    time_2sec->stop();
+    delete time_2sec;
+    QDialog::closeEvent(e);
 }
 
 Gen_Eolico::~Gen_Eolico()
