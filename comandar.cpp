@@ -96,15 +96,14 @@ void Comandar::on_button_ENVIAR_clicked()
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
-        data.var_char[0]=mode_set;
-        data.var_char[1]=0;
-        data.var_char[2]=0;
-        data.var_char[3]=0;
+            data.var_char[0]=mode_set;
+            data.var_char[1]=0;
+            data.var_char[2]=0;
+            data.var_char[3]=0;
         }
         else{
-        SET_ACTUAL_VAR();
-
-        data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+            SET_ACTUAL_VAR();
+            data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
         }
         mw->LACAN_Set(var_set,data,1,dest);
     }else{

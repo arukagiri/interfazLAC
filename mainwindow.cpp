@@ -1154,7 +1154,7 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
 
     uint16_t dest = verificar_destino();
-    Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
+    Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();

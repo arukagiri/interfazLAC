@@ -16,7 +16,7 @@ enum ERRORES  {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,IN
 enum RESULTADOS {OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
 
 
-Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
+Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
     QDialog(parent),
     ui(new Ui::Enviar_Mensaje)
@@ -28,15 +28,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
 
 
     mw = qobject_cast<MainWindow*>(this->parent());
-    dest=destMw;
-
-    msg_map["DO"]=LACAN_FUN_DO;
-    msg_map["SET"]=LACAN_FUN_SET;
-    msg_map["QUERY"]=LACAN_FUN_QRY;
-    msg_map["POST"]=LACAN_FUN_POST;
-    msg_map["ERROR"]=LACAN_FUN_ERR;
-    msg_map["HEARTBEAT"]=LACAN_FUN_HB;
-    msg_map["ACKNOWLEDGE"]=LACAN_FUN_ACK;
 
     ui->list_MENSAJE->addItem("DO");
     ui->list_MENSAJE->addItem("SET");
@@ -46,10 +37,11 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_MENSAJE->addItem("HEARTBEAT");
     ui->list_MENSAJE->addItem("ACKNOWLEDGE");
 
-    ui->list_DESTINO->addItem("Broadcast");
-    ui->list_DESTINO->addItem("Generador");
-    ui->list_DESTINO->addItem("Volante");
-    ui->list_DESTINO->addItem("Boost");
+    ui->list_DESTINO->addItem("Broadcast", LACAN_ID_BROADCAST);
+    ui->list_DESTINO->addItem("Generador", LACAN_ID_GEN);
+    ui->list_DESTINO->addItem("Volante", LACAN_ID_VOLANTE);
+    ui->list_DESTINO->addItem("Boost", LACAN_ID_BOOST);
+
 
     ui->list_VARIABLE->addItem("Corriente de Entrada");
     ui->list_VARIABLE->addItem("Corriente de Salida");
@@ -62,40 +54,36 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
     ui->list_VARIABLE->addItem("Velocidad Angular");
     ui->list_VARIABLE->addItem("Modo");
 
-    ui->list_TIPO->addItem("Maxima");
-    ui->list_TIPO->addItem("Minima");
-    ui->list_TIPO->addItem("Set Point");
+    ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
+    ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);
+    ui->list_COMANDO->addItem("Reset", LACAN_CMD_RESET);
+    ui->list_COMANDO->addItem("MPPT_Enable", LACAN_CMD_MPPT_ENABLE);
+    ui->list_COMANDO->addItem("MPPT_Disable", LACAN_CMD_MPPT_DISABLE);
+    ui->list_COMANDO->addItem("Acoplar", LACAN_CMD_COUPLE);
+    ui->list_COMANDO->addItem("Desacoplar", LACAN_CMD_DECOUPLE);
+    ui->list_COMANDO->addItem("Magnetizar", LACAN_CMD_MAGNETIZE);
+    ui->list_COMANDO->addItem("Trip", LACAN_CMD_TRIP);
 
-    ui->list_COMANDO->addItem("Start");
-    ui->list_COMANDO->addItem("Stop");
-    ui->list_COMANDO->addItem("Reset");
-    ui->list_COMANDO->addItem("MPPT_Enable");
-    ui->list_COMANDO->addItem("MPPT_Disable");
-    ui->list_COMANDO->addItem("Acoplar");
-    ui->list_COMANDO->addItem("Desacoplar");
-    ui->list_COMANDO->addItem("Magnetizar");
-    ui->list_COMANDO->addItem("Trip");
+    ui->list_ERROR->addItem("Generic Error", LACAN_ERR_GENERIC_ERR);
+    ui->list_ERROR->addItem("Over Voltage", LACAN_ERR_OVERVOLTAGE);
+    ui->list_ERROR->addItem("Under Voltage", LACAN_ERR_UNDERVOLTAGE);
+    ui->list_ERROR->addItem("Over Current", LACAN_ERR_OVERCURRENT);
+    ui->list_ERROR->addItem("Bat Over Current", LACAN_ERR_BAT_OVERCURRENT);
+    ui->list_ERROR->addItem("Over Temperature", LACAN_ERR_OVERTEMPERATURE);
+    ui->list_ERROR->addItem("Over Speed", LACAN_ERR_OVERSPEED);
+    ui->list_ERROR->addItem("Under Speed", LACAN_ERR_UNDERSPEED);
+    ui->list_ERROR->addItem("No HeartBeat", LACAN_ERR_NO_HEARTBEAT);
+    ui->list_ERROR->addItem("Internal Trip", LACAN_ERR_INTERNAL_TRIP);
+    ui->list_ERROR->addItem("External Trip", LACAN_ERR_EXTERNAL_TRIP);
 
-    ui->list_ERROR->addItem("Generic Error");
-    ui->list_ERROR->addItem("Over Voltage");
-    ui->list_ERROR->addItem("Under Voltage");
-    ui->list_ERROR->addItem("Over Current");
-    ui->list_ERROR->addItem("Bat Over Current");
-    ui->list_ERROR->addItem("Over Temperature");
-    ui->list_ERROR->addItem("Over Speed");
-    ui->list_ERROR->addItem("Under Speed");
-    ui->list_ERROR->addItem("No HeartBeat");
-    ui->list_ERROR->addItem("Internal Trip");
-    ui->list_ERROR->addItem("External Trip");
-
-    ui->list_RESULTADO->addItem("OK");
-    ui->list_RESULTADO->addItem("MISSING_PREREQ");
-    ui->list_RESULTADO->addItem("RECEIVED");
-    ui->list_RESULTADO->addItem("NOT_IMPLEMENTED");
-    ui->list_RESULTADO->addItem("OUT_OF_RANGE");
-    ui->list_RESULTADO->addItem("BUSY");
-    ui->list_RESULTADO->addItem("DENIED");
-    ui->list_RESULTADO->addItem("GENERIC_FAILURE");
+    ui->list_RESULTADO->addItem("OK", LACAN_RES_OK);
+    ui->list_RESULTADO->addItem("MISSING_PREREQ", LACAN_RES_MISSING_PREREQ);
+    ui->list_RESULTADO->addItem("RECEIVED", LACAN_RES_RECEIVED);
+    ui->list_RESULTADO->addItem("NOT_IMPLEMENTED", LACAN_RES_NOT_IMPLEMENTED);
+    ui->list_RESULTADO->addItem("OUT_OF_RANGE", LACAN_RES_OUT_OF_RANGE);
+    ui->list_RESULTADO->addItem("BUSY", LACAN_RES_BUSY);
+    ui->list_RESULTADO->addItem("DENIED", LACAN_RES_DENIED);
+    ui->list_RESULTADO->addItem("GENERIC_FAILURE", LACAN_RES_GENERIC_FAILURE);
 
     ui->spin_valor->setMaximum(1000);
 
@@ -109,6 +97,11 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent,uint16_t destMw) :
 
     DO_selected();
 
+}
+
+Enviar_Mensaje::~Enviar_Mensaje()
+{
+    delete ui;
 }
 
 void Enviar_Mensaje::MENSAJE_changed(){
@@ -252,30 +245,7 @@ void Enviar_Mensaje::ERR_selected(){
 
 void Enviar_Mensaje::VAR_Changed(){
     set_TIPO_VAR();
-    TIPO_Changed();
 }
-
-void Enviar_Mensaje::TIPO_Changed(){
-    QString var_selectedstr;
-    var_selectedstr=ui->list_VARIABLE->currentText()+" "+ui->list_TIPO->currentText();
-    switch(ui->list_TIPO->currentIndex()){
-    case MAX:
-        var = varmap[var_selectedstr].max;
-        break;
-    case MIN:
-        var = varmap[var_selectedstr].min;
-        break;
-    case SETP:
-        var = varmap[var_selectedstr].setp;
-        break;
-    case INST:
-        var = varmap[var_selectedstr].instantanea;
-        break;
-    }
-}
-
-
-
 
 void Enviar_Mensaje::set_TIPO_VAR(){
     switch (ui->list_VARIABLE->currentIndex()) {
@@ -291,23 +261,17 @@ void Enviar_Mensaje::set_TIPO_VAR(){
         case SET:
             ui->spin_valor->setEnabled(true);
             ui->list_TIPO->clear();
-            ui->list_TIPO->addItem("Maxima");
-            ui->list_TIPO->addItem("Minima");
             ui->list_TIPO->addItem("Set Point");
             break;
         case POST:
             ui->spin_valor->setEnabled(true);
             ui->list_TIPO->clear();
-            ui->list_TIPO->addItem("Maxima");
-            ui->list_TIPO->addItem("Minima");
             ui->list_TIPO->addItem("Set Point");
             ui->list_TIPO->addItem("Instantanea");
             break;
         case QRY:
             ui->spin_valor->setDisabled(true);
             ui->list_TIPO->clear();
-            ui->list_TIPO->addItem("Maxima");
-            ui->list_TIPO->addItem("Minima");
             ui->list_TIPO->addItem("Set Point");
             ui->list_TIPO->addItem("Instantanea");
             break;
@@ -315,165 +279,18 @@ void Enviar_Mensaje::set_TIPO_VAR(){
     }
 }
 
-
-
-void Enviar_Mensaje::CMD_Changed(){
-    switch(ui->list_COMANDO->currentIndex()){
-        case START:
-            cmd=LACAN_CMD_START;
-            break;
-        case STOP:
-            cmd=LACAN_CMD_STOP;
-            break;
-        case RESET:
-            cmd=LACAN_CMD_RESET;
-            break;
-        case MPPT_EN:
-            cmd=LACAN_CMD_MPPT_ENABLE;
-            break;
-        case MPPT_DIS:
-            cmd=LACAN_CMD_MPPT_DISABLE;
-            break;
-        case COUP:
-            cmd=LACAN_CMD_COUPLE;
-            break;
-        case DECOUP:
-            cmd=LACAN_CMD_DECOUPLE;
-            break;
-        case MAG:
-            cmd=LACAN_CMD_MAGNETIZE;
-            break;
-        case TRIP:
-            cmd=LACAN_CMD_TRIP;
-            break;
-    }
-}
-
-void Enviar_Mensaje::DEST_Changed(){
-
-    switch(ui->list_DESTINO->currentIndex()){
-        case BROAD:
-            dest=LACAN_ID_BROADCAST;
-            break;
-        case GEN_EOL:
-            varmap = mw->varmap_gen;
-            dest=LACAN_ID_GEN;
-            break;
-        case VOL:
-            varmap = mw->varmap_vol;
-            dest=LACAN_ID_VOLANTE;
-            break;
-        case BOOST:
-            dest=LACAN_ID_BOOST;
-            break;
-        default:
-            break;
-
-    }
-}
-
-void Enviar_Mensaje::RESULT_Changed(){
-    switch(ui->list_RESULTADO->currentIndex()){
-    case OK:
-        res=LACAN_RES_OK;
-        break;
-    case MISS_PREREQ:
-        res=LACAN_RES_MISSING_PREREQ;
-        break;
-    case REC:
-        res=LACAN_RES_RECEIVED;
-        break;
-    case NOT_IMPLEMENTED:
-        res=LACAN_RES_NOT_IMPLEMENTED;
-        break;
-    case OUT_OF_RANGE:
-        res=LACAN_RES_OUT_OF_RANGE;
-        break;
-    case BUSY:
-        res=LACAN_RES_BUSY;
-        break;
-    case DENIED:
-        res=LACAN_RES_DENIED ;
-        break;
-    case GEN_FAIL:
-        res=LACAN_RES_GENERIC_FAILURE;
-        break;
-
-        default:
-            break;
-
-}}
-
-void Enviar_Mensaje::ERR_Changed(){
-    switch(ui->list_ERROR->currentIndex()){
-        case GENER:
-            err_cod=LACAN_ERR_GENERIC_ERR;
-            break;
-        case OVERV:
-            err_cod=LACAN_ERR_OVERVOLTAGE;
-            qDebug()<<"ENTRO A OVERVOLTAGE";
-            break;
-        case UNDERV:
-            err_cod=LACAN_ERR_UNDERVOLTAGE;
-            break;
-        case OVERI:
-            err_cod=LACAN_ERR_OVERCURRENT;
-            break;
-        case BAT_OVERI:
-            err_cod=LACAN_ERR_BAT_OVERCURRENT;
-            break;
-        case OVERTEMP:
-            err_cod=LACAN_ERR_OVERTEMPERATURE;
-            break;
-        case OVERW:
-            err_cod=LACAN_ERR_OVERSPEED;
-            break;
-        case UNDERW:
-            err_cod=LACAN_ERR_UNDERSPEED;
-            break;
-        case NO_HB:
-            err_cod=LACAN_ERR_NO_HEARTBEAT;
-            break;
-        case INT_TRIP:
-            err_cod=LACAN_ERR_INTERNAL_TRIP;
-            break;
-        case EXT_TRIP:
-            err_cod=LACAN_ERR_EXTERNAL_TRIP;
-            break;
-        default:
-            break;
-
-}
-}
-
 void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
-    //Verifico si el valor que se va a mandar es un entero o un float
-   /*data_can data;
-    uint32_t data_int = ui->spin_valor->text().toInt();
-    float data_float = ui->spin_valor->text().toFloat();
-    if(data_int == data_float){
-        qDebug()<<"Son iguales";
-        data.var_int = data_int;}
-    else{
-        qDebug()<<"Son distintos";
-        data.var_float = data_float;}*/
-
- /*   data_can data;
-    uint32_t data_int = ui->spin_valor->text().toInt();
-    float data_float = ui->spin_valor->text().toFloat();
-    if(data_int == data_float){
-        //si entra aca es porque es in int, lo caesteamo a float
-        data.var_float =float(data_int);
-    }
-    else
-        data.var_float = data_float;    //si no, es un float y lo gaurdamo como esta*/
-
     data_can data;
     data.var_float = ui->spin_valor->value();
 
     uint16_t ack_cod = ui->spin_codigo->value();
     uint prevsize=mw->msg_ack.size();
+
+    cmd=ui->list_COMANDO->currentIndex();
+    QString varString = ui->list_MENSAJE->currentText()+ui->list_TIPO->currentText();
+    var=varmap[varString];
+    dest=ui->list_DESTINO->currentIndex();
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
@@ -509,15 +326,3 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
     this->close();
 }
-
-
-
-Enviar_Mensaje::~Enviar_Mensaje()
-{
-    delete ui;
-}
-/*
-void Enviar_Mensaje::on_list_DESTINO_currentIndexChanged(int index)
-{
-    dest=ui->list_DESTINO->itemData(index).toInt();
-}*/
