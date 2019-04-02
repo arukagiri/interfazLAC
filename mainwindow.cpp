@@ -203,6 +203,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     NoUSB=false;
     outlog_cont=0;
     inlog_cont=0;
+    filter_both_lists = true;
+
     //Se inicializa el timer con el cual se van a realizar acciones periodicas en el slot do_stuff, siendo la principal
     //mandar Heartbeats
     periodicTimer = new QTimer();
@@ -223,8 +225,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 
     ui->the_one_true_list_DESTINO->addItem(bc);
     ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
-    ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
-    ui->the_one_true_list_DESTINO->addItem("Boost");
 
     ui->the_one_true_list_DESTINO->setCurrentItem(bc);
 
@@ -336,7 +336,7 @@ void MainWindow::agregar_log_sent(){
                 ui->tableWidget_sent->setRowCount(list_send_cont);
                 do_log=TRUE;
             }
-        }else{
+        }else{            
             //VER
             //list_send_cont++; para pasarselo a row count y volverlo dinamico, probar pero es lo mismo que poner outlog_cont+1
             ui->tableWidget_sent->setRowCount(outlog_cont+1);
@@ -351,10 +351,19 @@ void MainWindow::agregar_log_sent(){
             ui->tableWidget_sent->setItem(outlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
             outlog_cont++;
         }
+
+        if(filter_both_lists){
+            QString filter = ui->searchBar->text();
+            filter_on_sent_searchBar(filter);
+        }else{
+            QString filter = ui->sent_searchBar->text();
+            filter_on_sent_searchBar(filter);
+        }
+
+        ui->tableWidget_sent->scrollToBottom();
     }
     //No importan las configuraciones para el caso del log en el txt, este siempre debe estar vigente
     agregar_textlog(abs_msg,"Enviado");
-    ui->tableWidget_sent->scrollToBottom();
 }
 
 void MainWindow::agregar_log_rec(){
@@ -391,9 +400,18 @@ void MainWindow::agregar_log_rec(){
             ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
             inlog_cont++;
         }
+
+        if(filter_both_lists){
+            QString filter = ui->searchBar->text();
+            filter_on_rec_searchBar(filter);
+        }else{
+            QString filter = ui->received_searchBar->text();
+            filter_on_rec_searchBar(filter);
+        }
+
+        ui->tableWidget_received->scrollToBottom();
     }
     agregar_textlog(abs_msg,"Recibido");
-    ui->tableWidget_received->scrollToBottom();
 }
 
 //VER esto se implementa al final?
@@ -498,6 +516,40 @@ void MainWindow::create_varmap_gen(){
     varmap_gen["Torque"]=TORQ_GEN;
     varmap_gen["Velocidad Angular"]=W_GEN;
     varmap_gen["Corriente de Bateria"]=IBAT_GEN;
+}
+
+void MainWindow::filter_on_sent_searchBar(QString filter){
+    for( int i = 0; i < ui->tableWidget_sent->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_sent->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_sent->item( i, j );
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_sent->setRowHidden( i, !match );
+    }
+}
+
+void MainWindow::filter_on_rec_searchBar(QString filter){
+    for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_received->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_received->item( i, j );
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_received->setRowHidden( i, !match );
+    }
 }
 
 void MainWindow::create_varmap_vol(){
@@ -1240,18 +1292,6 @@ void MainWindow::on_button_ByteSend_clicked()
     bytewin->show();
 }
 
-//FOR TESTING
-/*
-void MainWindow::on_pushButton_clicked(bool checked)
-{
-    dest = LACAN_ID_GEN;
-    data_can val;
-    val.var_float=1.5;
-    LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
-}*/
-
-
-
 void MainWindow::on_logButton_clicked()
 {
     if(ui->logButton->isChecked()){
@@ -1282,9 +1322,9 @@ void MainWindow::on_refreshButton_clicked()
     }
 }
 
-void MainWindow::on_searchBar_textChanged(const QString &arg1)
+void MainWindow::on_searchBar_textChanged(const QString &filter)
 {
-    QString filter = ui->searchBar->text();
+//    QString filter = ui->searchBar->text();
     for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
     {
         bool match = false;
@@ -1315,3 +1355,42 @@ void MainWindow::on_searchBar_textChanged(const QString &arg1)
         ui->tableWidget_sent->setRowHidden( i, !match );
     }
 }
+
+void MainWindow::on_sent_searchBar_textChanged(const QString &filter)
+{
+    filter_on_sent_searchBar(filter);
+}
+
+void MainWindow::on_received_searchBar_textChanged(const QString &filter)
+{
+    filter_on_rec_searchBar(filter);
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if(arg1){
+        filter_both_lists = true;
+        ui->sent_searchBar->setText("");
+        ui->sent_searchBar->setEnabled(false);
+        ui->received_searchBar->setEnabled(false);
+        ui->searchBar->setEnabled(true);
+    }else{
+        filter_both_lists = false;
+        ui->received_searchBar->setText("");
+        ui->searchBar->setText("");
+        ui->sent_searchBar->setEnabled(true);
+        ui->received_searchBar->setEnabled(true);
+        ui->searchBar->setEnabled(false);
+    }
+}
+
+//FOR TESTING
+/*
+void MainWindow::on_pushButton_clicked(bool checked)
+{
+    dest = LACAN_ID_GEN;
+    data_can val;
+    val.var_float=1.5;
+    LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
+}*/
+
