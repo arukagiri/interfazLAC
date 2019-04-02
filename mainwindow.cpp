@@ -40,10 +40,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Si la carpeta Log de Mensajes LACAN no se encuentra creada la creo antes de guardar los txt
     if(QDir(file_folder+"/Log de Mensajes LACAN").exists()){
         //Especifico el nombre del archivo segun el mes, si no existe se crea automaticamente al guardar datos
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".txt";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
     }else if(QDir(file_folder).exists()){
         QDir(file_folder).mkdir("Log de Mensajes LACAN");
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".txt";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
     }else {
         file_path = QDir::currentPath()+"/"+abs_msg.curr_time.mid(3,7)+".txt";
     }
@@ -56,10 +56,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Para mantener la legibilidad del txt se vuelven a escribir los nombres de columnas cuando se inicia el programa
     //o cuando se insertaron 25 lineas (mensajes) en el archivo
     if(!(cont%25)){
-        out<<"Sentido"<<"\t"<<"Fecha y hora"<<"\t\t"<<"Destino"<<"\t\t\t"<<"Funcion"<<"\t"<<"Tipo de variable"<<"\t"<<"Valor de variable"<<"\t"<<"Comando"<<"\t"<<"Codigo de ACK"<<"\t"<<"Codigo de error"<<"\n";
+        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Codigo de error"<<"\n";
         cont=0;
     }
-    out<<way<<"\t"<<abs_msg.curr_time<<"\t"<<abs_msg.dest<<"\t"<<abs_msg.fun<<"\t"<<abs_msg.var_type<<"\t"<<abs_msg.var_val<<"\t"<<abs_msg.com<<"\t"<<abs_msg.ack_code<<"\t"<<abs_msg.err_code<<"\n";
+    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.err_code<<"\n";
     //Vacio buffers (lo cual obliga al flujo a plasmarse de manera definitiva en el archivo) y luego cierro el archivo
     file.flush();
     file.close();
