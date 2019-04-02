@@ -11,7 +11,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMap>
 #include "better_serialfunc.h"
-
+#include "senderthread.h"
+#include "readerthread.h"
 
 #define LOG_LIMIT 500
 
@@ -125,7 +126,8 @@ private:
     uint16_t verificar_destino();
 
 public:
-
+    ReaderThread* readerth;
+    SenderThread* msgSender;
     QSerialPort *serial_port;
     //uint16_t dest;
     vector <LACAN_MSG> msg_log;

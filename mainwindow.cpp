@@ -25,8 +25,7 @@
 #include "lacan_limits_vol.h"
 #include <QThread>
 #include "tiempo.h"
-#include "senderthread.h"
-#include "readerthread.h"
+
 
 /***Funciones genericas***/
 //Carga de mensajes al log en un txt, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
@@ -213,7 +212,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     //cuenta tics del microprocesador, obteniendose precision de por lo menos 100us, en este caso se usara cada 0,5s para
     //realizar el envio de los mensajes de manera escpaciada para no saturar el adaptador debido a la diferencia de velocidades
     //CAN y serie
-    SenderThread* msgSender=new SenderThread(this);
+    msgSender=new SenderThread(this);
     connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
     msgSender->start();
 
@@ -289,7 +288,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     create_varmap_gen();
     create_varmap_vol();
 
-    ReaderThread* readerth = new ReaderThread(*serial_port);
+    readerth = new ReaderThread(*serial_port);
     readerth->start();
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
     connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
