@@ -61,70 +61,67 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
     first_byte[0]=0;    //esto es redundante pero fue, guarda la posicion del primer byte del proximo mensaje
     bool lastMsgIsFull = false;
 
+
     while((newdataflag=serial_port.read(buffer+index_buffer,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
         lastMsgIsFull=false;
         cantBytes++;
-
-        qDebug()<<"nuevo byte: "<<QString::number(buffer[index_buffer]);
         index_buffer++;        //ya apunta a la siguiente
-        char fuck = buffer[index_buffer];
-        bool test = fuck==char(-86);
-        qDebug()<<fuck<<test;
-        if((buffer[index_buffer]&0xFF)==0xAA){
-            if(index_buffer-first_byte[cant_msg]==1){
-                qDebug()<<"\nLlego AA\n";
-            }
-            else{
-                index_buffer=first_byte[cant_msg];
+        uint current_byte = index_buffer - 1;
+
+        qDebug()<<"nuevo byte: "<<QString::number(buffer[index_buffer-1]);
+
+        if((buffer[current_byte]&0xFF)==0xAA){
+            if(current_byte-first_byte[cant_msg]!=0){
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
         else{
-            if(index_buffer-first_byte[cant_msg]==1){
-                index_buffer=first_byte[cant_msg];
+            if(current_byte-first_byte[cant_msg]==0){
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
 
-        if(((buffer[index_buffer]&0xFF)>>4)==0xC){  //ultimos 4 bits de cabecera
-            if(index_buffer-first_byte[cant_msg]==2){
-                qDebug()<<"Llego 0xC + dlc\n";
-                dlc=buffer[index_buffer]&15;                //extraigo dlc
+        if(((buffer[current_byte]&0xFF)>>4)==0xC){  //ultimos 4 bits de cabecera
+            if(current_byte-first_byte[cant_msg]==1){
+                dlc=buffer[current_byte]&15;                //extraigo dlc
             }
             else{
-                index_buffer=first_byte[cant_msg];
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
         else{
-            if(index_buffer-first_byte[cant_msg]==2){
-                index_buffer=first_byte[cant_msg];
+            if(current_byte-first_byte[cant_msg]==1){
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
 
 
-        if(((buffer[index_buffer])&0xFF)==0x55){
-            if(index_buffer-first_byte[cant_msg]>=(dlc+5)){
+        if(((buffer[current_byte])&0xFF)==0x55){
+            if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
                 qDebug()<<"ENTRO UN MENSAJE COMPLETO";
-                //index_buffer=0; //reseteamos variables para volverlas a usar en el proximo mensaje
+                //current_byte=0; //reseteamos variables para volverlas a usar en el proximo mensaje
                 dlc=0;
                 cant_msg++;
                 lastMsgIsFull=true;
                 first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
-                                                //guardo la primer direccion del siguiente mensaje, si es que existe (index_buffer ya apunta al proximo)
+                                                //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
             }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
             else{
-                index_buffer=first_byte[cant_msg];
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
         else{
-            if(index_buffer-first_byte[cant_msg]>=(dlc+5)){
-                index_buffer=first_byte[cant_msg];
+            if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
+                current_byte=first_byte[cant_msg];
                 losedMsgCount++;
             }
         }
+
     }
 
     for(uint i=cantBytes;i>0;i--){
@@ -135,7 +132,7 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
         index_buffer=0;
     }
     else{
-        index_buffer=index_buffer-first_byte[cant_msg];
+        index_buffer -= first_byte[cant_msg];
     }
 
     emit msgLost(losedMsgCount);
