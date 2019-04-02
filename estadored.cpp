@@ -42,7 +42,7 @@ EstadoRed::EstadoRed(QWidget *parent) :
     send_qry();
     set_states();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-
+    send_qry();
     time_2sec->start(2000);
 
 }
@@ -132,8 +132,10 @@ void EstadoRed::send_qry(){
 }
 
 void EstadoRed::timer_handler(){
+    if(send_query){
+        send_qry();
+    }
     refresh_values();
-    send_qry();
     set_states();
 }
 
@@ -248,6 +250,10 @@ void EstadoRed::on_button_gen_clicked()
     Gen_Eolico *gen_win = new Gen_Eolico(mw);
     gen_win->setModal(true);
     gen_win->show();
+
+    send_query = false;
+
+    connect(gen_win, SIGNAL(genWindowsClosed()), this, SLOT(handle_genWindowsClosed()));
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -273,9 +279,6 @@ EstadoRed::~EstadoRed()
 }
 
 
-
-
-
 void EstadoRed::on_pushButton_clicked()
 {
     if(ui->button_gen->isEnabled())
@@ -295,4 +298,6 @@ void EstadoRed::on_pushButton_clicked()
         ui->button_vol->setEnabled(true);
 }
 
-
+void EstadoRed::handle_genWindowsClosed(){
+   send_query = true;
+}

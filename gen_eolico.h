@@ -63,7 +63,8 @@ private:
     float gen_tor = 0.0;
 
 
-
+signals:
+    void genWindowsClosed();
 
 private slots:
 
