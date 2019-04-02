@@ -63,6 +63,9 @@ private:
     void refresh_values();
     void send_qry();
 
+signals:
+    void volWindowsClosed();
+
 private slots:
 
     void timer_handler();

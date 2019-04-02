@@ -34,12 +34,15 @@ private:
     uint16_t cmd;
     data_can val;
     QString text_val;
-
+    bool referenceChanged;
+    bool send_queries;
     QTimer *time_2sec;
 
     void new_mode();
     void refresh_values();
     void send_qry();
+    void send_qry_variables();
+    void send_qry_references();
 
     //variables para guardar el valor a mostrar
 
@@ -65,7 +68,8 @@ private:
 
 signals:
     void genWindowsClosed();
-
+public slots:
+    void focusReturned();
 private slots:
 
     void timer_handler();

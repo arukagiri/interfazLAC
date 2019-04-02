@@ -242,6 +242,10 @@ void EstadoRed::on_button_vol_clicked()
     volante *vol_win = new volante(mw);
     vol_win->setModal(true);
     vol_win->show();
+
+    send_query = false;
+
+    connect(vol_win, SIGNAL(volWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
     connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -253,7 +257,7 @@ void EstadoRed::on_button_gen_clicked()
 
     send_query = false;
 
-    connect(gen_win, SIGNAL(genWindowsClosed()), this, SLOT(handle_genWindowsClosed()));
+    connect(gen_win, SIGNAL(genWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -262,6 +266,9 @@ void EstadoRed::on_button_boost_clicked()
     boost *boost_win = new boost(mw);
     boost_win->setModal(true);
     boost_win->show();
+
+    send_query = false;
+
    // connect(this, SIGNAL(postforBOOST_arrived(LACAN_MSG)), boost_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -298,6 +305,6 @@ void EstadoRed::on_pushButton_clicked()
         ui->button_vol->setEnabled(true);
 }
 
-void EstadoRed::handle_genWindowsClosed(){
+void EstadoRed::handle_dispWindowsClosed(){
    send_query = true;
 }
