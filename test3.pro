@@ -81,5 +81,5 @@ FORMS += \
 RESOURCES += \
     imagenes.qrc
 
-CONFIG += c++11
+CONFIG += c++14
 
