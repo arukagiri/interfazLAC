@@ -48,7 +48,7 @@ private:
 
     data_can recibed_val;
 
-    bool send_query;
+    bool send_queries;
     float gen_vo;
     float gen_io;
     float gen_vel;

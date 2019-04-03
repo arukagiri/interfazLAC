@@ -13,6 +13,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
+    send_queries = true;
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
@@ -253,7 +254,7 @@ void Gen_Eolico::on_pushButton_comandar_clicked()
    comwin->show();
    send_queries = false;
    referenceChanged = true;
-   connect(comwin, SIGNAL(), this, SLOT(focusReturned()));
+   connect(comwin, SIGNAL(comWindowsClosed()), this, SLOT(focusReturned()));
 
 }
 
