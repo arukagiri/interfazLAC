@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
-    <height>583</height>
+    <width>907</width>
+    <height>594</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -415,8 +415,8 @@ border: 1px solid black;</string>
       <property name="title">
        <string>Log de mensajes</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QToolButton" name="logButton">
@@ -459,6 +459,19 @@ border: 1px solid black;</string>
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QLineEdit" name="searchBar">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -479,29 +492,26 @@ border: 1px solid black;</string>
             </size>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Barra de búsqueda. Empiece a escribir para filtrar en ambas tablas.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filtro para ambas tablas.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="text">
+            <string>Filter both lists</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
+           <property name="checked">
+            <bool>true</bool>
            </property>
-          </spacer>
+          </widget>
          </item>
         </layout>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item row="1" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
@@ -510,25 +520,52 @@ border: 1px solid black;</string>
             </widget>
            </item>
            <item>
-            <widget class="QTableWidget" name="tableWidget_sent">
-             <property name="minimumSize">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
               <size>
-               <width>400</width>
-               <height>200</height>
+               <width>40</width>
+               <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>600</height>
-              </size>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="sent_searchBar">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filtro de mensajes enviados&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
+          <widget class="QTableWidget" name="tableWidget_sent">
+           <property name="minimumSize">
+            <size>
+             <width>400</width>
+             <height>200</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>600</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
@@ -537,22 +574,45 @@ border: 1px solid black;</string>
             </widget>
            </item>
            <item>
-            <widget class="QTableWidget" name="tableWidget_received">
-             <property name="minimumSize">
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
               <size>
-               <width>400</width>
-               <height>200</height>
+               <width>40</width>
+               <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>600</height>
-              </size>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="received_searchBar">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filtro de mensajes recibidos.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QTableWidget" name="tableWidget_received">
+           <property name="minimumSize">
+            <size>
+             <width>400</width>
+             <height>200</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>600</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -566,7 +626,7 @@ border: 1px solid black;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>899</width>
+     <width>907</width>
      <height>20</height>
     </rect>
    </property>

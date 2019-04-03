@@ -42,7 +42,7 @@ void OpenPort::on_pushButton_clicked()
         foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
             serial_port=new QSerialPort(info);
             //serial_port->setBaudRate(QSerialPort::Baud115200);
-            serial_port->setBaudRate(1228800);
+            serial_port->setBaudRate(SERIAL_BAUD);
             serial_port->setDataBits(QSerialPort::Data8);
             serial_port->setParity(QSerialPort::NoParity);
             serial_port->setStopBits(QSerialPort::OneStop);
@@ -55,14 +55,14 @@ void OpenPort::on_pushButton_clicked()
     }else{
         serial_port=new QSerialPort(ui->ports_comboBox->currentText());
         //serial_port->setBaudRate(QSerialPort::Baud115200);
-        serial_port->setBaudRate(1228800);;
+        serial_port->setBaudRate(SERIAL_BAUD);;
         serial_port->setDataBits(QSerialPort::Data8);
         serial_port->setParity(QSerialPort::NoParity);
         serial_port->setStopBits(QSerialPort::OneStop);
         serial_port->setFlowControl(QSerialPort::NoFlowControl);
         retval = serial_port->open(QSerialPort::ReadWrite);
     }
-    uint8_t bdr=0x05; //250Kbps
+    uint8_t bdr=CAN_BAUD_HEXA; //250Kbps
     //uint8_t bdr2=0x09; //50Kbps
     sendinit2(*serial_port,bdr);
 

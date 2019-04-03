@@ -11,7 +11,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QMap>
 #include "better_serialfunc.h"
-
+#include "senderthread.h"
+#include "readerthread.h"
 
 #define LOG_LIMIT 500
 
@@ -114,9 +115,19 @@ private slots:
 
     void on_refreshButton_clicked();
 
-    void on_searchBar_textChanged(const QString &arg1);
+    void on_searchBar_textChanged(const QString &filter);
+
+    void on_checkBox_stateChanged(int arg1);
+
+    void on_sent_searchBar_textChanged(const QString &filter);
+
+    void on_received_searchBar_textChanged(const QString &filter);
 
 private:
+
+    void filter_on_sent_searchBar(QString filter);
+
+    void filter_on_rec_searchBar(QString filter);
 
     void create_varmap_gen();
 
@@ -125,7 +136,8 @@ private:
     uint16_t verificar_destino();
 
 public:
-
+    ReaderThread* readerth;
+    SenderThread* msgSender;
     QSerialPort *serial_port;
     //uint16_t dest;
     vector <LACAN_MSG> msg_log;
@@ -138,6 +150,7 @@ public:
     bool ERflag;
     bool NoUSB;
     bool show_miss_ack_flag=false;
+    bool filter_both_lists;
 
     uint16_t list_rec_cont = 0;
     uint16_t list_send_cont = 0;

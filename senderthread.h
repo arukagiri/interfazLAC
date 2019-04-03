@@ -5,7 +5,6 @@
 #include <QThread>
 #include <vector>
 #include "PC.h"
-#include "mainwindow.h"
 #include "tiempo.h"
 
 using namespace std;
@@ -17,6 +16,7 @@ public:
     explicit SenderThread(QObject *parent);
     virtual void run() override;
     tiempo senderTimer;
+    std::atomic<int> send{1}; //Cambiar esta variable a 0 provoca que el thread deje de señalizar el envio de mensajes
 signals:
     void sendTimeout();
 };
