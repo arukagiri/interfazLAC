@@ -240,18 +240,18 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME);
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME+100);//VER: probar sin los delays
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME+100);//VER: probar sin los delays
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME+200);
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
 
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
@@ -449,7 +449,7 @@ bool MainWindow::device_is_connected(uint8_t id){
         }
     }
     //Si no se encuentra dicho dispositivo se devuelve false (nunca estuvo conectado)
-    return false;
+    return INACTIVE;
 }
 
 //Las funciones create_varmap_"nombre de dispositivo" crean el mapeo de variables para cada dispositivo en la red
@@ -904,7 +904,7 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
 }
 
 void MainWindow::refreshLostMsgCount(uint totalAmountLost){
-    ui->msgLost_label->setText(QString(totalAmountLost));
+    ui->msgLost_label->setText(QString::number(totalAmountLost));
 }
 
 //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
@@ -1180,7 +1180,7 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
 
     uint16_t dest = verificar_destino();
-    Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
+    Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();

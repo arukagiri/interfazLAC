@@ -16,7 +16,7 @@ class Enviar_Mensaje : public QDialog
     Q_OBJECT
 
 public:
-    explicit Enviar_Mensaje(QWidget *parent, uint16_t dest);
+    explicit Enviar_Mensaje(QWidget *parent);
 
     ~Enviar_Mensaje();
 
@@ -33,9 +33,8 @@ private:
     uint16_t dest;
     void set_TIPO_VAR();
 
-    QMap<QString,LACAN_VAR> varmap;
+    QMap<QString,uint16_t> varmap;
     QMap<QString,uint16_t> d_map;
-    QMap<QString,uint16_t> msg_map;
 
 private slots:
     void MENSAJE_changed(void);
@@ -47,13 +46,7 @@ private slots:
     void QRY_selected(void);
     void POST_selected(void);
     void HB_selected(void);
-
     void VAR_Changed();
-    void TIPO_Changed();
-    void CMD_Changed();
-    void DEST_Changed();
-    void ERR_Changed();
-    void RESULT_Changed();
 
     void on_button_ENVIAR_MENSAJE_clicked();
     //void on_list_DESTINO_currentIndexChanged(int index);

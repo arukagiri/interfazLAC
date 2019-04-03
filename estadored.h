@@ -24,7 +24,7 @@ signals:
     void postforVOL_arrived(LACAN_MSG msg);
 
 public slots:
-    void handle_genWindowsClosed();
+    void handle_dispWindowsClosed();
 
 private slots:
     void ERpost_Handler(LACAN_MSG msg);
@@ -48,7 +48,7 @@ private:
 
     data_can recibed_val;
 
-    bool send_query;
+    bool send_queries;
     float gen_vo;
     float gen_io;
     float gen_vel;
