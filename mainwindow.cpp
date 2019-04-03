@@ -224,7 +224,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QListWidgetItem* bc = new QListWidgetItem("Broadcast");
 
     ui->the_one_true_list_DESTINO->addItem(bc);
-    ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
 
     ui->the_one_true_list_DESTINO->setCurrentItem(bc);
 
