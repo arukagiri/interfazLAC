@@ -213,6 +213,9 @@ void volante::new_mode(){
 void volante::closeEvent(QCloseEvent *e){
     time_2sec->stop();
     delete time_2sec;
+
+    emit volWindowsClosed();
+
     QDialog::closeEvent(e);
 }
 

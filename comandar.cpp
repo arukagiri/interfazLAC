@@ -183,6 +183,11 @@ void Comandar::on_list_COMANDO_currentIndexChanged(int index)
     cmd = ui->list_COMANDO->itemData(index).toInt();
 }
 
+void Comandar::closeEvent(QCloseEvent *e){
+    emit comWindowsClosed();
+    QDialog::closeEvent(e);
+}
+
 Comandar::~Comandar()
 {
     delete ui;

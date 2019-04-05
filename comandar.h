@@ -20,7 +20,8 @@ public:
     explicit Comandar(QWidget *parent, uint16_t dest);
     //explicit Comandar(uint16_t destino, QWidget *parent);
     ~Comandar();
-
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
 private:
     Ui::Comandar *ui;
     uint16_t var_set;
@@ -33,6 +34,9 @@ private:
     void SET_ACTUAL_VAR();
 
     QMap <QString,LACAN_VAR> varmap;
+
+signals:
+    void comWindowsClosed();
 
 private slots:
     void DO_selected(void);
