@@ -84,6 +84,7 @@ private slots:
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
     void on_combo_modo_currentIndexChanged(int index);
+    void on_edit_pushButton_clicked();
 };
 
 #endif // GEN_EOLICO_H
