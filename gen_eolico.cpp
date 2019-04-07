@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QTimer>
 #include "PC.h"
+#include "lacan_limits_gen.h"
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
@@ -22,7 +23,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
-    mode_changed();
+    //mode_changed();
 
 
 //Inicializacion de Labels
@@ -33,14 +34,23 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->label_gen_vel->setText("----");
     ui->label_gen_tor->setText("----");
 
-    ui->label_gen_isd_ref->setText("----");
-    ui->label_gen_lim_ibat_ref->setText("----");
-    ui->label_gen_lim_ief_ref->setText("----");
-    ui->label_gen_lim_vdc_ref->setText("----");
-    ui->label_gen_pot_ref->setText("----");
-    ui->label_gen_speed_ref->setText("----");
-    ui->label_gen_torque_ref->setText("----");
+    blockAllSpinSignals(true);
 
+    ui->spin_gen_isd_ref->setMinimum(LACAN_VAR_GEN_ISD_MIN);
+    ui->spin_gen_lim_ibat_ref->setMinimum(LACAN_VAR_GEN_IBAT_MIN);
+    ui->spin_gen_lim_ief_ref->setMinimum(LACAN_VAR_GEN_IEF_MIN);
+    ui->spin_gen_lim_vdc_ref->setMinimum(LACAN_VAR_GEN_VO_MIN);
+    ui->spin_gen_pot_ref->setMinimum(LACAN_VAR_GEN_PO_MIN);
+    ui->spin_gen_speed_ref->setMinimum(LACAN_VAR_GEN_W_MIN);
+    ui->spin_gen_torque_ref->setMinimum(LACAN_VAR_GEN_TORQ_MIN);
+
+    ui->spin_gen_isd_ref->setMaximum(LACAN_VAR_GEN_ISD_MAX);
+    ui->spin_gen_lim_ibat_ref->setMaximum(LACAN_VAR_GEN_IBAT_MAX);
+    ui->spin_gen_lim_ief_ref->setMaximum(LACAN_VAR_GEN_IEF_MAX);
+    ui->spin_gen_lim_vdc_ref->setMaximum(LACAN_VAR_GEN_VO_MAX);
+    ui->spin_gen_pot_ref->setMaximum(LACAN_VAR_GEN_PO_MAX);
+    ui->spin_gen_speed_ref->setMaximum(LACAN_VAR_GEN_W_MAX);
+    ui->spin_gen_torque_ref->setMaximum(LACAN_VAR_GEN_TORQ_MAX);
 
 //TIMER ENCARGADO DE REFRESCAR LOS VALORES Y DE ENVIAR LAS NUEVAS CONSULTAS
     time_2sec = new QTimer();
@@ -54,7 +64,13 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 }
 
 void Gen_Eolico::timer_handler(){
+<<<<<<< Updated upstream
     if(mw->device_is_connected(LACAN_ID_GEN)){
+=======
+    static uint count = 0;
+//    if(mw->device_is_connected(LACAN_ID_GEN)){
+        if(true){
+>>>>>>> Stashed changes
         refresh_values();       //actualiza los valores de la pantalla
         if(send_queries){
             send_qry_variables();
@@ -67,14 +83,13 @@ void Gen_Eolico::timer_handler(){
         //send_qry();             //y vuelve a preguntar con los actuales
     }
     else{   //si no esta conectado, se cierra la pantalla
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::warning(this,"Conexion perdida","El generador se ha desconectado de la red. Esta ventana se cerrara inmediatamente");
-        if(reply){
-            this->close();
-        }
+//        QMessageBox::StandardButton reply;
+//        reply = QMessageBox::warning(this,"Conexion perdida","El generador se ha desconectado de la red. Esta ventana se cerrara inmediatamente");
+//        if(reply){
+//            this->close();
+//        }
     }
 }
-
 
 //Me fijo que variable es la que llego, y le asigno el valor correspondiente, a la variable propia de la clase
 void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
@@ -206,6 +221,11 @@ void Gen_Eolico::send_qry_references(){
 
 //Se actualizan todos los valores del GENERADOR
 void Gen_Eolico::refresh_values(){
+    ui->spin_gen_isd_ref->setEnabled(true);
+    ui->spin_gen_lim_ibat_ref->setEnabled(true);
+    ui->spin_gen_lim_ief_ref->setEnabled(true);
+    ui->spin_gen_lim_vdc_ref->setEnabled(true);
+    ui->combo_modo->setEnabled(true);
 
     //Variables de SET
     ui->label_gen_torque_ref->setText(QString::number(torque_ref,'f',2));
@@ -301,27 +321,47 @@ void Gen_Eolico::new_mode(){
     case LACAN_VAR_MOD_VEL:     //Velocidad
         qDebug()<<"Entro a velocidad";
         ui->label_pot_ref->setDisabled(true);
+        ui->spin_gen_pot_ref->setDisabled(true);
+
         ui->label_speed_ref->setEnabled(true);
+        ui->spin_gen_speed_ref->setEnabled(true);
+
         ui->label_torque_ref->setDisabled(true);
+        ui->spin_gen_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_POT:     //Potencia
         qDebug()<<"Entro a potencia";
         ui->label_pot_ref->setEnabled(true);
+        ui->spin_gen_pot_ref->setEnabled(true);
+
         ui->label_speed_ref->setDisabled(true);
+        ui->spin_gen_speed_ref->setDisabled(true);
+
         ui->label_torque_ref->setDisabled(true);
+        ui->spin_gen_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_TORQ:     //Torque
         qDebug()<<"Entro a Torke";
         ui->label_pot_ref->setDisabled(true);
+        ui->spin_gen_pot_ref->setDisabled(true);
+
         ui->label_speed_ref->setDisabled(true);
+        ui->spin_gen_speed_ref->setDisabled(true);
+
         ui->label_torque_ref->setEnabled(true);
+        ui->spin_gen_torque_ref->setEnabled(true);
         break;
     case LACAN_VAR_MOD_MPPT:     //MPPT
 
         qDebug()<<"Entro a Mppt";
         ui->label_pot_ref->setDisabled(true);
+        ui->spin_gen_pot_ref->setDisabled(true);
+
         ui->label_speed_ref->setDisabled(true);
+        ui->spin_gen_speed_ref->setDisabled(true);
+
         ui->label_torque_ref->setDisabled(true);
+        ui->spin_gen_torque_ref->setDisabled(true);
         break;
     default:
         break;
@@ -352,3 +392,113 @@ Gen_Eolico::~Gen_Eolico()
     delete ui;
 }
 
+<<<<<<< Updated upstream
+=======
+void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
+{
+    blockAllSpinSignals(true);
+    spin->clearFocus();
+    data_can data;
+    float value = float(spin->value());
+    int reply;
+    QString str = "El valor a enviar es: ";
+    str.append(QString::number(double(value)));
+    str.append(". Confirma que desea enviar este valor?");
+    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
+    reply = dialog->exec();
+    if(reply){
+        data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
+        mw->LACAN_Set(var, data, 1, dest);
+        mw->agregar_log_sent();
+    }
+    blockAllSpinSignals(false);
+    spin->setValue(double(value));
+}
+
+void Gen_Eolico::blockAllSpinSignals(bool b){
+    ui->spin_gen_isd_ref->blockSignals(b);
+    ui->spin_gen_lim_ibat_ref->blockSignals(b);
+    ui->spin_gen_lim_ief_ref->blockSignals(b);
+    ui->spin_gen_lim_vdc_ref->blockSignals(b);
+    ui->spin_gen_pot_ref->blockSignals(b);
+    ui->spin_gen_speed_ref->blockSignals(b);
+    ui->spin_gen_torque_ref->blockSignals(b);
+}
+
+void Gen_Eolico::on_checkBox_stateChanged(int checked)
+{
+    if(checked)
+    {
+        send_queries = false;
+
+        ui->spin_gen_isd_ref->blockSignals(false);
+        ui->spin_gen_lim_ibat_ref->blockSignals(false);
+        ui->spin_gen_lim_ief_ref->blockSignals(false);
+        ui->spin_gen_lim_vdc_ref->blockSignals(false);
+        ui->spin_gen_pot_ref->blockSignals(false);
+        ui->spin_gen_speed_ref->blockSignals(false);
+        ui->spin_gen_torque_ref->blockSignals(false);
+
+        ui->spin_gen_isd_ref->setReadOnly(false);
+        ui->spin_gen_lim_ibat_ref->setReadOnly(false);
+        ui->spin_gen_lim_ief_ref->setReadOnly(false);
+        ui->spin_gen_lim_vdc_ref->setReadOnly(false);
+        ui->spin_gen_pot_ref->setReadOnly(false);
+        ui->spin_gen_speed_ref->setReadOnly(false);
+        ui->spin_gen_torque_ref->setReadOnly(false);
+    }else{
+        send_queries = true;
+
+        ui->spin_gen_isd_ref->blockSignals(true);
+        ui->spin_gen_lim_ibat_ref->blockSignals(true);
+        ui->spin_gen_lim_ief_ref->blockSignals(true);
+        ui->spin_gen_lim_vdc_ref->blockSignals(true);
+        ui->spin_gen_pot_ref->blockSignals(true);
+        ui->spin_gen_speed_ref->blockSignals(true);
+        ui->spin_gen_torque_ref->blockSignals(true);
+
+        ui->spin_gen_isd_ref->setReadOnly(true);
+        ui->spin_gen_lim_ibat_ref->setReadOnly(true);
+        ui->spin_gen_lim_ief_ref->setReadOnly(true);
+        ui->spin_gen_lim_vdc_ref->setReadOnly(true);
+        ui->spin_gen_pot_ref->setReadOnly(true);
+        ui->spin_gen_speed_ref->setReadOnly(true);
+        ui->spin_gen_torque_ref->setReadOnly(true);
+    }
+}
+
+void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_speed_ref, LACAN_VAR_W_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_pot_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_pot_ref, LACAN_VAR_PO_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_torque_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_torque_ref, LACAN_VAR_TORQ_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_lim_ief_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_lim_ief_ref, LACAN_VAR_IEF_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_isd_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_isd_ref, LACAN_VAR_ISD_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_lim_ibat_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_lim_ibat_ref, LACAN_VAR_I_BAT_SETP);
+}
+
+void Gen_Eolico::on_spin_gen_lim_vdc_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_gen_lim_vdc_ref, LACAN_VAR_VO_SETP);
+}
+>>>>>>> Stashed changes
