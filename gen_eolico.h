@@ -43,7 +43,8 @@ private:
     void send_qry();
     void send_qry_variables();
     void send_qry_references();
-
+    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var);
+    void blockAllSpinSignals(bool b);
     //variables para guardar el valor a mostrar
 
     data_can recibed_val;
@@ -84,7 +85,14 @@ private slots:
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
     void on_combo_modo_currentIndexChanged(int index);
-    void on_edit_pushButton_clicked();
+    void on_checkBox_stateChanged(int checked);
+    void on_spin_gen_speed_ref_editingFinished();
+    void on_spin_gen_pot_ref_editingFinished();
+    void on_spin_gen_torque_ref_editingFinished();
+    void on_spin_gen_lim_ief_ref_editingFinished();
+    void on_spin_gen_isd_ref_editingFinished();
+    void on_spin_gen_lim_ibat_ref_editingFinished();
+    void on_spin_gen_lim_vdc_ref_editingFinished();
 };
 
 #endif // GEN_EOLICO_H
