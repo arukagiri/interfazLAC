@@ -63,7 +63,8 @@ HEADERS += \
     lacan_limits_vol.h \
     boost.h \
     senderthread.h \
-    readerthread.h
+    readerthread.h \
+    lacan_limits_broad.h
 
 FORMS += \
         mainwindow.ui \

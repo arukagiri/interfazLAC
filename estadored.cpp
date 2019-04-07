@@ -140,15 +140,16 @@ void EstadoRed::timer_handler(){
     set_states();
 }
 
+//borrar????
 void EstadoRed::var_changed(uint16_t var, uint16_t data){
     qDebug()<<var;
     qDebug()<<data;
 }
 
 void EstadoRed::set_states(){
+    ui->button_gen->setEnabled(true); //BORRAR, CAMBIAR, PONER LO DE ABAJO
     //if(mw->device_is_connected(LACAN_ID_GEN)){ui->button_gen->setEnabled(true);}
     //else{ui->button_gen->setDisabled(true);}
-    ui->button_gen->setEnabled(true); //BORRAR, CAMBIAR, PONER LO DE ARRIBA
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){ui->button_vol->setEnabled(true);}
     else{ui->button_vol->setDisabled(true);}
@@ -305,6 +306,7 @@ void EstadoRed::on_pushButton_clicked()
     else
         ui->button_vol->setEnabled(true);
 }
+
 
 void EstadoRed::handle_dispWindowsClosed(){
    send_queries = true;

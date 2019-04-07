@@ -383,17 +383,29 @@ border: 1px solid black;</string>
         </item>
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>50</horstretch>
+            <verstretch>50</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>300</width>
-            <height>100</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="imagenes.qrc">:/Imagenes/lacan.png</pixmap>
+           <pixmap resource="imagenes.qrc">:/Imagenes/LACAN-LOGO.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -627,7 +639,7 @@ border: 1px solid black;</string>
      <x>0</x>
      <y>0</y>
      <width>907</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuArchivo">
