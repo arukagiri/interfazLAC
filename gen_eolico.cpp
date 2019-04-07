@@ -13,6 +13,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
+    send_queries = true;
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
@@ -46,13 +47,27 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
     time_2sec->start(2000); //velocidad de refresco (en ms)
 
-    send_qry(); //envio las primeras consultas
+    //envio las primeras consultas
+    send_qry_references();
+    send_qry_variables();
+    referenceChanged = false;
 }
 
 void Gen_Eolico::timer_handler(){
+    static uint count = 0;
     if(mw->device_is_connected(LACAN_ID_GEN)){
         refresh_values();       //actualiza los valores de la pantalla
-        send_qry();             //y vuelve a preguntar con los actuales
+        if(send_queries){
+            count++;
+            send_qry_variables();
+            if(count%5==0||referenceChanged){
+                send_qry_references();
+                referenceChanged = false;
+                count = 0;
+            }
+        }
+
+        //send_qry();             //y vuelve a preguntar con los actuales
     }
     else{   //si no esta conectado, se cierra la pantalla
         QMessageBox::StandardButton reply;
@@ -122,9 +137,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
     }
 }
 
-//Consulto todas las variables del GENERADOR
-void Gen_Eolico::send_qry(){
-
+void Gen_Eolico::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //gen_vo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //gen_io
@@ -137,7 +150,9 @@ void Gen_Eolico::send_qry(){
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_INST,false,dest);   //gen_po
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+}
 
+void Gen_Eolico::send_qry_references(){
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //sped_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_SETP,false,dest);   //po_ref
@@ -205,6 +220,10 @@ void Gen_Eolico::on_pushButton_comandar_clicked()
    Comandar *comwin = new Comandar(mw,dest);
    comwin->setModal(true);
    comwin->show();
+   send_queries = false;
+   referenceChanged = true;
+   connect(comwin, SIGNAL(comWindowsClosed()), this, SLOT(focusReturned()));
+
 }
 
 void Gen_Eolico::verificar_mode_changed(){
@@ -223,7 +242,7 @@ void Gen_Eolico::verificar_mode_changed(){
         mw->LACAN_Set(LACAN_VAR_MOD,modo,false,dest);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->agregar_log_sent();
-
+        referenceChanged = true;
         //version1
         //mode_changed();
     }
@@ -286,7 +305,14 @@ void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
 void Gen_Eolico::closeEvent(QCloseEvent *e){
     time_2sec->stop();
     delete time_2sec;
+
+    emit genWindowsClosed();
+
     QDialog::closeEvent(e);
+}
+
+void Gen_Eolico::focusReturned(){
+    send_queries = true;
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -294,3 +320,8 @@ Gen_Eolico::~Gen_Eolico()
     delete ui;
 }
 
+
+void Gen_Eolico::on_edit_pushButton_clicked()
+{
+
+}

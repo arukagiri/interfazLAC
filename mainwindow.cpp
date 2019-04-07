@@ -25,7 +25,7 @@
 #include "lacan_limits_vol.h"
 #include <QThread>
 #include "tiempo.h"
-#include "senderthread.h"
+
 
 /***Funciones genericas***/
 //Carga de mensajes al log en un txt, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
@@ -40,10 +40,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Si la carpeta Log de Mensajes LACAN no se encuentra creada la creo antes de guardar los txt
     if(QDir(file_folder+"/Log de Mensajes LACAN").exists()){
         //Especifico el nombre del archivo segun el mes, si no existe se crea automaticamente al guardar datos
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".txt";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
     }else if(QDir(file_folder).exists()){
         QDir(file_folder).mkdir("Log de Mensajes LACAN");
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".txt";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
     }else {
         file_path = QDir::currentPath()+"/"+abs_msg.curr_time.mid(3,7)+".txt";
     }
@@ -56,10 +56,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Para mantener la legibilidad del txt se vuelven a escribir los nombres de columnas cuando se inicia el programa
     //o cuando se insertaron 25 lineas (mensajes) en el archivo
     if(!(cont%25)){
-        out<<"Sentido"<<"\t"<<"Fecha y hora"<<"\t\t"<<"Destino"<<"\t\t\t"<<"Funcion"<<"\t"<<"Tipo de variable"<<"\t"<<"Valor de variable"<<"\t"<<"Comando"<<"\t"<<"Codigo de ACK"<<"\t"<<"Codigo de error"<<"\n";
+        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Codigo de error"<<"\n";
         cont=0;
     }
-    out<<way<<"\t"<<abs_msg.curr_time<<"\t"<<abs_msg.dest<<"\t"<<abs_msg.fun<<"\t"<<abs_msg.var_type<<"\t"<<abs_msg.var_val<<"\t"<<abs_msg.com<<"\t"<<abs_msg.ack_code<<"\t"<<abs_msg.err_code<<"\n";
+    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.err_code<<"\n";
     //Vacio buffers (lo cual obliga al flujo a plasmarse de manera definitiva en el archivo) y luego cierro el archivo
     file.flush();
     file.close();
@@ -203,6 +203,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     NoUSB=false;
     outlog_cont=0;
     inlog_cont=0;
+    filter_both_lists = true;
+
     //Se inicializa el timer con el cual se van a realizar acciones periodicas en el slot do_stuff, siendo la principal
     //mandar Heartbeats
     periodicTimer = new QTimer();
@@ -212,7 +214,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     //cuenta tics del microprocesador, obteniendose precision de por lo menos 100us, en este caso se usara cada 0,5s para
     //realizar el envio de los mensajes de manera escpaciada para no saturar el adaptador debido a la diferencia de velocidades
     //CAN y serie
-    SenderThread* msgSender=new SenderThread(this);
+    msgSender=new SenderThread(this);
     connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
     msgSender->start();
 
@@ -222,9 +224,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     QListWidgetItem* bc = new QListWidgetItem("Broadcast");
 
     ui->the_one_true_list_DESTINO->addItem(bc);
-    ui->the_one_true_list_DESTINO->addItem("Generador Eolico");
-    ui->the_one_true_list_DESTINO->addItem("Volante de Inercia");
-    ui->the_one_true_list_DESTINO->addItem("Boost");
 
     ui->the_one_true_list_DESTINO->setCurrentItem(bc);
 
@@ -239,19 +238,20 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME);
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME);
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME+100);//VER: probar sin los delays
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME+100);//VER: probar sin los delays
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
-    newdev->hb_status=ACTIVE;
-    newdev->hb_timer.start(DEAD_HB_TIME+200);
+    newdev->hb_status=INACTIVE;
+    //newdev->hb_timer.start(DEAD_HB_TIME+200);
     hb_con.push_back(newdev);
+
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
@@ -287,8 +287,13 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     create_varmap_gen();
     create_varmap_vol();
 
+    readerth = new ReaderThread(*serial_port);
+    readerth->start();
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
-    connect(serial_port, SIGNAL(readyRead()), this, SLOT(handleRead()));
+    connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
+    connect(readerth, SIGNAL(receivedMsg(LACAN_MSG)), this, SLOT(handleProcessedMsg(LACAN_MSG)));
+    connect(readerth, SIGNAL(msgLost(uint)), this, SLOT(refreshLostMsgCount(uint)));
+
     //Conecto la señal que indica un error en el puerto serie con nuestro slot para manejarla
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
 }
@@ -330,7 +335,7 @@ void MainWindow::agregar_log_sent(){
                 ui->tableWidget_sent->setRowCount(list_send_cont);
                 do_log=TRUE;
             }
-        }else{
+        }else{            
             //VER
             //list_send_cont++; para pasarselo a row count y volverlo dinamico, probar pero es lo mismo que poner outlog_cont+1
             ui->tableWidget_sent->setRowCount(outlog_cont+1);
@@ -345,10 +350,19 @@ void MainWindow::agregar_log_sent(){
             ui->tableWidget_sent->setItem(outlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
             outlog_cont++;
         }
+
+        if(filter_both_lists){
+            QString filter = ui->searchBar->text();
+            filter_on_sent_searchBar(filter);
+        }else{
+            QString filter = ui->sent_searchBar->text();
+            filter_on_sent_searchBar(filter);
+        }
+
+        ui->tableWidget_sent->scrollToBottom();
     }
     //No importan las configuraciones para el caso del log en el txt, este siempre debe estar vigente
     agregar_textlog(abs_msg,"Enviado");
-    ui->tableWidget_sent->scrollToBottom();
 }
 
 void MainWindow::agregar_log_rec(){
@@ -385,9 +399,18 @@ void MainWindow::agregar_log_rec(){
             ui->tableWidget_received->setItem(inlog_cont, 8, new QTableWidgetItem(abs_msg.curr_time));
             inlog_cont++;
         }
+
+        if(filter_both_lists){
+            QString filter = ui->searchBar->text();
+            filter_on_rec_searchBar(filter);
+        }else{
+            QString filter = ui->received_searchBar->text();
+            filter_on_rec_searchBar(filter);
+        }
+
+        ui->tableWidget_received->scrollToBottom();
     }
     agregar_textlog(abs_msg,"Recibido");
-    ui->tableWidget_received->scrollToBottom();
 }
 
 //VER esto se implementa al final?
@@ -442,7 +465,7 @@ bool MainWindow::device_is_connected(uint8_t id){
         }
     }
     //Si no se encuentra dicho dispositivo se devuelve false (nunca estuvo conectado)
-    return false;
+    return INACTIVE;
 }
 
 //Las funciones create_varmap_"nombre de dispositivo" crean el mapeo de variables para cada dispositivo en la red
@@ -492,6 +515,40 @@ void MainWindow::create_varmap_gen(){
     varmap_gen["Torque"]=TORQ_GEN;
     varmap_gen["Velocidad Angular"]=W_GEN;
     varmap_gen["Corriente de Bateria"]=IBAT_GEN;
+}
+
+void MainWindow::filter_on_sent_searchBar(QString filter){
+    for( int i = 0; i < ui->tableWidget_sent->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_sent->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_sent->item( i, j );
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_sent->setRowHidden( i, !match );
+    }
+}
+
+void MainWindow::filter_on_rec_searchBar(QString filter){
+    for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
+    {
+        bool match = false;
+        for( int j = 0; j < ui->tableWidget_received->columnCount(); ++j )
+        {
+            QTableWidgetItem *item = ui->tableWidget_received->item( i, j );
+            if( item->text().contains(filter, Qt::CaseInsensitive) )
+            {
+                match = true;
+                break;
+            }
+        }
+        ui->tableWidget_received->setRowHidden( i, !match );
+    }
 }
 
 void MainWindow::create_varmap_vol(){
@@ -896,6 +953,9 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
 
 }
 
+void MainWindow::refreshLostMsgCount(uint totalAmountLost){
+    ui->msgLost_label->setText(QString::number(totalAmountLost));
+}
 
 //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,
 //cada nodo debe enviar HB cada un cierto tiempo(HB_TIME), si este no se recibe dentro de un periodo de
@@ -973,8 +1033,8 @@ void MainWindow::verificarACK(){
 }
 
 //Es la encargada de manejar la señal del sistema que indica que hay datos por leer en el buffer del puerto serie
-void MainWindow::handleRead(){
-    uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
+void MainWindow::handleProcessedMsg(LACAN_MSG msg){
+    /*uint16_t cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
     uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
     static uint16_t notsup_count, notsup_gen;
@@ -1022,19 +1082,30 @@ void MainWindow::handleRead(){
         //mensaje lo maneje esa ventana
         if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
             emit postforER_arrived(msg);
-        }
-        //Proceso el mensaje
-        int result;
-        result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
-        //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
-        //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
-        //(el ultimo) con el slot
-        if(hb_con.size()>prevsize){
-            connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
-        }
-        //Agrego el mensaje al log de recibidos (y a su vez al txt)
-        agregar_log_rec();
+        }*/
+
+    msg_log.push_back(msg);//Agrego el mensaje al vector de mensajes a loguear
+
+    int prevsize = hb_con.size();//Guardo la cantidad de dispositivos en la red (antes de que pueda ser modificada)
+
+    //Si el mensaje es un POST y esta activa la ventana estado de red, emito la señal para que este
+    //mensaje lo maneje esa ventana
+    if((msg.ID>>LACAN_IDENT_BITS==LACAN_FUN_POST)&&ERflag){
+        emit postforER_arrived(msg);
     }
+    //Proceso el mensaje
+    static uint16_t notsup_count, notsup_gen;
+    int result;
+    result=LACAN_Msg_Handler(msg,notsup_count,notsup_gen);
+    //VER A partir de mensajes recibidos solo podria aumentar el numero de dispositivos conectados, no de msj con ACK
+    //Si la cantidad de dispositivos conectados aumento, conecto la señal del timer del dispositivo agregado
+    //(el ultimo) con el slot
+    if(hb_con.size()>prevsize){
+        connect(&(hb_con.back()->hb_timer),SIGNAL(timeout()),this,SLOT(verificarHB()));
+    }
+    //Agrego el mensaje al log de recibidos (y a su vez al txt)
+    agregar_log_rec();
+
 }
 
 //Seteo del nombre del nuevo dispositivo segun se ingreso y lo termino de agragar al procesamiento de la aplicacion
@@ -1159,7 +1230,7 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
 
     uint16_t dest = verificar_destino();
-    Enviar_Mensaje *envwin = new Enviar_Mensaje(this,dest);
+    Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
 
     envwin->setModal(true);
     envwin->show();
@@ -1219,18 +1290,6 @@ void MainWindow::on_button_ByteSend_clicked()
     bytewin->show();
 }
 
-//FOR TESTING
-/*
-void MainWindow::on_pushButton_clicked(bool checked)
-{
-    dest = LACAN_ID_GEN;
-    data_can val;
-    val.var_float=1.5;
-    LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
-}*/
-
-
-
 void MainWindow::on_logButton_clicked()
 {
     if(ui->logButton->isChecked()){
@@ -1261,9 +1320,9 @@ void MainWindow::on_refreshButton_clicked()
     }
 }
 
-void MainWindow::on_searchBar_textChanged(const QString &arg1)
+void MainWindow::on_searchBar_textChanged(const QString &filter)
 {
-    QString filter = ui->searchBar->text();
+//    QString filter = ui->searchBar->text();
     for( int i = 0; i < ui->tableWidget_received->rowCount(); ++i )
     {
         bool match = false;
@@ -1294,3 +1353,42 @@ void MainWindow::on_searchBar_textChanged(const QString &arg1)
         ui->tableWidget_sent->setRowHidden( i, !match );
     }
 }
+
+void MainWindow::on_sent_searchBar_textChanged(const QString &filter)
+{
+    filter_on_sent_searchBar(filter);
+}
+
+void MainWindow::on_received_searchBar_textChanged(const QString &filter)
+{
+    filter_on_rec_searchBar(filter);
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if(arg1){
+        filter_both_lists = true;
+        ui->sent_searchBar->setText("");
+        ui->sent_searchBar->setEnabled(false);
+        ui->received_searchBar->setEnabled(false);
+        ui->searchBar->setEnabled(true);
+    }else{
+        filter_both_lists = false;
+        ui->received_searchBar->setText("");
+        ui->searchBar->setText("");
+        ui->sent_searchBar->setEnabled(true);
+        ui->received_searchBar->setEnabled(true);
+        ui->searchBar->setEnabled(false);
+    }
+}
+
+//FOR TESTING
+/*
+void MainWindow::on_pushButton_clicked(bool checked)
+{
+    dest = LACAN_ID_GEN;
+    data_can val;
+    val.var_float=1.5;
+    LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
+}*/
+

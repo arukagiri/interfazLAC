@@ -232,6 +232,11 @@ struct LACAN_VAR {
   uint16_t min;         //valor del limite inferior
 };
 
+#define SERIAL_BAUD 1228800 //bps
+#define CAN_BAUD_HEXA 0x05 //opcion del adaptador
+#define CAN_BAUD 250000 //bps
+#define BIGGEST_CAN_MSG 13 //Bytes
+
 #endif // PC_H_INCLUDED
 
 

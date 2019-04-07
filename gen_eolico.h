@@ -34,12 +34,15 @@ private:
     uint16_t cmd;
     data_can val;
     QString text_val;
-
+    bool referenceChanged;
+    bool send_queries;
     QTimer *time_2sec;
 
     void new_mode();
     void refresh_values();
     void send_qry();
+    void send_qry_variables();
+    void send_qry_references();
 
     //variables para guardar el valor a mostrar
 
@@ -63,8 +66,10 @@ private:
     float gen_tor = 0.0;
 
 
-
-
+signals:
+    void genWindowsClosed();
+public slots:
+    void focusReturned();
 private slots:
 
     void timer_handler();
@@ -79,6 +84,7 @@ private slots:
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
     void on_combo_modo_currentIndexChanged(int index);
+    void on_edit_pushButton_clicked();
 };
 
 #endif // GEN_EOLICO_H

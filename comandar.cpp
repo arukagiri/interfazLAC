@@ -8,8 +8,7 @@
 #include <QWidget>
 #include <QMap>
 
-//PARA LA MAIN WINDOWS
-Comandar::Comandar(QWidget *parent, uint16_t destMw) :
+Comandar::Comandar(QWidget *parent, uint16_t destEx) :
     QDialog(parent),
     ui(new Ui::Comandar)
 {
@@ -18,7 +17,7 @@ Comandar::Comandar(QWidget *parent, uint16_t destMw) :
     this->setWindowTitle("Comandar");
 
     mw = qobject_cast<MainWindow*>(this->parent());
-    dest=destMw;
+    dest=destEx;
 
     switch(dest){
         case LACAN_ID_GEN:
@@ -182,6 +181,11 @@ void Comandar::on_list_MOD_SET_currentIndexChanged(int index)
 void Comandar::on_list_COMANDO_currentIndexChanged(int index)
 {
     cmd = ui->list_COMANDO->itemData(index).toInt();
+}
+
+void Comandar::closeEvent(QCloseEvent *e){
+    emit comWindowsClosed();
+    QDialog::closeEvent(e);
 }
 
 Comandar::~Comandar()

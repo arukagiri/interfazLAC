@@ -42,7 +42,8 @@ EstadoRed::EstadoRed(QWidget *parent) :
     send_qry();
     set_states();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-
+    //send_qry();
+    send_queries = true;
     time_2sec->start(2000);
 
 }
@@ -132,8 +133,10 @@ void EstadoRed::send_qry(){
 }
 
 void EstadoRed::timer_handler(){
+    if(send_queries){
+        send_qry();
+    }
     refresh_values();
-    //send_qry();
     set_states();
 }
 
@@ -241,6 +244,10 @@ void EstadoRed::on_button_vol_clicked()
     volante *vol_win = new volante(mw);
     vol_win->setModal(true);
     vol_win->show();
+
+    send_queries = false;
+
+    connect(vol_win, SIGNAL(volWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
     connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -249,6 +256,10 @@ void EstadoRed::on_button_gen_clicked()
     Gen_Eolico *gen_win = new Gen_Eolico(mw);
     gen_win->setModal(true);
     gen_win->show();
+
+    send_queries = false;
+
+    connect(gen_win, SIGNAL(genWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
     connect(this, SIGNAL(postforGEN_arrived(LACAN_MSG)), gen_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -257,6 +268,9 @@ void EstadoRed::on_button_boost_clicked()
     boost *boost_win = new boost(mw);
     boost_win->setModal(true);
     boost_win->show();
+
+    send_queries = false;
+
    // connect(this, SIGNAL(postforBOOST_arrived(LACAN_MSG)), boost_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
@@ -272,7 +286,12 @@ EstadoRed::~EstadoRed()
 {
     delete ui;
 }
+<<<<<<< HEAD
 //borrar
+=======
+
+
+>>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c
 void EstadoRed::on_pushButton_clicked()
 {
     if(ui->button_gen->isEnabled())
@@ -291,3 +310,10 @@ void EstadoRed::on_pushButton_clicked()
     else
         ui->button_vol->setEnabled(true);
 }
+<<<<<<< HEAD
+=======
+
+void EstadoRed::handle_dispWindowsClosed(){
+   send_queries = true;
+}
+>>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c
