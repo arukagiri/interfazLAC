@@ -198,6 +198,14 @@ void Gen_Eolico::refresh_values(){
     ui->label_gen_isd_ref->setText(QString::number(isd_ref,'f',2));
     ui->label_gen_lim_ibat_ref->setText(QString::number(lim_ibat,'f',2));
 
+    ui->spin_gen_isd_ref->setValue(double(isd_ref));
+    ui->spin_gen_lim_ibat_ref->setValue(double(lim_ibat));
+    ui->spin_gen_lim_ief_ref->setValue(double(lim_ief));
+    ui->spin_gen_lim_vdc_ref->setValue(double(lim_vdc));
+    ui->spin_gen_pot_ref->setValue(double(pot_ref));
+    ui->spin_gen_speed_ref->setValue(double(speed_ref));
+    ui->spin_gen_torque_ref->setValue(double(torque_ref));
+
     //Variables de Salida
     ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
     ui->label_gen_io->setText(QString::number(gen_io,'f',2));
