@@ -383,17 +383,29 @@ border: 1px solid black;</string>
         </item>
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>50</horstretch>
+            <verstretch>50</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>300</width>
-            <height>100</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="imagenes.qrc">:/Imagenes/lacan.png</pixmap>
+           <pixmap resource="imagenes.qrc">:/Imagenes/LACAN-LOGO.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -459,18 +471,6 @@ border: 1px solid black;</string>
           </widget>
          </item>
          <item>
-<<<<<<< HEAD
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>10</width>
-=======
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -478,23 +478,12 @@ border: 1px solid black;</string>
            <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
->>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c
              <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
          <item>
-<<<<<<< HEAD
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Buscar:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-=======
->>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c
           <widget class="QLineEdit" name="searchBar">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -650,7 +639,7 @@ border: 1px solid black;</string>
      <x>0</x>
      <y>0</y>
      <width>907</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuArchivo">

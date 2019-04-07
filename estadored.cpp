@@ -286,12 +286,8 @@ EstadoRed::~EstadoRed()
 {
     delete ui;
 }
-<<<<<<< HEAD
-//borrar
-=======
 
 
->>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c
 void EstadoRed::on_pushButton_clicked()
 {
     if(ui->button_gen->isEnabled())
@@ -310,10 +306,8 @@ void EstadoRed::on_pushButton_clicked()
     else
         ui->button_vol->setEnabled(true);
 }
-<<<<<<< HEAD
-=======
+
 
 void EstadoRed::handle_dispWindowsClosed(){
    send_queries = true;
 }
->>>>>>> 649c2112ae9efb75dc55240022e23e97e71adc5c

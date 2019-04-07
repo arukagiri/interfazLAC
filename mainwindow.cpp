@@ -18,11 +18,12 @@
 #include <QStandardPaths>
 #include "addnewdevdialog.h"
 #include <QColor>
-#include "lacan_limits_gen.h"
 #include "bytesend.h"
 #include <stdlib.h>
 #include <string.h>
 #include "lacan_limits_vol.h"
+#include "lacan_limits_broad.h"
+#include "lacan_limits_gen.h"
 #include <QThread>
 #include "tiempo.h"
 
@@ -33,7 +34,7 @@
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
     //Guardo el path que por defecto tiene configurado el SO como carpeta personal del usuario (normalmente Documentos)
-    //Si dicho path no existe configurado se guarda en la carpeta del programa
+    //Si dicho path no existFe configurado se guarda en la carpeta del programa
     QString file_folder=QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     QString file_path="";
 
@@ -284,6 +285,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 
     //creacion de los mapas que asocian los string de las variables con su respectivo ID segun a que
     //dispositivo pertenezcan, deberia haber un "create_varmap_" por cada dispositivo conectado a la red
+    create_varmap_broadcast();
     create_varmap_gen();
     create_varmap_vol();
 
@@ -517,6 +519,84 @@ void MainWindow::create_varmap_gen(){
     varmap_gen["Corriente de Bateria"]=IBAT_GEN;
 }
 
+void MainWindow::create_varmap_vol(){
+    LACAN_VAR W_VOL;
+    W_VOL.instantanea=LACAN_VAR_W_INST;
+    W_VOL.setp=LACAN_VAR_W_SETP;
+    W_VOL.max=LACAN_VAR_GEN_W_MAX;
+    W_VOL.min=LACAN_VAR_GEN_W_MIN;
+    LACAN_VAR ISD_VOL;
+    ISD_VOL.instantanea=LACAN_VAR_ISD_INST;
+    ISD_VOL.setp=LACAN_VAR_ISD_SETP;
+    ISD_VOL.max=LACAN_VAR_VOL_ISD_MAX;
+    ISD_VOL.min=LACAN_VAR_VOL_ISD_MIN;
+    LACAN_VAR W_STBY_VOL;
+    W_STBY_VOL.instantanea=LACAN_VAR_STANDBY_W_INST;
+    W_STBY_VOL.setp=LACAN_VAR_STANDBY_W_SETP;
+    W_STBY_VOL.max=LACAN_VAR_VOL_STANDBY_W_MAX;
+    W_STBY_VOL.min=LACAN_VAR_VOL_STANDBY_W_MIN;
+    LACAN_VAR PO_VOL;
+    PO_VOL.instantanea=LACAN_VAR_PO_INST;
+    PO_VOL.setp=LACAN_VAR_PO_SETP;
+    LACAN_VAR VO_VOL;
+    VO_VOL.instantanea=LACAN_VAR_VO_INST;
+    VO_VOL.setp=LACAN_VAR_VO_SETP;
+    LACAN_VAR TORQ_VOL;
+    TORQ_VOL.instantanea=LACAN_VAR_TORQ_INST;
+    TORQ_VOL.setp=LACAN_VAR_TORQ_SETP;
+    LACAN_VAR IBAT_VOL;
+    IBAT_VOL.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
+
+    varmap_vol["Corriente de ID"]=ISD_VOL;
+    varmap_vol["Velocidad Angular"]=W_VOL;
+    varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
+    varmap_vol["Potencia de Salida"]=PO_VOL;
+    varmap_vol["Torque"]=TORQ_VOL;
+    varmap_vol["Tension de Salida"]=VO_VOL;
+    varmap_vol["Corriente de Bateria"]=IBAT_VOL;
+}
+
+
+void MainWindow::create_varmap_broadcast(){
+    LACAN_VAR ISD_BROAD;
+    ISD_BROAD.instantanea=LACAN_VAR_ISD_INST;
+    ISD_BROAD.setp=LACAN_VAR_ISD_SETP;
+    ISD_BROAD.max=LACAN_VAR_BROAD_ISD_MAX;
+    ISD_BROAD.min=LACAN_VAR_BROAD_ISD_MIN;
+
+    LACAN_VAR IO_BROAD;
+    IO_BROAD.instantanea=LACAN_VAR_IO_INST;
+    IO_BROAD.setp=LACAN_VAR_IO_SETP;
+    IO_BROAD.max=LACAN_VAR_BROAD_IO_MAX;
+    IO_BROAD.min=LACAN_VAR_BROAD_IO_MIN;
+
+    LACAN_VAR PO_BROAD;
+    PO_BROAD.instantanea=LACAN_VAR_PO_INST;
+    PO_BROAD.setp=LACAN_VAR_PO_SETP;
+    PO_BROAD.max=LACAN_VAR_BROAD_PO_MAX;
+    PO_BROAD.min=LACAN_VAR_BROAD_PO_MIN;
+
+    LACAN_VAR VO_BROAD;
+    VO_BROAD.instantanea=LACAN_VAR_VO_INST;
+    VO_BROAD.setp=LACAN_VAR_VO_SETP;
+    VO_BROAD.max=LACAN_VAR_BROAD_VO_MAX;
+    VO_BROAD.min=LACAN_VAR_BROAD_VO_MIN;
+
+    LACAN_VAR IBAT_BROAD;
+    IBAT_BROAD.instantanea=LACAN_VAR_I_BAT_INST;
+    IBAT_BROAD.setp=LACAN_VAR_I_BAT_SETP;
+    IBAT_BROAD.max=LACAN_VAR_BROAD_IBAT_MAX;
+    IBAT_BROAD.min=LACAN_VAR_BROAD_IBAT_MIN;
+
+    varmap_broad["Corriente de ID"]=ISD_BROAD;
+    varmap_broad["Potencia de Salida"]=PO_BROAD;
+    varmap_broad["Tension de Salida"]=VO_BROAD;
+    varmap_broad["Corriente de Bateria"]=IBAT_BROAD;
+    varmap_broad["Corriente de Salida"]=IO_BROAD;
+}
+
+
 void MainWindow::filter_on_sent_searchBar(QString filter){
     for( int i = 0; i < ui->tableWidget_sent->rowCount(); ++i )
     {
@@ -551,43 +631,6 @@ void MainWindow::filter_on_rec_searchBar(QString filter){
     }
 }
 
-void MainWindow::create_varmap_vol(){
-    LACAN_VAR W_VOL;
-    W_VOL.instantanea=LACAN_VAR_W_INST;
-    W_VOL.setp=LACAN_VAR_W_SETP;
-    W_VOL.max=LACAN_VAR_GEN_W_MAX;
-    W_VOL.min=LACAN_VAR_GEN_W_MIN;
-    LACAN_VAR ID_VOL;
-    ID_VOL.instantanea=LACAN_VAR_ID_INST;
-    ID_VOL.setp=LACAN_VAR_ID_SETP;
-    ID_VOL.max=LACAN_VAR_VOL_ID_MAX;
-    ID_VOL.min=LACAN_VAR_VOL_ID_MIN;
-    LACAN_VAR W_STBY_VOL;
-    W_STBY_VOL.instantanea=LACAN_VAR_STANDBY_W_INST;
-    W_STBY_VOL.setp=LACAN_VAR_STANDBY_W_SETP;
-    W_STBY_VOL.max=LACAN_VAR_VOL_STANDBY_W_MAX;
-    W_STBY_VOL.min=LACAN_VAR_VOL_STANDBY_W_MIN;
-    LACAN_VAR PO_VOL;
-    PO_VOL.instantanea=LACAN_VAR_PO_INST;
-    PO_VOL.setp=LACAN_VAR_PO_SETP;
-    LACAN_VAR VO_VOL;
-    VO_VOL.instantanea=LACAN_VAR_VO_INST;
-    VO_VOL.setp=LACAN_VAR_VO_SETP;
-    LACAN_VAR TORQ_VOL;
-    TORQ_VOL.instantanea=LACAN_VAR_TORQ_INST;
-    TORQ_VOL.setp=LACAN_VAR_TORQ_SETP;
-    LACAN_VAR IBAT_VOL;
-    IBAT_VOL.instantanea=LACAN_VAR_I_BAT_INST;
-    IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
-
-    varmap_vol["Corriente de ID"]=ID_VOL;
-    varmap_vol["Velocidad Angular"]=W_VOL;
-    varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
-    varmap_vol["Potencia de Salida"]=PO_VOL;
-    varmap_vol["Torque"]=TORQ_VOL;
-    varmap_vol["Tension de Salida"]=VO_VOL;
-    varmap_vol["Corriente de Bateria"]=IBAT_VOL;
-}
 
 /* *Funciones de recepcion de mensajes* */
 
