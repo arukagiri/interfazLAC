@@ -121,4 +121,7 @@ void Consultar::on_list_VARIABLE_QRY_currentIndexChanged(const QString &arg1)
     if(arg1=="Modo"){
         ui->list_TIPO_QRY->setEnabled(false);
     }
+    else{
+        ui->list_TIPO_QRY->setEnabled(true);
+    }
 }
