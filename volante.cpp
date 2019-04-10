@@ -92,7 +92,7 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_STANDBY_W_SETP:
             standby_ref=recibed_val.var_float;
         break;
-        case LACAN_VAR_ID_SETP:
+        case LACAN_VAR_ISD_SETP:
             id_ref=recibed_val.var_float;
         break;
         case LACAN_VAR_MOD:
@@ -121,7 +121,7 @@ void volante::send_qry(){
 
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //sped_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-    mw->LACAN_Query(LACAN_VAR_ID_SETP,false,dest);   //id_ref
+    mw->LACAN_Query(LACAN_VAR_ISD_SETP,false,dest);   //id_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_STANDBY_W_SETP,false,dest);   //standby_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));

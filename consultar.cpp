@@ -66,31 +66,13 @@ Consultar::Consultar(QWidget *parent, uint16_t destMw) :
         break;
     case LACAN_ID_BROADCAST:
         ui->label_DESTINO_QRY->setText("Broadcast");
-        ui->label_DESTINO_QRY->setText("Generador Eolico");
 
-        varmap = mw->varmap_gen;
-
-        ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
-        ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
-        ui->list_VARIABLE_QRY->addItem("Torque");
-        ui->list_VARIABLE_QRY->addItem("Tension de Salida");
-        ui->list_VARIABLE_QRY->addItem("Corriente de ISD");
-        ui->list_VARIABLE_QRY->addItem("Corriente Eficaz");
-        ui->list_VARIABLE_QRY->addItem("Corriente de Bateria");
-        ui->list_VARIABLE_QRY->addItem("Modo");
-
-        consulta=LACAN_VAR_PO_SETP;
-
-        ui->label_DESTINO_QRY->setText("Generador Eolico");
-
-        varmap = mw->varmap_gen;
+        varmap = mw->varmap_broad;
 
         ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
-        ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
-        ui->list_VARIABLE_QRY->addItem("Torque");
         ui->list_VARIABLE_QRY->addItem("Tension de Salida");
+        ui->list_VARIABLE_QRY->addItem("Corriente de Salida");
         ui->list_VARIABLE_QRY->addItem("Corriente de ISD");
-        ui->list_VARIABLE_QRY->addItem("Corriente Eficaz");
         ui->list_VARIABLE_QRY->addItem("Corriente de Bateria");
         ui->list_VARIABLE_QRY->addItem("Modo");
 
@@ -138,5 +120,8 @@ void Consultar::on_list_VARIABLE_QRY_currentIndexChanged(const QString &arg1)
 {
     if(arg1=="Modo"){
         ui->list_TIPO_QRY->setEnabled(false);
+    }
+    else{
+        ui->list_TIPO_QRY->setEnabled(true);
     }
 }

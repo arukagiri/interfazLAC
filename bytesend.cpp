@@ -17,6 +17,8 @@ ByteSend::ByteSend(QWidget *parent) :
 
     mw = qobject_cast<MainWindow*>(this->parent());
 
+    this->setWindowTitle ("Enviar Bytes");
+
     ui->dlc->addItem("1",QVariant(1));
     ui->dlc->addItem("2",QVariant(2));
     ui->dlc->addItem("3",QVariant(3));

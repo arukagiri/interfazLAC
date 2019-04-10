@@ -129,6 +129,8 @@ private:
 
     void filter_on_rec_searchBar(QString filter);
 
+    void create_varmap_broadcast();
+
     void create_varmap_gen();
 
     void create_varmap_vol();
@@ -156,6 +158,7 @@ public:
     uint16_t list_send_cont = 0;
     QMap <QString,LACAN_VAR> varmap_gen;
     QMap <QString,LACAN_VAR> varmap_vol;
+    QMap <QString,LACAN_VAR> varmap_broad;
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
     QTimer* periodicTimer;
