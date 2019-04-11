@@ -170,6 +170,8 @@ void Comandar::SET_ACTUAL_VAR(){
    ui->spin_valor->setMaximum(varmap[var_selectedstr].max);
    ui->spin_valor->setMinimum(varmap[var_selectedstr].min);
    minimo=varmap[var_selectedstr].min;
+   qDebug()<<" ";
+   qDebug()<<"MINIMOOOOO: "+QString::number(minimo);
 }
 
 

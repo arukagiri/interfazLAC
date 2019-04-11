@@ -225,7 +225,6 @@ void Gen_Eolico::on_pushButton_start_clicked()
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
-    ui->status_label->setText("ON");
 }
 
 void Gen_Eolico::on_pushButton_stop_clicked()
@@ -235,7 +234,6 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
-    ui->status_label->setText("OFF");
 }
 
 void Gen_Eolico::on_pushButton_comandar_clicked()
@@ -358,58 +356,6 @@ void Gen_Eolico::focusReturned(){
     send_queries = true;
 }
 
-void Gen_Eolico::on_checkBox_stateChanged(int checked)
-{
-    if(checked)
-    {
-        send_queries = false;
-
-        ui->pushButton_comandar->setDisabled(true);
-        ui->pushButton_start->setDisabled(true);
-        ui->pushButton_stop->setDisabled(true);
-        ui->combo_modo->setDisabled(true);
-
-        ui->spin_gen_isd_ref->blockSignals(false);
-        ui->spin_gen_lim_ibat_ref->blockSignals(false);
-        ui->spin_gen_lim_ief_ref->blockSignals(false);
-        ui->spin_gen_lim_vdc_ref->blockSignals(false);
-        ui->spin_gen_pot_ref->blockSignals(false);
-        ui->spin_gen_speed_ref->blockSignals(false);
-        ui->spin_gen_torque_ref->blockSignals(false);
-
-        ui->spin_gen_isd_ref->setReadOnly(false);
-        ui->spin_gen_lim_ibat_ref->setReadOnly(false);
-        ui->spin_gen_lim_ief_ref->setReadOnly(false);
-        ui->spin_gen_lim_vdc_ref->setReadOnly(false);
-        ui->spin_gen_pot_ref->setReadOnly(false);
-        ui->spin_gen_speed_ref->setReadOnly(false);
-        ui->spin_gen_torque_ref->setReadOnly(false);
-    }else{
-        send_queries = true;
-
-        ui->pushButton_comandar->setDisabled(false);
-        ui->pushButton_start->setDisabled(false);
-        ui->pushButton_stop->setDisabled(false);
-        ui->combo_modo->setDisabled(false);
-
-        ui->spin_gen_isd_ref->blockSignals(true);
-        ui->spin_gen_lim_ibat_ref->blockSignals(true);
-        ui->spin_gen_lim_ief_ref->blockSignals(true);
-        ui->spin_gen_lim_vdc_ref->blockSignals(true);
-        ui->spin_gen_pot_ref->blockSignals(true);
-        ui->spin_gen_speed_ref->blockSignals(true);
-        ui->spin_gen_torque_ref->blockSignals(true);
-
-        ui->spin_gen_isd_ref->setReadOnly(true);
-        ui->spin_gen_lim_ibat_ref->setReadOnly(true);
-        ui->spin_gen_lim_ief_ref->setReadOnly(true);
-        ui->spin_gen_lim_vdc_ref->setReadOnly(true);
-        ui->spin_gen_pot_ref->setReadOnly(true);
-        ui->spin_gen_speed_ref->setReadOnly(true);
-        ui->spin_gen_torque_ref->setReadOnly(true);
-    }
-}
-
 void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
 {
     blockAllSpinSignals(true);
@@ -475,4 +421,56 @@ void Gen_Eolico::on_spin_gen_lim_ibat_ref_editingFinished()
 void Gen_Eolico::on_spin_gen_lim_vdc_ref_editingFinished()
 {
     processEditingFinished(ui->spin_gen_lim_vdc_ref, LACAN_VAR_VO_SETP);
+}
+
+void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
+{
+    if(checked)
+    {
+        send_queries = false;
+
+        ui->pushButton_comandar->setDisabled(true);
+        ui->pushButton_start->setDisabled(true);
+        ui->pushButton_stop->setDisabled(true);
+        ui->combo_modo->setDisabled(true);
+
+        ui->spin_gen_isd_ref->blockSignals(false);
+        ui->spin_gen_lim_ibat_ref->blockSignals(false);
+        ui->spin_gen_lim_ief_ref->blockSignals(false);
+        ui->spin_gen_lim_vdc_ref->blockSignals(false);
+        ui->spin_gen_pot_ref->blockSignals(false);
+        ui->spin_gen_speed_ref->blockSignals(false);
+        ui->spin_gen_torque_ref->blockSignals(false);
+
+        ui->spin_gen_isd_ref->setReadOnly(false);
+        ui->spin_gen_lim_ibat_ref->setReadOnly(false);
+        ui->spin_gen_lim_ief_ref->setReadOnly(false);
+        ui->spin_gen_lim_vdc_ref->setReadOnly(false);
+        ui->spin_gen_pot_ref->setReadOnly(false);
+        ui->spin_gen_speed_ref->setReadOnly(false);
+        ui->spin_gen_torque_ref->setReadOnly(false);
+    }else{
+        send_queries = true;
+
+        ui->pushButton_comandar->setDisabled(false);
+        ui->pushButton_start->setDisabled(false);
+        ui->pushButton_stop->setDisabled(false);
+        ui->combo_modo->setDisabled(false);
+
+        ui->spin_gen_isd_ref->blockSignals(true);
+        ui->spin_gen_lim_ibat_ref->blockSignals(true);
+        ui->spin_gen_lim_ief_ref->blockSignals(true);
+        ui->spin_gen_lim_vdc_ref->blockSignals(true);
+        ui->spin_gen_pot_ref->blockSignals(true);
+        ui->spin_gen_speed_ref->blockSignals(true);
+        ui->spin_gen_torque_ref->blockSignals(true);
+
+        ui->spin_gen_isd_ref->setReadOnly(true);
+        ui->spin_gen_lim_ibat_ref->setReadOnly(true);
+        ui->spin_gen_lim_ief_ref->setReadOnly(true);
+        ui->spin_gen_lim_vdc_ref->setReadOnly(true);
+        ui->spin_gen_pot_ref->setReadOnly(true);
+        ui->spin_gen_speed_ref->setReadOnly(true);
+        ui->spin_gen_torque_ref->setReadOnly(true);
+    }
 }

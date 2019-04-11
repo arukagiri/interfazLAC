@@ -82,7 +82,7 @@ FORMS += \
 RESOURCES += \
     imagenes.qrc
 
-RC_FILE = lacan.rc
+#RC_FILE = lacan.rc
 
 CONFIG += c++14
 

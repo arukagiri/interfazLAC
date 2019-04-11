@@ -13,6 +13,7 @@ volante::volante(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
+    send_queries = true;
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Volante de Inercia (0)",QVariant(LACAN_VAR_MOD));
@@ -31,12 +32,23 @@ volante::volante(QWidget *parent) :
     ui->label_vol_tor->setText("----");
     ui->label_vol_ener->setText("----");
 
+    blockAllSpinSignals(true);
+
+    ui->spin_vol_isd_ref->setMinimum(LACAN_VAR_VOL_ISD_MIN);
+    ui->spin_vol_isd_ref->setMaximum(LACAN_VAR_VOL_ISD_MAX);
+    ui->spin_vol_sbyspeed_ref->setMinimum(LACAN_VAR_VOL_STANDBY_W_MIN);
+    ui->spin_vol_sbyspeed_ref->setMaximum(LACAN_VAR_VOL_STANDBY_W_MAX);
+    ui->spin_vol_speed_ref->setMinimum(LACAN_VAR_VOL_W_MIN);
+    ui->spin_vol_speed_ref->setMaximum(LACAN_VAR_VOL_W_MAX);
+
 //TIMER ENCARGADO DE REFRESCAR LOS VALORES Y DE ENVIAR LAS NUEVAS CONSULTAS
     time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
     time_2sec->start(2000); //velocidad de refresco (en ms)
 
-    send_qry(); //envio las primeras consultas
+    send_qry_variables(); //envio las primeras consultas
+    send_qry_references();
+    referenceChanged=false;
 }
 
 volante::~volante()
@@ -113,13 +125,6 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
     }
 }
 
-void volante::send_qry(){
-
-
-
-
-}
-
 void volante::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //vol_vo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -148,6 +153,10 @@ void volante::send_qry_references(){
 }
 
 void volante::refresh_values(){
+
+    ui->spin_vol_isd_ref->setValue(double(id_ref));
+    ui->spin_vol_sbyspeed_ref->setValue(double(standby_ref));
+    ui->spin_vol_speed_ref->setValue(double(speed_ref));
 
     ui->label_vol_vo->setText(QString::number(vol_vo,'f',2));
     ui->label_vol_io->setText(QString::number(vol_io,'f',2));
@@ -279,4 +288,35 @@ void volante::on_spin_vol_sbyspeed_ref_editingFinished()
 void volante::on_spin_vol_isd_ref_editingFinished()
 {
     processEditingFinished(ui->spin_vol_isd_ref, LACAN_VAR_ISD_SETP);
+}
+
+void volante::on_edit_checkBox_stateChanged(int check)
+{
+    if(check){
+        send_queries = false;
+
+        ui->pushButton_comandar->setDisabled(true);
+        ui->pushButton_start->setDisabled(true);
+        ui->pushButton_stop->setDisabled(true);
+        ui->combo_modo->setDisabled(true);
+
+        blockAllSpinSignals(false);
+
+        ui->spin_vol_sbyspeed_ref->setReadOnly(false);
+        ui->spin_vol_isd_ref->setReadOnly(false);
+        ui->spin_vol_speed_ref->setReadOnly(false);
+    }else{
+        send_queries = true;
+
+        ui->pushButton_comandar->setDisabled(false);
+        ui->pushButton_start->setDisabled(false);
+        ui->pushButton_stop->setDisabled(false);
+        ui->combo_modo->setDisabled(false);
+
+        blockAllSpinSignals(true);
+
+        ui->spin_vol_sbyspeed_ref->setReadOnly(true);
+        ui->spin_vol_isd_ref->setReadOnly(true);
+        ui->spin_vol_speed_ref->setReadOnly(true);
+    }
 }

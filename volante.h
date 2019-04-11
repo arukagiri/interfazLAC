@@ -62,7 +62,6 @@ private:
 
     void new_mode();
     void refresh_values();
-    void send_qry();
     void send_qry_variables();
     void send_qry_references();
     void processEditingFinished(QDoubleSpinBox* spin, uint16_t var);
@@ -89,6 +88,7 @@ private slots:
     void on_spin_vol_speed_ref_editingFinished();
     void on_spin_vol_sbyspeed_ref_editingFinished();
     void on_spin_vol_isd_ref_editingFinished();
+    void on_edit_checkBox_stateChanged(int check);
 };
 
 #endif // VOLANTE_H
