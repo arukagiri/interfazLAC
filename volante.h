@@ -49,7 +49,8 @@ private:
     float vol_vel;
     float vol_tor;
     float vol_ener;
-
+    bool send_queries;
+    bool referenceChanged;
 
     uint16_t actual_mode;
     uint16_t previous_mode;
@@ -62,6 +63,10 @@ private:
     void new_mode();
     void refresh_values();
     void send_qry();
+    void send_qry_variables();
+    void send_qry_references();
+    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var);
+    void blockAllSpinSignals(bool b);
 
 signals:
     void volWindowsClosed();
@@ -81,6 +86,9 @@ private slots:
     void on_pushButton_stop_clicked();
     void on_combo_modo_currentIndexChanged(int index);
 
+    void on_spin_vol_speed_ref_editingFinished();
+    void on_spin_vol_sbyspeed_ref_editingFinished();
+    void on_spin_vol_isd_ref_editingFinished();
 };
 
 #endif // VOLANTE_H

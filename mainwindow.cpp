@@ -997,7 +997,7 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
 }
 
 void MainWindow::refreshLostMsgCount(uint totalAmountLost){
-    ui->msgLost_label->setText(QString::number(totalAmountLost));
+    //ui->msgLost_label->setText(QString::number(totalAmountLost));
 }
 
 //Encargada de verificar que todos los dispositivos de la red esten activos mediante el HB,

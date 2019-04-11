@@ -65,7 +65,7 @@ private:
     float gen_ibat = 0.0;
     float gen_vel = 0.0;
     float gen_tor = 0.0;
-
+    bool state = false;
 
 signals:
     void genWindowsClosed();

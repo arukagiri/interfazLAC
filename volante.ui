@@ -16,10 +16,10 @@
   <widget class="QWidget" name="layoutWidget_8">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>115</width>
-     <height>22</height>
+     <x>130</x>
+     <y>100</y>
+     <width>121</width>
+     <height>25</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -31,9 +31,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_speed_ref">
-      <property name="text">
-       <string/>
+     <widget class="QDoubleSpinBox" name="spin_vol_speed_ref">
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -42,10 +42,10 @@
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
-     <x>550</x>
-     <y>230</y>
-     <width>95</width>
-     <height>22</height>
+     <x>690</x>
+     <y>220</y>
+     <width>101</width>
+     <height>25</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -57,9 +57,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_id_ref">
-      <property name="text">
-       <string/>
+     <widget class="QDoubleSpinBox" name="spin_vol_isd_ref">
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -68,9 +68,9 @@
   <widget class="QWidget" name="layoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>330</y>
-     <width>162</width>
+     <x>10</x>
+     <y>350</y>
+     <width>172</width>
      <height>175</height>
     </rect>
    </property>
@@ -182,7 +182,7 @@
     <rect>
      <x>500</x>
      <y>10</y>
-     <width>497</width>
+     <width>581</width>
      <height>78</height>
     </rect>
    </property>
@@ -228,21 +228,21 @@
           <item>
            <widget class="QLabel" name="label_vol_vo">
             <property name="text">
-             <string>tension</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_vol_io">
             <property name="text">
-             <string>corriente </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_vol_ibat">
             <property name="text">
-             <string>ibat</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -291,14 +291,14 @@
           <item>
            <widget class="QLabel" name="label_vol_po">
             <property name="text">
-             <string>Potencia (kW):</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_vol_ener">
             <property name="text">
-             <string>energia</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -347,14 +347,14 @@
           <item>
            <widget class="QLabel" name="label_vol_vel">
             <property name="text">
-             <string>velocidad</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_vol_tor">
             <property name="text">
-             <string>torque</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -366,44 +366,61 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>190</x>
+     <y>80</y>
+     <width>891</width>
+     <height>481</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="imagenes.qrc">:/Imagenes/DB_VOLANTE.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
      <y>260</y>
-     <width>97</width>
-     <height>36</height>
+     <width>141</width>
+     <height>25</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_5">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="text_speed_ref">
-        <property name="text">
-         <string>StandBy</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="text_speed_ref_3">
-        <property name="text">
-         <string>Speed:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="text_speed_ref">
+      <property name="text">
+       <string>StandBy speed:</string>
+      </property>
+     </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_standbay_speed_ref">
-      <property name="text">
-       <string/>
+     <widget class="QDoubleSpinBox" name="spin_vol_sbyspeed_ref">
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
+  <zorder>label</zorder>
+  <zorder>layoutWidget_8</zorder>
+  <zorder>layoutWidget_10</zorder>
+  <zorder>layoutWidget_3</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>spin_vol_sbyspeed_ref</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="imagenes.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -33,8 +33,6 @@ private slots:
 
     void timer_handler();
 
-    void var_changed(uint16_t var,uint16_t data);
-
     void on_pushButton_clicked();
 
     void on_button_vol_clicked();

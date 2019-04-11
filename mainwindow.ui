@@ -337,24 +337,6 @@ border: 1px solid black;</string>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Mensajes Perdidos</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="msgLost_label">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
            <widget class="QTextEdit" name="textEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -466,7 +448,7 @@ border: 1px solid black;</string>
          <item>
           <widget class="QPushButton" name="refreshButton">
            <property name="text">
-            <string>Refresh</string>
+            <string>Borrar Log</string>
            </property>
           </widget>
          </item>
@@ -511,12 +493,25 @@ border: 1px solid black;</string>
          <item>
           <widget class="QCheckBox" name="checkBox">
            <property name="text">
-            <string>Filter both lists</string>
+            <string>Filtrar ambas listas</string>
            </property>
            <property name="checked">
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -639,7 +634,7 @@ border: 1px solid black;</string>
      <x>0</x>
      <y>0</y>
      <width>907</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuArchivo">

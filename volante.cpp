@@ -31,11 +31,6 @@ volante::volante(QWidget *parent) :
     ui->label_vol_tor->setText("----");
     ui->label_vol_ener->setText("----");
 
-    ui->label_speed_ref->setText("----");
-    ui->label_id_ref->setText("----");
-    ui->label_standbay_speed_ref->setText("----");
-
-
 //TIMER ENCARGADO DE REFRESCAR LOS VALORES Y DE ENVIAR LAS NUEVAS CONSULTAS
     time_2sec = new QTimer();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
@@ -44,10 +39,26 @@ volante::volante(QWidget *parent) :
     send_qry(); //envio las primeras consultas
 }
 
+volante::~volante()
+{
+    delete ui;
+}
+
 void volante::timer_handler(){
+    static uint count = 0;
+
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
-        refresh_values();       //actualiza los valores de la pantalla
-        send_qry();             //y vuelve a preguntar con los actuales
+        if(send_queries){
+            refresh_values();       //actualiza los valores de la pantalla
+            count++;
+            send_qry_variables();
+            if(count%5==0 || referenceChanged){
+                send_qry_references();
+                referenceChanged = false;
+                count = 0;
+            }
+        }
+
     }
     else{   //si no esta conectado, se cierra la pantalla
         QMessageBox::StandardButton reply;
@@ -57,9 +68,6 @@ void volante::timer_handler(){
         }
     }
 }
-
-
-
 
 void volante::VOLpost_Handler(LACAN_MSG msg){
     recibed_val.var_char[0]=msg.BYTE2;
@@ -99,6 +107,7 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
             mode_changed();
+        break;
     default:
         break;
     }
@@ -106,6 +115,12 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
 
 void volante::send_qry(){
 
+
+
+
+}
+
+void volante::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //vol_vo
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //vol_io
@@ -118,7 +133,9 @@ void volante::send_qry(){
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_INST,false,dest);   //vol_po
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+}
 
+void volante::send_qry_references(){
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //sped_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_ISD_SETP,false,dest);   //id_ref
@@ -131,10 +148,6 @@ void volante::send_qry(){
 }
 
 void volante::refresh_values(){
-
-    ui->label_speed_ref->setText(QString::number(speed_ref,'f',2));
-    ui->label_id_ref->setText(QString::number(id_ref,'f',2));
-    ui->label_standbay_speed_ref->setText(QString::number(standby_ref,'f',2));
 
     ui->label_vol_vo->setText(QString::number(vol_vo,'f',2));
     ui->label_vol_io->setText(QString::number(vol_io,'f',2));
@@ -198,12 +211,12 @@ void volante::mode_changed(){
 void volante::new_mode(){
     switch (actual_mode) {
     case LACAN_VAR_MOD_VEL:     //Velocidad
-        ui->label_standbay_speed_ref->setDisabled(true);
-        ui->label_speed_ref->setEnabled(true);
+        ui->spin_vol_sbyspeed_ref->setDisabled(true);
+        ui->spin_vol_speed_ref->setEnabled(true);
         break;
     case LACAN_VAR_MOD_INER:     //Inercia
-        ui->label_standbay_speed_ref->setEnabled(true);
-        ui->label_speed_ref->setDisabled(true);
+        ui->spin_vol_sbyspeed_ref->setEnabled(true);
+        ui->spin_vol_speed_ref->setDisabled(true);
         break;
     default:
         break;
@@ -219,13 +232,51 @@ void volante::closeEvent(QCloseEvent *e){
     QDialog::closeEvent(e);
 }
 
-volante::~volante()
-{
-    delete ui;
-}
-
 void volante::on_combo_modo_currentIndexChanged(int index)
 {
    previous_mode = actual_mode;     //guardo el modo anterior por si el usuario cancela el cambio
    actual_mode = ui->combo_modo->itemData(index).toInt();
+}
+
+void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
+{
+    blockAllSpinSignals(true);
+    spin->clearFocus();
+    data_can data;
+    float value = float(spin->value());
+    int reply;
+    QString str = "El valor a enviar es: ";
+    str.append(QString::number(double(value)));
+    str.append(". Confirma que desea enviar este valor?");
+    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
+    reply = dialog->exec();
+    if(reply){
+        data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
+        mw->LACAN_Set(var, data, 1, dest);
+        mw->agregar_log_sent();
+        referenceChanged = true;
+    }
+    blockAllSpinSignals(false);
+    spin->setValue(double(value));
+}
+
+void volante::blockAllSpinSignals(bool b){
+    ui->spin_vol_isd_ref->blockSignals(b);
+    ui->spin_vol_sbyspeed_ref->blockSignals(b);
+    ui->spin_vol_speed_ref->blockSignals(b);
+}
+
+void volante::on_spin_vol_speed_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_vol_speed_ref, LACAN_VAR_W_SETP);
+}
+
+void volante::on_spin_vol_sbyspeed_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_vol_sbyspeed_ref, LACAN_VAR_W_SETP);
+}
+
+void volante::on_spin_vol_isd_ref_editingFinished()
+{
+    processEditingFinished(ui->spin_vol_isd_ref, LACAN_VAR_ISD_SETP);
 }

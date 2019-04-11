@@ -4,14 +4,12 @@ INTERFAZ:
 ventana comandar --> variable IBAT hace caca porque tiene limites negativos
 ver de chequear la posibilidad de variables negativas URGENTE
 
-VER EL TEMA DE LOS QMAPS DISTINTOS POR DISPOSITIVOS y de la ventanta consultar BROADCAST
-ver de agregar varmap para broadcast
+ver de consultar el estado(on/off) de los dispostivos
 
 cambiar variable para deshabilitar boton de gen en estado de red
 
 VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
 
-ver filtro de mensaje cuando llegan mensajes nuevos
 
 ==================================================================================================================================
 FINAL:

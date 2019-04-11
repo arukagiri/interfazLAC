@@ -63,6 +63,11 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     referenceChanged = false;
 }
 
+Gen_Eolico::~Gen_Eolico()
+{
+    delete ui;
+}
+
 void Gen_Eolico::timer_handler(){
 
     static uint count = 0;
@@ -162,7 +167,9 @@ void Gen_Eolico::send_qry_variables(){
 }
 
 void Gen_Eolico::send_qry_references(){
-    mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //sped_ref
+    mw->LACAN_Query(LACAN_VAR_STATUS,false,dest);   //status
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //speed_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_SETP,false,dest);   //po_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -189,15 +196,7 @@ void Gen_Eolico::refresh_values(){
     ui->spin_gen_lim_vdc_ref->setEnabled(true);
     ui->combo_modo->setEnabled(true);
 
-    //Variables de SET
-    ui->label_gen_torque_ref->setText(QString::number(torque_ref,'f',2));
-    ui->label_gen_speed_ref->setText(QString::number(speed_ref,'f',2));
-    ui->label_gen_pot_ref->setText(QString::number(pot_ref,'f',2));
-    ui->label_gen_lim_vdc_ref->setText(QString::number(lim_vdc,'f',2));
-    ui->label_gen_lim_ief_ref->setText(QString::number(lim_ief,'f',2));
-    ui->label_gen_isd_ref->setText(QString::number(isd_ref,'f',2));
-    ui->label_gen_lim_ibat_ref->setText(QString::number(lim_ibat,'f',2));
-
+    //Variables SET
     ui->spin_gen_isd_ref->setValue(double(isd_ref));
     ui->spin_gen_lim_ibat_ref->setValue(double(lim_ibat));
     ui->spin_gen_lim_ief_ref->setValue(double(lim_ief));
@@ -215,7 +214,6 @@ void Gen_Eolico::refresh_values(){
     ui->label_gen_vel->setText(QString::number(gen_vel,'f',2));
 }
 
-
 //VER SI ANDA EL TEMA DEL CODE (mw->code)
 //entre  "mw->LACAN_Do(cmd,false,dest);" donde se crea el vecotor de ack que espera la respuesta  y
 // "connect(&(mw->msg_ack.back()->ack_timer)..." que uso el .back (osea el ultimo que asumo que se creo en el envio anteior)
@@ -226,6 +224,8 @@ void Gen_Eolico::on_pushButton_start_clicked()
     mw->LACAN_Do(cmd,false,dest);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
+
+    ui->status_label->setText("ON");
 }
 
 void Gen_Eolico::on_pushButton_stop_clicked()
@@ -234,8 +234,9 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     mw->LACAN_Do(cmd,false,dest);
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
-}
 
+    ui->status_label->setText("OFF");
+}
 
 void Gen_Eolico::on_pushButton_comandar_clicked()
 {
@@ -357,47 +358,16 @@ void Gen_Eolico::focusReturned(){
     send_queries = true;
 }
 
-Gen_Eolico::~Gen_Eolico()
-{
-    delete ui;
-}
-
-void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
-{
-    blockAllSpinSignals(true);
-    spin->clearFocus();
-    data_can data;
-    float value = float(spin->value());
-    int reply;
-    QString str = "El valor a enviar es: ";
-    str.append(QString::number(double(value)));
-    str.append(". Confirma que desea enviar este valor?");
-    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
-    reply = dialog->exec();
-    if(reply){
-        data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
-        mw->LACAN_Set(var, data, 1, dest);
-        mw->agregar_log_sent();
-    }
-    blockAllSpinSignals(false);
-    spin->setValue(double(value));
-}
-
-void Gen_Eolico::blockAllSpinSignals(bool b){
-    ui->spin_gen_isd_ref->blockSignals(b);
-    ui->spin_gen_lim_ibat_ref->blockSignals(b);
-    ui->spin_gen_lim_ief_ref->blockSignals(b);
-    ui->spin_gen_lim_vdc_ref->blockSignals(b);
-    ui->spin_gen_pot_ref->blockSignals(b);
-    ui->spin_gen_speed_ref->blockSignals(b);
-    ui->spin_gen_torque_ref->blockSignals(b);
-}
-
 void Gen_Eolico::on_checkBox_stateChanged(int checked)
 {
     if(checked)
     {
         send_queries = false;
+
+        ui->pushButton_comandar->setDisabled(true);
+        ui->pushButton_start->setDisabled(true);
+        ui->pushButton_stop->setDisabled(true);
+        ui->combo_modo->setDisabled(true);
 
         ui->spin_gen_isd_ref->blockSignals(false);
         ui->spin_gen_lim_ibat_ref->blockSignals(false);
@@ -417,6 +387,11 @@ void Gen_Eolico::on_checkBox_stateChanged(int checked)
     }else{
         send_queries = true;
 
+        ui->pushButton_comandar->setDisabled(false);
+        ui->pushButton_start->setDisabled(false);
+        ui->pushButton_stop->setDisabled(false);
+        ui->combo_modo->setDisabled(false);
+
         ui->spin_gen_isd_ref->blockSignals(true);
         ui->spin_gen_lim_ibat_ref->blockSignals(true);
         ui->spin_gen_lim_ief_ref->blockSignals(true);
@@ -433,6 +408,38 @@ void Gen_Eolico::on_checkBox_stateChanged(int checked)
         ui->spin_gen_speed_ref->setReadOnly(true);
         ui->spin_gen_torque_ref->setReadOnly(true);
     }
+}
+
+void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
+{
+    blockAllSpinSignals(true);
+    spin->clearFocus();
+    data_can data;
+    float value = float(spin->value());
+    int reply;
+    QString str = "El valor a enviar es: ";
+    str.append(QString::number(double(value)));
+    str.append(". Confirma que desea enviar este valor?");
+    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
+    reply = dialog->exec();
+    if(reply){
+        data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
+        mw->LACAN_Set(var, data, 1, dest);
+        mw->agregar_log_sent();
+        referenceChanged = true;
+    }
+    blockAllSpinSignals(false);
+    spin->setValue(double(value));
+}
+
+void Gen_Eolico::blockAllSpinSignals(bool b){
+    ui->spin_gen_isd_ref->blockSignals(b);
+    ui->spin_gen_lim_ibat_ref->blockSignals(b);
+    ui->spin_gen_lim_ief_ref->blockSignals(b);
+    ui->spin_gen_lim_vdc_ref->blockSignals(b);
+    ui->spin_gen_pot_ref->blockSignals(b);
+    ui->spin_gen_speed_ref->blockSignals(b);
+    ui->spin_gen_torque_ref->blockSignals(b);
 }
 
 void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
