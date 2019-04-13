@@ -228,8 +228,8 @@ struct variable {
 struct LACAN_VAR {
   uint16_t instantanea; //ID de instantena
   uint16_t setp;        //ID de setpoint
-  uint16_t max;         //valor del limite superior
-  uint16_t min;         //valor del limite inferior
+  double max;         //valor del limite superior
+  double min;         //valor del limite inferior
 };
 
 #define SERIAL_BAUD 1228800 //bps

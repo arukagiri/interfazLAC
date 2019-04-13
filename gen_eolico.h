@@ -85,7 +85,6 @@ private slots:
     void on_pushButton_start_clicked();
     void on_pushButton_stop_clicked();
     void on_combo_modo_currentIndexChanged(int index);
-    void on_checkBox_stateChanged(int checked);
     void on_spin_gen_speed_ref_editingFinished();
     void on_spin_gen_pot_ref_editingFinished();
     void on_spin_gen_torque_ref_editingFinished();
@@ -93,6 +92,7 @@ private slots:
     void on_spin_gen_isd_ref_editingFinished();
     void on_spin_gen_lim_ibat_ref_editingFinished();
     void on_spin_gen_lim_vdc_ref_editingFinished();
+    void on_edit_checkBox_stateChanged(int checked);
 };
 
 #endif // GEN_EOLICO_H
