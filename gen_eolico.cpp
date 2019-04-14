@@ -74,8 +74,8 @@ Gen_Eolico::~Gen_Eolico()
 void Gen_Eolico::timer_handler(){
     static uint count = 0;
 
-//    if(mw->device_is_connected(LACAN_ID_GEN)){0
-    if(true){
+    if(mw->device_is_connected(LACAN_ID_GEN)){
+//    if(true){
         if(send_queries){
             refresh_values();       //actualiza los valores de la pantalla
             count++;

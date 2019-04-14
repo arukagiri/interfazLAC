@@ -141,10 +141,8 @@ void EstadoRed::timer_handler(){
 }
 
 void EstadoRed::set_states(){
-    ui->button_gen->setEnabled(true); //BORRAR, CAMBIAR, PONER LO DE ABAJO
-
-    //if(mw->device_is_connected(LACAN_ID_GEN)){ui->button_gen->setEnabled(true);}
-    //else{ui->button_gen->setDisabled(true);}
+    if(mw->device_is_connected(LACAN_ID_GEN)){ui->button_gen->setEnabled(true);}
+    else{ui->button_gen->setDisabled(true);}
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){ui->button_vol->setEnabled(true);}
     else{ui->button_vol->setDisabled(true);}
