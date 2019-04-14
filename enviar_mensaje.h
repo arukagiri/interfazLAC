@@ -33,7 +33,7 @@ private:
     uint16_t dest;
     void set_TIPO_VAR();
 
-    QMap<QString,uint16_t> varmap;
+    QMap<QString,LACAN_VAR> varmap;
     QMap<QString,uint16_t> d_map;
 
 private slots:

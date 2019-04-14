@@ -37,8 +37,10 @@ private:
     bool referenceChanged;
     bool send_queries;
     QTimer *time_2sec;
+    int refValue = -5; // un valor que sea menor que cualquiera de los limites
 
-    void new_mode();
+
+    void refresh_mode();
     void refresh_values();
     void send_qry();
     void send_qry_variables();
@@ -50,21 +52,21 @@ private:
     data_can recibed_val;
 
     //Variables de SetPoint
-    float pot_ref = 0.0;
-    float speed_ref = 0.0;
-    float torque_ref = 0.0;
-    float isd_ref = 0.0;
-    float lim_ibat = 0.0;
-    float lim_ief = 0.0;
-    float lim_vdc = 0.0;
+    float pot_ref = refValue;
+    float speed_ref = refValue;
+    float torque_ref = refValue;
+    float isd_ref = refValue;
+    float lim_ibat = refValue;
+    float lim_ief = refValue;
+    float lim_vdc = refValue;
 
     //Variables de Salida
-    float gen_vo = 0.0;
-    float gen_io = 0.0;
-    float gen_po = 0.0;
-    float gen_ibat = 0.0;
-    float gen_vel = 0.0;
-    float gen_tor = 0.0;
+    float gen_vo = refValue;
+    float gen_io = refValue;
+    float gen_po = refValue;
+    float gen_ibat = refValue;
+    float gen_vel = refValue;
+    float gen_tor = refValue;
     bool state = false;
 
 signals:
@@ -82,17 +84,31 @@ private slots:
     void GENpost_Handler(LACAN_MSG msg);
 
     void on_pushButton_comandar_clicked();
+
     void on_pushButton_start_clicked();
+
     void on_pushButton_stop_clicked();
+
     void on_combo_modo_currentIndexChanged(int index);
+
     void on_spin_gen_speed_ref_editingFinished();
+
     void on_spin_gen_pot_ref_editingFinished();
+
     void on_spin_gen_torque_ref_editingFinished();
+
     void on_spin_gen_lim_ief_ref_editingFinished();
+
     void on_spin_gen_isd_ref_editingFinished();
+
     void on_spin_gen_lim_ibat_ref_editingFinished();
+
     void on_spin_gen_lim_vdc_ref_editingFinished();
+
     void on_edit_checkBox_stateChanged(int checked);
+
+    void changeEditState();
+
 };
 
 #endif // GEN_EOLICO_H
