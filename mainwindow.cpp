@@ -57,10 +57,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Para mantener la legibilidad del txt se vuelven a escribir los nombres de columnas cuando se inicia el programa
     //o cuando se insertaron 25 lineas (mensajes) en el archivo
     if(!(cont%25)){
-        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Codigo de error"<<"\n";
+        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Respuesta ACK"<<";"<<"Codigo de error"<<"\n";
         cont=0;
     }
-    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.err_code<<"\n";
+    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.ack_res<<";"<<abs_msg.err_code<<"\n";
     //Vacio buffers (lo cual obliga al flujo a plasmarse de manera definitiva en el archivo) y luego cierro el archivo
     file.flush();
     file.close();
