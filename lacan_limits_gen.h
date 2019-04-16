@@ -9,8 +9,8 @@
 #define LACAN_VAR_GEN_TORQ_MAX     3  //Nm
 #define LACAN_VAR_GEN_TORQ_MIN     0
 
-#define LACAN_VAR_GEN_PO_MAX  2     //kW
-#define LACAN_VAR_GEN_PO_MIN  0     //kW
+#define LACAN_VAR_GEN_PO_MAX  2000     //W
+#define LACAN_VAR_GEN_PO_MIN  0        //W
 
 #define LACAN_VAR_GEN_IEF_MAX      10   //A
 #define LACAN_VAR_GEN_IEF_MIN       0   //A
