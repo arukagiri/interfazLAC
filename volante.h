@@ -32,23 +32,24 @@ protected:
 private:
     Ui::volante *ui;
     MainWindow* mw ;
-
     uint16_t dest=LACAN_ID_VOLANTE;
+    int refValue = -5; // un valor que sea menor que cualquiera de los limites
 
     data_can recibed_val;
+
     //Variables de Entrada
-    float id_ref;
-    float speed_ref;
-    float standby_ref;
+    float id_ref = -5;
+    float speed_ref = -5;
+    float standby_ref = -5;
 
     //Variables de Salida
-    float vol_vo;
-    float vol_io;
-    float vol_po;
-    float vol_ibat;
-    float vol_vel;
-    float vol_tor;
-    float vol_ener;
+    float vol_vo = -5;
+    float vol_io = -5;
+    float vol_po = -5;
+    float vol_ibat = -5;
+    float vol_vel = -5;
+    float vol_tor = -5;
+    float vol_ener = -5;
     bool send_queries;
     bool referenceChanged;
 
@@ -60,7 +61,7 @@ private:
 
     QTimer *time_2sec;
 
-    void new_mode();
+    void refresh_mode();
     void refresh_values();
     void send_qry_variables();
     void send_qry_references();
@@ -81,14 +82,22 @@ private slots:
     void VOLpost_Handler(LACAN_MSG msg);
 
     void on_pushButton_comandar_clicked();
+
     void on_pushButton_start_clicked();
+
     void on_pushButton_stop_clicked();
+
     void on_combo_modo_currentIndexChanged(int index);
 
     void on_spin_vol_speed_ref_editingFinished();
+
     void on_spin_vol_sbyspeed_ref_editingFinished();
+
     void on_spin_vol_isd_ref_editingFinished();
+
     void on_edit_checkBox_stateChanged(int check);
+
+    void changeEditState();
 };
 
 #endif // VOLANTE_H

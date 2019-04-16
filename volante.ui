@@ -16,9 +16,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>200</x>
      <y>80</y>
-     <width>891</width>
+     <width>881</width>
      <height>481</height>
     </rect>
    </property>
@@ -35,7 +35,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>210</x>
      <y>260</y>
      <width>143</width>
      <height>25</height>
@@ -51,6 +51,9 @@
     </item>
     <item>
      <widget class="QDoubleSpinBox" name="spin_vol_sbyspeed_ref">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -61,7 +64,7 @@
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
-     <x>690</x>
+     <x>700</x>
      <y>220</y>
      <width>101</width>
      <height>25</height>
@@ -77,6 +80,9 @@
     </item>
     <item>
      <widget class="QDoubleSpinBox" name="spin_vol_isd_ref">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -277,7 +283,7 @@
    <property name="geometry">
     <rect>
      <x>130</x>
-     <y>100</y>
+     <y>90</y>
      <width>121</width>
      <height>25</height>
     </rect>
@@ -292,6 +298,9 @@
     </item>
     <item>
      <widget class="QDoubleSpinBox" name="spin_vol_speed_ref">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -302,10 +311,10 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>11</x>
-     <y>290</y>
-     <width>172</width>
-     <height>159</height>
+     <x>10</x>
+     <y>400</y>
+     <width>181</width>
+     <height>138</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -320,6 +329,9 @@
       </item>
       <item>
        <widget class="QCheckBox" name="edit_checkBox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Usa el atajo Ctrl+E para cambiar este checkbox.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Editable</string>
         </property>
@@ -353,73 +365,53 @@
      </widget>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>13</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QLabel" name="label_modo">
-          <property name="text">
-           <string>Modo:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="combo_modo">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>115</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>115</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QLabel" name="label_modo">
+        <property name="text">
+         <string>Modo:</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_12">
-        <item>
-         <widget class="QPushButton" name="pushButton_apply">
-          <property name="text">
-           <string>Apply</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_cancel">
-          <property name="text">
-           <string>Cancel</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QComboBox" name="combo_modo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>140</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>140</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <widget class="QPushButton" name="pushButton_apply">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_cancel">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

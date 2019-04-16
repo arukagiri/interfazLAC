@@ -26,7 +26,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     this->setFixedSize(ui->verticalLayout->sizeHint());
     this->setLayout(ui->verticalLayout);
 
-
     mw = qobject_cast<MainWindow*>(this->parent());
 
     ui->list_MENSAJE->addItem("DO");
@@ -42,17 +41,16 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_DESTINO->addItem("Volante", LACAN_ID_VOLANTE);
     ui->list_DESTINO->addItem("Boost", LACAN_ID_BOOST);
 
-
-    ui->list_VARIABLE->addItem("Corriente de Entrada");
-    ui->list_VARIABLE->addItem("Corriente de Salida");
-    ui->list_VARIABLE->addItem("Corriente de ISD");
-    ui->list_VARIABLE->addItem("Corriente Eficaz");
-    ui->list_VARIABLE->addItem("Potencia de Entrada");
-    ui->list_VARIABLE->addItem("Potencia de Salida");
-    ui->list_VARIABLE->addItem("Tension de Entrada");
-    ui->list_VARIABLE->addItem("Tension de Salida");
-    ui->list_VARIABLE->addItem("Velocidad Angular");
-    ui->list_VARIABLE->addItem("Modo");
+//    ui->list_VARIABLE->addItem("Corriente de Entrada");
+//    ui->list_VARIABLE->addItem("Corriente de Salida");
+//    ui->list_VARIABLE->addItem("Corriente de ISD");
+//    ui->list_VARIABLE->addItem("Corriente Eficaz");
+//    ui->list_VARIABLE->addItem("Potencia de Entrada");
+//    ui->list_VARIABLE->addItem("Potencia de Salida");
+//    ui->list_VARIABLE->addItem("Tension de Entrada");
+//    ui->list_VARIABLE->addItem("Tension de Salida");
+//    ui->list_VARIABLE->addItem("Velocidad Angular");
+//    ui->list_VARIABLE->addItem("Modo");
 
     ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
     ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);
@@ -94,6 +92,19 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     connect(ui->list_DESTINO,SIGNAL(currentTextChanged(QString)),this,SLOT(DEST_Changed()));
     connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
     connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
+
+    QMap<QString,LACAN_VAR>* dev_maps = new QMap<QString,LACAN_VAR>[2];
+    dev_maps[0] = mw->varmap_gen;
+    dev_maps[1] = mw->varmap_vol;
+
+    for(int i=0;i<2;i++){
+        for(auto v : dev_maps[i].keys()){
+            if(!varmap.contains(v)){
+                varmap[v] = mw->varmap_gen[v];
+                ui->list_VARIABLE->addItem(v);
+            }
+        }
+    }
 
     DO_selected();
 
@@ -282,15 +293,24 @@ void Enviar_Mensaje::set_TIPO_VAR(){
 void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
     data_can data;
-    data.var_float = ui->spin_valor->value();
+    data.var_float = float(ui->spin_valor->value());
 
-    uint16_t ack_cod = ui->spin_codigo->value();
+    uint16_t ack_cod = uint16_t(ui->spin_codigo->value());
+
+    cmd = uint16_t(ui->list_COMANDO->currentData().toInt());
+    dest = uint16_t(ui->list_DESTINO->currentData().toInt());
+    res = uint16_t(ui->list_RESULTADO->currentData().toInt());
+    err_cod = uint16_t(ui->list_ERROR->currentData().toInt());
+
+    QString varString = ui->list_VARIABLE->currentText();
+
+    if(ui->list_TIPO->currentText() == "Set Point"){
+        var=varmap[varString].setp;
+    }else if(ui->list_TIPO->currentText() == "Instantanea"){
+        var=varmap[varString].instantanea;
+    }
+
     uint prevsize=mw->msg_ack.size();
-
-    cmd=ui->list_COMANDO->currentIndex();
-    QString varString = ui->list_MENSAJE->currentText()+ui->list_TIPO->currentText();
-    var=varmap[varString];
-    dest=ui->list_DESTINO->currentIndex();
 
     switch(ui->list_MENSAJE->currentIndex()){
     case DO:
@@ -320,7 +340,6 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     if(mw->msg_ack.size()>prevsize){
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
-
 
     mw->agregar_log_sent();
 

@@ -158,7 +158,7 @@ union LACAN_32b_DATA{
 
 union data_can{
     float    var_float;
-    char     var_char[4];
+    uchar    var_char[4];
     uint32_t var_int;
 };
 

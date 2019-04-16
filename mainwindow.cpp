@@ -41,12 +41,12 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Si la carpeta Log de Mensajes LACAN no se encuentra creada la creo antes de guardar los txt
     if(QDir(file_folder+"/Log de Mensajes LACAN").exists()){
         //Especifico el nombre del archivo segun el mes, si no existe se crea automaticamente al guardar datos
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.left(7)+".csv";
     }else if(QDir(file_folder).exists()){
         QDir(file_folder).mkdir("Log de Mensajes LACAN");
-        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.mid(3,7)+".csv";
+        file_path = file_folder+"/Log de Mensajes LACAN/"+abs_msg.curr_time.left(7)+".csv";
     }else {
-        file_path = QDir::currentPath()+"/"+abs_msg.curr_time.mid(3,7)+".txt";
+        file_path = QDir::currentPath()+"/"+abs_msg.curr_time.left(7)+".csv";
     }
 
     //Abro el archivo solamente para la escritura en modo "Append" y "Text" con lo cual agrega cada nueva linea de manera consecutiva
@@ -57,10 +57,10 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     //Para mantener la legibilidad del txt se vuelven a escribir los nombres de columnas cuando se inicia el programa
     //o cuando se insertaron 25 lineas (mensajes) en el archivo
     if(!(cont%25)){
-        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Codigo de error"<<"\n";
+        out<<"Sentido"<<";"<<"Fecha y hora"<<";"<<"Destino"<<";"<<"Funcion"<<";"<<"Tipo de variable"<<";"<<"Valor de variable"<<";"<<"Comando"<<";"<<"Codigo de ACK"<<";"<<"Respuesta ACK"<<";"<<"Codigo de error"<<"\n";
         cont=0;
     }
-    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.err_code<<"\n";
+    out<<way<<";"<<abs_msg.curr_time<<";"<<abs_msg.dest<<";"<<abs_msg.fun<<";"<<abs_msg.var_type<<";"<<abs_msg.var_val<<";"<<abs_msg.com<<";"<<abs_msg.ack_code<<";"<<abs_msg.ack_res<<";"<<abs_msg.err_code<<"\n";
     //Vacio buffers (lo cual obliga al flujo a plasmarse de manera definitiva en el archivo) y luego cierro el archivo
     file.flush();
     file.close();
@@ -70,7 +70,7 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
 //Funcion interna para transformar el contenido de los mensajes en strings para poder cargarlos en el txt
 ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     QString format_time="hh:mm:ss";
-    QString format_date="dd.MM.yyyy";
+    QString format_date="yyyy-MM-dd";
     QDateTime curr_date_time=QDateTime::currentDateTime();
     ABSTRACTED_MSG abs_msg={"","","","","","","","","", curr_date_time.toString(format_date)+" "+curr_date_time.toString(format_time)+"hs"};
     float val_float;
@@ -415,7 +415,6 @@ void MainWindow::agregar_log_rec(){
     agregar_textlog(abs_msg,"Recibido");
 }
 
-//VER esto se implementa al final?
 void MainWindow::no_ACK_Handler(void){}
 
 //Se encarga de cambiar el valor de la ERflag cualquiera sea su valor
@@ -557,7 +556,6 @@ void MainWindow::create_varmap_vol(){
     varmap_vol["Corriente de Bateria"]=IBAT_VOL;
 }
 
-
 void MainWindow::create_varmap_broadcast(){
     LACAN_VAR ISD_BROAD;
     ISD_BROAD.instantanea=LACAN_VAR_ISD_INST;
@@ -595,7 +593,6 @@ void MainWindow::create_varmap_broadcast(){
     varmap_broad["Corriente de Bateria"]=IBAT_BROAD;
     varmap_broad["Corriente de Salida"]=IO_BROAD;
 }
-
 
 void MainWindow::filter_on_sent_searchBar(QString filter){
     for( int i = 0; i < ui->tableWidget_sent->rowCount(); ++i )

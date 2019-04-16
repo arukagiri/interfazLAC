@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "PC.h"
 #include "lacan_limits_gen.h"
+#include <QShortcut>
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
@@ -24,7 +25,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
     //mode_changed();
-
 
 //Inicializacion de Labels
     ui->label_gen_io->setText("----");
@@ -61,6 +61,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     send_qry_references();
     send_qry_variables();
     referenceChanged = false;
+
+    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -69,10 +72,10 @@ Gen_Eolico::~Gen_Eolico()
 }
 
 void Gen_Eolico::timer_handler(){
-
     static uint count = 0;
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
+//    if(true){
         if(send_queries){
             refresh_values();       //actualiza los valores de la pantalla
             count++;
@@ -143,7 +146,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_MOD:
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
-            //new_mode();    version1
+            //refresh_mode();    version1
             mode_changed();  //ver si va este o el anterior (cambio el 17/3)
             break;
         default:
@@ -190,11 +193,21 @@ void Gen_Eolico::send_qry_references(){
 
 //Se actualizan todos los valores del GENERADOR
 void Gen_Eolico::refresh_values(){
-    ui->spin_gen_isd_ref->setEnabled(true);
-    ui->spin_gen_lim_ibat_ref->setEnabled(true);
-    ui->spin_gen_lim_ief_ref->setEnabled(true);
-    ui->spin_gen_lim_vdc_ref->setEnabled(true);
-    ui->combo_modo->setEnabled(true);
+    static bool firstTime = true;
+
+    refresh_mode();
+
+    if(firstTime){
+        firstTime = false;
+        if(double(isd_ref) > refValue)
+            ui->spin_gen_isd_ref->setEnabled(true);
+        if(double(lim_ibat) > refValue)
+            ui->spin_gen_lim_ibat_ref->setEnabled(true);
+        if(double(lim_ief) > refValue)
+            ui->spin_gen_lim_ief_ref->setEnabled(true);
+        if(double(lim_vdc) > refValue)
+            ui->spin_gen_lim_vdc_ref->setEnabled(true);
+    }
 
     //Variables SET
     ui->spin_gen_isd_ref->setValue(double(isd_ref));
@@ -206,12 +219,18 @@ void Gen_Eolico::refresh_values(){
     ui->spin_gen_torque_ref->setValue(double(torque_ref));
 
     //Variables de Salida
-    ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
-    ui->label_gen_io->setText(QString::number(gen_io,'f',2));
-    ui->label_gen_ibat->setText(QString::number(gen_ibat,'f',2));
-    ui->label_gen_po->setText(QString::number(gen_po,'f',2));
-    ui->label_gen_tor->setText(QString::number(gen_tor,'f',2));
-    ui->label_gen_vel->setText(QString::number(gen_vel,'f',2));
+    if(double(gen_vo)>refValue)
+        ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
+    if(double(gen_io)>refValue)
+        ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
+    if(double(gen_ibat)>refValue)
+        ui->label_gen_ibat->setText(QString::number(double(gen_ibat),'f',2));
+    if(double(gen_po)>refValue)
+        ui->label_gen_po->setText(QString::number(double(gen_po),'f',2));
+    if(double(gen_tor)>refValue)
+        ui->label_gen_tor->setText(QString::number(double(gen_tor),'f',2));
+    if(double(gen_vel)>refValue)
+        ui->label_gen_vel->setText(QString::number(double(gen_vel),'f',2));
 }
 
 //VER SI ANDA EL TEMA DEL CODE (mw->code)
@@ -256,7 +275,7 @@ void Gen_Eolico::verificar_mode_changed(){
     if(reply==QMessageBox::Yes){  
         //version2
         data_can modo;
-        modo.var_char[0] = actual_mode;
+        modo.var_char[0] = uchar(actual_mode);
         modo.var_char[1] = 0;
         modo.var_char[2] = 0;
         modo.var_char[3] = 0;
@@ -278,30 +297,28 @@ void Gen_Eolico::verificar_mode_changed(){
 }
 
 void Gen_Eolico::mode_changed(){
-    new_mode();             //poner los valores reales en el spin
-    refresh_values();       //todo desclickeado
+    refresh_values();
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual
-void Gen_Eolico::new_mode(){
+void Gen_Eolico::refresh_mode(){
 
-    qDebug()<<"Numero de Modo: "<<ui->combo_modo->currentIndex();
     switch (actual_mode) {
     case LACAN_VAR_MOD_VEL:     //Velocidad
-        qDebug()<<"Entro a velocidad";
         ui->label_pot_ref->setDisabled(true);
         ui->spin_gen_pot_ref->setDisabled(true);
 
         ui->label_speed_ref->setEnabled(true);
-        ui->spin_gen_speed_ref->setEnabled(true);
+        if(speed_ref > refValue)
+            ui->spin_gen_speed_ref->setEnabled(true);
 
         ui->label_torque_ref->setDisabled(true);
         ui->spin_gen_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_POT:     //Potencia
-        qDebug()<<"Entro a potencia";
         ui->label_pot_ref->setEnabled(true);
-        ui->spin_gen_pot_ref->setEnabled(true);
+        if(pot_ref > refValue)
+            ui->spin_gen_pot_ref->setEnabled(true);
 
         ui->label_speed_ref->setDisabled(true);
         ui->spin_gen_speed_ref->setDisabled(true);
@@ -310,7 +327,6 @@ void Gen_Eolico::new_mode(){
         ui->spin_gen_torque_ref->setDisabled(true);
         break;
     case LACAN_VAR_MOD_TORQ:     //Torque
-        qDebug()<<"Entro a Torke";
         ui->label_pot_ref->setDisabled(true);
         ui->spin_gen_pot_ref->setDisabled(true);
 
@@ -318,11 +334,10 @@ void Gen_Eolico::new_mode(){
         ui->spin_gen_speed_ref->setDisabled(true);
 
         ui->label_torque_ref->setEnabled(true);
-        ui->spin_gen_torque_ref->setEnabled(true);
+        if(torque_ref > refValue)
+            ui->spin_gen_torque_ref->setEnabled(true);
         break;
     case LACAN_VAR_MOD_MPPT:     //MPPT
-
-        qDebug()<<"Entro a Mppt";
         ui->label_pot_ref->setDisabled(true);
         ui->spin_gen_pot_ref->setDisabled(true);
 
@@ -340,7 +355,7 @@ void Gen_Eolico::new_mode(){
 void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
 {
    previous_mode = actual_mode;     //guardo el modo anterior por si el usuario cancela el cambio
-   actual_mode = ui->combo_modo->itemData(index).toInt();
+   actual_mode = uint16_t(ui->combo_modo->itemData(index).toInt());
 }
 
 void Gen_Eolico::closeEvent(QCloseEvent *e){
@@ -434,13 +449,7 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->pushButton_stop->setDisabled(true);
         ui->combo_modo->setDisabled(true);
 
-        ui->spin_gen_isd_ref->blockSignals(false);
-        ui->spin_gen_lim_ibat_ref->blockSignals(false);
-        ui->spin_gen_lim_ief_ref->blockSignals(false);
-        ui->spin_gen_lim_vdc_ref->blockSignals(false);
-        ui->spin_gen_pot_ref->blockSignals(false);
-        ui->spin_gen_speed_ref->blockSignals(false);
-        ui->spin_gen_torque_ref->blockSignals(false);
+        blockAllSpinSignals(false);
 
         ui->spin_gen_isd_ref->setReadOnly(false);
         ui->spin_gen_lim_ibat_ref->setReadOnly(false);
@@ -457,13 +466,7 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->pushButton_stop->setDisabled(false);
         ui->combo_modo->setDisabled(false);
 
-        ui->spin_gen_isd_ref->blockSignals(true);
-        ui->spin_gen_lim_ibat_ref->blockSignals(true);
-        ui->spin_gen_lim_ief_ref->blockSignals(true);
-        ui->spin_gen_lim_vdc_ref->blockSignals(true);
-        ui->spin_gen_pot_ref->blockSignals(true);
-        ui->spin_gen_speed_ref->blockSignals(true);
-        ui->spin_gen_torque_ref->blockSignals(true);
+        blockAllSpinSignals(true);
 
         ui->spin_gen_isd_ref->setReadOnly(true);
         ui->spin_gen_lim_ibat_ref->setReadOnly(true);
@@ -473,4 +476,9 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->spin_gen_speed_ref->setReadOnly(true);
         ui->spin_gen_torque_ref->setReadOnly(true);
     }
+}
+
+void Gen_Eolico::changeEditState()
+{
+    ui->edit_checkBox->toggle();
 }

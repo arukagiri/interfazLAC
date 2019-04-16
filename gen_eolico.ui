@@ -56,17 +56,6 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
-      <item>
-       <widget class="QLabel" name="status_label">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_15">
       <item>
        <widget class="QLabel" name="label_2">
@@ -77,6 +66,9 @@
       </item>
       <item>
        <widget class="QCheckBox" name="edit_checkBox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Usa el atajo Ctrl+E para cambiar este checkBox&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Editable</string>
         </property>
@@ -387,7 +379,7 @@
   <widget class="QWidget" name="layoutWidget_6">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>360</x>
      <y>410</y>
      <width>151</width>
      <height>25</height>

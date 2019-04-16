@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QTimer>
 #include "PC.h"
+#include <QShortcut>
 
 volante::volante(QWidget *parent) :
     QDialog(parent),
@@ -21,7 +22,6 @@ volante::volante(QWidget *parent) :
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
     mode_changed();
-
 
 //Inicializacion de Labels
     ui->label_vol_io->setText("----");
@@ -49,6 +49,9 @@ volante::volante(QWidget *parent) :
     send_qry_variables(); //envio las primeras consultas
     send_qry_references();
     referenceChanged=false;
+
+    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 }
 
 volante::~volante()
@@ -60,6 +63,7 @@ void volante::timer_handler(){
     static uint count = 0;
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
+//    if(true){
         if(send_queries){
             refresh_values();       //actualiza los valores de la pantalla
             count++;
@@ -97,7 +101,7 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
             vol_po = recibed_val.var_float;
         break;
         case LACAN_VAR_W_INST:
-            vol_vel = recibed_val.var_float;    //calcular energia ****************************************************************************
+            vol_vel = recibed_val.var_float;
         break;
         case LACAN_VAR_TORQ_INST:
             vol_tor = recibed_val.var_float;
@@ -153,18 +157,31 @@ void volante::send_qry_references(){
 }
 
 void volante::refresh_values(){
+    static bool firstTime = true;
+
+    refresh_mode();
+
+    if(firstTime){
+        if(double(id_ref) > refValue)
+            ui->spin_vol_isd_ref->setEnabled(true);
+    }
 
     ui->spin_vol_isd_ref->setValue(double(id_ref));
-    ui->spin_vol_sbyspeed_ref->setValue(double(standby_ref));
-    ui->spin_vol_speed_ref->setValue(double(speed_ref));
 
-    ui->label_vol_vo->setText(QString::number(vol_vo,'f',2));
-    ui->label_vol_io->setText(QString::number(vol_io,'f',2));
-    ui->label_vol_ibat->setText(QString::number(vol_ibat,'f',2));
-    ui->label_vol_po->setText(QString::number(vol_po,'f',2));
-    ui->label_vol_tor->setText(QString::number(vol_tor,'f',2));
-    ui->label_vol_vel->setText(QString::number(vol_vel,'f',2));
-    ui->label_vol_vel->setText(QString::number(vol_ener,'f',2));  //ver donde se hace el calculo de esto ********
+    if(double(vol_vo)>refValue)
+        ui->label_vol_vo->setText(QString::number(double(vol_vo),'f',2));
+    if(double(vol_io)>refValue)
+        ui->label_vol_io->setText(QString::number(double(vol_io),'f',2));
+    if(double(vol_ibat)>refValue)
+        ui->label_vol_ibat->setText(QString::number(double(vol_ibat),'f',2));
+    if(double(vol_po)>refValue)
+        ui->label_vol_po->setText(QString::number(double(vol_po),'f',2));
+    if(double(vol_tor)>refValue)
+        ui->label_vol_tor->setText(QString::number(double(vol_tor),'f',2));
+    if(double(vol_vel)>refValue)
+        ui->label_vol_vel->setText(QString::number(double(vol_vel),'f',2));
+    if(double(vol_ener)>refValue)
+        ui->label_vol_vel->setText(QString::number(double(vol_ener),'f',2));
 }
 
 void volante::on_pushButton_start_clicked()
@@ -198,7 +215,7 @@ void volante::verificar_mode_changed(){
     reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
     if(reply==QMessageBox::Yes){
         data_can modo;
-        modo.var_char[0] = actual_mode;
+        modo.var_char[0] = uchar(actual_mode);
         modo.var_char[1] = 0;
         modo.var_char[2] = 0;
         modo.var_char[3] = 0;
@@ -212,19 +229,20 @@ void volante::verificar_mode_changed(){
 }
 
 void volante::mode_changed(){
-    new_mode();
     refresh_values();
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual
-void volante::new_mode(){
+void volante::refresh_mode(){
     switch (actual_mode) {
     case LACAN_VAR_MOD_VEL:     //Velocidad
         ui->spin_vol_sbyspeed_ref->setDisabled(true);
-        ui->spin_vol_speed_ref->setEnabled(true);
+        if(speed_ref > refValue)
+            ui->spin_vol_speed_ref->setEnabled(true);
         break;
     case LACAN_VAR_MOD_INER:     //Inercia
-        ui->spin_vol_sbyspeed_ref->setEnabled(true);
+        if(standby_ref > refValue)
+            ui->spin_vol_sbyspeed_ref->setEnabled(true);
         ui->spin_vol_speed_ref->setDisabled(true);
         break;
     default:
@@ -244,7 +262,7 @@ void volante::closeEvent(QCloseEvent *e){
 void volante::on_combo_modo_currentIndexChanged(int index)
 {
    previous_mode = actual_mode;     //guardo el modo anterior por si el usuario cancela el cambio
-   actual_mode = ui->combo_modo->itemData(index).toInt();
+   actual_mode = uint16_t(ui->combo_modo->itemData(index).toInt());
 }
 
 void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
@@ -319,4 +337,9 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->spin_vol_isd_ref->setReadOnly(true);
         ui->spin_vol_speed_ref->setReadOnly(true);
     }
+}
+
+void volante::changeEditState()
+{
+    ui->edit_checkBox->toggle();
 }
