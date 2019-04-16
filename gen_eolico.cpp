@@ -193,21 +193,17 @@ void Gen_Eolico::send_qry_references(){
 
 //Se actualizan todos los valores del GENERADOR
 void Gen_Eolico::refresh_values(){
-    static bool firstTime = true;
 
     refresh_mode();
 
-    if(firstTime){
-        firstTime = false;
-        if(double(isd_ref) > refValue)
-            ui->spin_gen_isd_ref->setEnabled(true);
-        if(double(lim_ibat) > refValue)
-            ui->spin_gen_lim_ibat_ref->setEnabled(true);
-        if(double(lim_ief) > refValue)
-            ui->spin_gen_lim_ief_ref->setEnabled(true);
-        if(double(lim_vdc) > refValue)
-            ui->spin_gen_lim_vdc_ref->setEnabled(true);
-    }
+    if(double(isd_ref) > refValue)
+        ui->spin_gen_isd_ref->setEnabled(true);
+    if(double(lim_ibat) > refValue)
+        ui->spin_gen_lim_ibat_ref->setEnabled(true);
+    if(double(lim_ief) > refValue)
+        ui->spin_gen_lim_ief_ref->setEnabled(true);
+    if(double(lim_vdc) > refValue)
+        ui->spin_gen_lim_vdc_ref->setEnabled(true);
 
     //Variables SET
     ui->spin_gen_isd_ref->setValue(double(isd_ref));
@@ -391,6 +387,7 @@ void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
     }
     blockAllSpinSignals(false);
     spin->setValue(double(value));
+    ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
 void Gen_Eolico::blockAllSpinSignals(bool b){
