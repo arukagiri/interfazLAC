@@ -15,6 +15,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
+
+    this->setWindowTitle("Generador Eolico");
+
     send_queries = true;
 
 //Configuracion del CombBox para los Modos
