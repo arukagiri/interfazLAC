@@ -12,6 +12,9 @@ volante::volante(QWidget *parent) :
     ui(new Ui::volante)
 {
     ui->setupUi(this);
+
+    this->setWindowTitle("Volante de Inercia");
+
     mw = qobject_cast<MainWindow*>(this->parent());
 
     send_queries = true;

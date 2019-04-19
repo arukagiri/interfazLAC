@@ -271,19 +271,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>380</y>
-     <width>91</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PRUEBA</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -402,7 +389,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>480</x>
