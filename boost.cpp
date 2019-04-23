@@ -6,6 +6,8 @@ boost::boost(QWidget *parent) :
     ui(new Ui::boost)
 {
     ui->setupUi(this);
+
+    this->setWindowTitle("Boost");
 }
 
 boost::~boost()

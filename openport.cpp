@@ -10,6 +10,9 @@ OpenPort::OpenPort(QWidget *parent) :
     ui(new Ui::OpenPort)
 {
     ui->setupUi(this);
+
+    this->setWindowTitle("Config COM");
+
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
         ui->ports_comboBox->addItem(info.portName());
     }

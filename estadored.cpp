@@ -19,6 +19,9 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
     mw = qobject_cast<MainWindow*>(this->parent());
 
+
+    this->setWindowTitle("Estado de Red");
+
     time_2sec = new QTimer();
 
     ui->label_gen_vo->setText("----");
@@ -278,26 +281,6 @@ void EstadoRed::closeEvent(QCloseEvent *e){
 EstadoRed::~EstadoRed()
 {
     delete ui;
-}
-
-
-void EstadoRed::on_pushButton_clicked()
-{
-    if(ui->button_gen->isEnabled())
-        ui->button_gen->setDisabled(true);
-    else
-        ui->button_gen->setEnabled(true);
-
-    if(ui->button_boost->isEnabled())
-        ui->button_boost->setDisabled(true);
-    else
-        ui->button_boost->setEnabled(true);
-
-
-    if(ui->button_vol->isEnabled())
-        ui->button_vol->setDisabled(true);
-    else
-        ui->button_vol->setEnabled(true);
 }
 
 

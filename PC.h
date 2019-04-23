@@ -74,8 +74,8 @@
 #define LACAN_VAR_TORQ_SETP     0x6D
 //#define LACAN_VAR_ID_INST       0x66
 //#define LACAN_VAR_ID_SETP       0x67
-#define LACAN_VAR_STANDBY_W_INST 0x6C   //esta no existe
-#define LACAN_VAR_STANDBY_W_SETP 0x6D
+#define LACAN_VAR_STANDBY_W_INST 0x7C   //esta no existe
+#define LACAN_VAR_STANDBY_W_SETP 0x7D
 
 #define LACAN_VAR_MOD           0xC0
 

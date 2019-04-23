@@ -33,8 +33,6 @@ private slots:
 
     void timer_handler();
 
-    void on_pushButton_clicked();
-
     void on_button_vol_clicked();
 
     void on_button_boost_clicked();

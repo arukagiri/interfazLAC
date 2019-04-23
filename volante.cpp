@@ -12,6 +12,9 @@ volante::volante(QWidget *parent) :
     ui(new Ui::volante)
 {
     ui->setupUi(this);
+
+    this->setWindowTitle("Volante de Inercia");
+
     mw = qobject_cast<MainWindow*>(this->parent());
 
     send_queries = true;
@@ -157,14 +160,11 @@ void volante::send_qry_references(){
 }
 
 void volante::refresh_values(){
-    static bool firstTime = true;
-
     refresh_mode();
 
-    if(firstTime){
-        if(double(id_ref) > refValue)
-            ui->spin_vol_isd_ref->setEnabled(true);
-    }
+    if(double(id_ref) > refValue)
+        ui->spin_vol_isd_ref->setEnabled(true);
+
 
     ui->spin_vol_isd_ref->setValue(double(id_ref));
 
@@ -285,6 +285,7 @@ void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
     }
     blockAllSpinSignals(false);
     spin->setValue(double(value));
+    ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
 void volante::blockAllSpinSignals(bool b){

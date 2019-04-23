@@ -333,7 +333,7 @@ border: 1px solid black;</string>
        </layout>
       </item>
       <item>
-       <spacer name="horizontalSpacer_12">
+       <spacer name="horizontalSpacer_13">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -377,7 +377,7 @@ border: 1px solid black;</string>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_13">
+       <spacer name="horizontalSpacer_12">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
