@@ -71,14 +71,16 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
 
         if((buffer[current_byte]&0xFF)==0xAA){
             if(current_byte-first_byte[cant_msg]!=0){
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
         else{
             if(current_byte-first_byte[cant_msg]==0){
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
 
@@ -87,14 +89,16 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
                 dlc=buffer[current_byte]&15;                //extraigo dlc
             }
             else{
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
         else{
             if(current_byte-first_byte[cant_msg]==1){
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
 
@@ -110,14 +114,16 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
                                                 //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
             }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
             else{
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
         else{
             if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
-                current_byte=first_byte[cant_msg];
+                index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                continue;
             }
         }
 
@@ -127,11 +133,16 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
         pila.push_back(buffer[index_buffer-i]);
     }
 
+
     if(lastMsgIsFull){
         index_buffer=0;
     }
     else{
         index_buffer -= first_byte[cant_msg];
+
+        for(uint j=0;j<index_buffer;j++){
+            buffer[j]=buffer[first_byte[cant_msg]+j];
+        }
     }
 
     emit msgLost(losedMsgCount);
