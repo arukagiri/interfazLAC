@@ -17,7 +17,7 @@ void ReaderThread::handleRead(){
     cant_msg=readport2(pila, first_byte, *thread_serial_port);
     msgLeft = cant_msg;//En un principio la cantidad de mensajes que faltan procesar es la misma que los leidos del puerto
     //Se procesa cada mensaje en cada ciclo
-    for(int i=0;i<cant_msg;i++){
+    for(uint i=0;i<cant_msg;i++){
         LACAN_MSG msg;
         char sub_pila[13]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
 
@@ -49,7 +49,6 @@ void ReaderThread::handleRead(){
 
 //Se encarga de leer el puerto, busca un nuevo dato, si ReadChar no lo encuentra regresa automaticamente
 //Verifica los primeros 12bits para verificar que es un mensaje valido, no se contempla la verificacion del final del mensaje
-/*VER si hace falta pasar index_pila, quiza podria ser estatica dentro de readport, haciendo la verificacion del mensaje ahi*/
 uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
     qint64 newdataflag = 0;
     char buffer[200];
