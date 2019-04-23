@@ -51,7 +51,7 @@ void ReaderThread::handleRead(){
 //Verifica los primeros 12bits para verificar que es un mensaje valido, no se contempla la verificacion del final del mensaje
 uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
     qint64 newdataflag = 0;
-    char buffer[200];
+    static char buffer[200];
     uint cantBytes=0;
     static uint losedMsgCount = 0;
     uint16_t cant_msg = 0;
@@ -59,7 +59,7 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
     static uint16_t dlc=0;
     first_byte[0]=0;    //esto es redundante pero fue, guarda la posicion del primer byte del proximo mensaje
     bool lastMsgIsFull = false;
-
+    bool llegoAA = false;
 
     while((newdataflag=serial_port.read(buffer+index_buffer,1))==1){ //devuelve la cantidad de bytes leidos (deberia ser 1 por el limite impuesto)
         lastMsgIsFull=false;
@@ -74,6 +74,9 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
                 index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
                 continue;
+            }else{
+                llegoAA = true;
+                continue;
             }
         }
         else{
@@ -84,13 +87,16 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
             }
         }
 
-        if(((buffer[current_byte]&0xFF)>>4)==0xC){  //ultimos 4 bits de cabecera
+        if((((buffer[current_byte]&0xFF)>>4)==0xC) && llegoAA){  //ultimos 4 bits de cabecera
             if(current_byte-first_byte[cant_msg]==1){
                 dlc=buffer[current_byte]&15;                //extraigo dlc
+                llegoAA = false;
+                continue;
             }
             else{
                 index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                llegoAA = false;
                 continue;
             }
         }
@@ -98,6 +104,7 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
             if(current_byte-first_byte[cant_msg]==1){
                 index_buffer=first_byte[cant_msg];
                 losedMsgCount++;
+                llegoAA = false;
                 continue;
             }
         }
@@ -111,7 +118,7 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
                 cant_msg++;
                 lastMsgIsFull=true;
                 first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
-                                                //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
+                continue;                                   //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
             }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
             else{
                 index_buffer=first_byte[cant_msg];
@@ -129,11 +136,14 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
 
     }
 
-    for(uint i=cantBytes;i>0;i--){
-        pila.push_back(buffer[index_buffer-i]);
+//    for(uint i=cantBytes;i>0;i--){
+//        pila.push_back(buffer[index_buffer-i]);
+//    }
+    for(int i=(first_byte[cant_msg]-1);i>-1;i--){
+        pila.push_back(buffer[first_byte[cant_msg]-1-i]);
     }
 
-
+//    index_buffer = 0;
     if(lastMsgIsFull){
         index_buffer=0;
     }
@@ -146,6 +156,8 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
     }
 
     emit msgLost(losedMsgCount);
+
+    qDebug()<<losedMsgCount;
 
     return cant_msg;
 }
