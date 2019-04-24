@@ -13,6 +13,7 @@
 #include "better_serialfunc.h"
 #include "senderthread.h"
 #include "readerthread.h"
+#include <deque>
 
 #define LOG_LIMIT 500
 
@@ -162,7 +163,7 @@ public:
     QMap<QString, uint16_t> disp_map;
     HB_CONTROL newdev;
     QTimer* periodicTimer;
-    vector<LACAN_MSG*> stack;
+    deque<LACAN_MSG*> stack;
 };
 
 #endif // MAINWINDOW_H

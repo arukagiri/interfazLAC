@@ -1231,8 +1231,8 @@ void MainWindow::do_stuff(){
 void MainWindow::handleSendTimeout(){
     //Si la pila no esta vacia, enviamos el mensaje que se encuentra ultimo y luego lo borramos de la misma
     if(!stack.empty()){
-        serialsend2(*serial_port,*stack.back());
-        stack.pop_back();
+        serialsend2(*serial_port,*stack.front());
+        stack.pop_front();
     }
 }
 
