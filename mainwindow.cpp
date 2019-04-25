@@ -197,6 +197,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowTitle("LACAN");
+
     //Inicializacion de variables(el puerto serie se obtiene de una ventana previa)
     serial_port=&serial_port0;
     do_log=false;
