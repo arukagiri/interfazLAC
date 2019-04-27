@@ -60,7 +60,7 @@
              </property>
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>10</pointsize>
               </font>
              </property>
              <property name="text">
@@ -212,12 +212,6 @@
             <height>60</height>
            </size>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>60</height>
-           </size>
-          </property>
           <property name="title">
            <string>Mensajes específicos (solo para pruebas)</string>
           </property>
@@ -229,6 +223,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="text">
               <string>Enviar Mensaje</string>
@@ -242,6 +242,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="text">
               <string>Enviar Bytes</string>
@@ -621,6 +627,7 @@ border: 1px solid black;</string>
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -630,22 +637,7 @@ border: 1px solid black;</string>
      <height>20</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuArchivo">
-    <property name="title">
-     <string>Archivo</string>
-    </property>
-    <addaction name="actionSalir"/>
-   </widget>
-   <widget class="QMenu" name="menuAcciones">
-    <property name="title">
-     <string>Acciones</string>
-    </property>
-    <addaction name="actionEnviar_Mensaje_2"/>
-   </widget>
-   <addaction name="menuArchivo"/>
-   <addaction name="menuAcciones"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionEnviar_Mensaje">
    <property name="text">
     <string>Enviar Mensaje</string>

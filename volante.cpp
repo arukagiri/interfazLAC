@@ -24,7 +24,7 @@ volante::volante(QWidget *parent) :
     ui->combo_modo->addItem("Variador de Velocidad (1)",QVariant(LACAN_VAR_MOD_INER));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
-    mode_changed();
+    refresh_values();
 
 //Inicializacion de Labels
     ui->label_vol_io->setText("----");
@@ -125,7 +125,7 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_MOD:
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
-            mode_changed();
+            refresh_values();
         break;
     default:
         break;
@@ -226,10 +226,6 @@ void volante::verificar_mode_changed(){
     else{
         actual_mode=previous_mode;
     }
-}
-
-void volante::mode_changed(){
-    refresh_values();
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual

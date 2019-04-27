@@ -27,7 +27,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
-    //mode_changed();
+    //refresh_values();
 
 //Inicializacion de Labels
     ui->label_gen_io->setText("----");
@@ -150,7 +150,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
             //refresh_mode();    version1
-            mode_changed();  //ver si va este o el anterior (cambio el 17/3)
+            refresh_values();  //ver si va este o el anterior (cambio el 17/3)
             break;
         default:
             break;
@@ -283,7 +283,7 @@ void Gen_Eolico::verificar_mode_changed(){
         mw->agregar_log_sent();
         referenceChanged = true;
         //version1
-        //mode_changed();
+        //refresh_values();
     }
     else{
         //version2
@@ -293,10 +293,6 @@ void Gen_Eolico::verificar_mode_changed(){
         //actual_mode=previous_mode;
         //ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(previous_mode));
     }
-}
-
-void Gen_Eolico::mode_changed(){
-    refresh_values();
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual
