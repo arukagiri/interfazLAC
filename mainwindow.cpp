@@ -197,6 +197,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowTitle("LACAN");
+
     //Inicializacion de variables(el puerto serie se obtiene de una ventana previa)
     serial_port=&serial_port0;
     do_log=false;
@@ -522,8 +524,8 @@ void MainWindow::create_varmap_vol(){
     LACAN_VAR W_VOL;
     W_VOL.instantanea=LACAN_VAR_W_INST;
     W_VOL.setp=LACAN_VAR_W_SETP;
-    W_VOL.max=LACAN_VAR_GEN_W_MAX;
-    W_VOL.min=LACAN_VAR_GEN_W_MIN;
+    W_VOL.max=LACAN_VAR_VOL_W_MAX;
+    W_VOL.min=LACAN_VAR_VOL_W_MIN;
     LACAN_VAR ISD_VOL;
     ISD_VOL.instantanea=LACAN_VAR_ISD_INST;
     ISD_VOL.setp=LACAN_VAR_ISD_SETP;
@@ -1231,8 +1233,8 @@ void MainWindow::do_stuff(){
 void MainWindow::handleSendTimeout(){
     //Si la pila no esta vacia, enviamos el mensaje que se encuentra ultimo y luego lo borramos de la misma
     if(!stack.empty()){
-        serialsend2(*serial_port,*stack.back());
-        stack.pop_back();
+        serialsend2(*serial_port,*stack.front());
+        stack.pop_front();
     }
 }
 

@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include "PC.h"
+#include <QDebug>
 
 using namespace std::chrono_literals;
 
@@ -44,8 +45,9 @@ SenderThread::SenderThread(QObject *parent) : QThread(parent)
 //}
 
 void SenderThread::run(){
-    uint timeout_uint = 1000000/((CAN_BAUD/8)/BIGGEST_CAN_MSG); //Tiempo minimo necesario del lado del CAN para enviar el mensaje mas largo (en us)
-    uint timeout_rounded = timeout_uint+100; //Se otorga un margen de 100us
+    double timeout_uint = 1000000/((CAN_BAUD/8)/BIGGEST_CAN_MSG); //Tiempo minimo necesario del lado del CAN para enviar el mensaje mas largo (en us)
+    uint timeout_rounded = uint(timeout_uint*1.1); //Se otorga un margen del 10%
+
     chrono::microseconds timeout = chrono::microseconds(timeout_rounded);
     std::condition_variable cv;
     std::mutex cv_m;
