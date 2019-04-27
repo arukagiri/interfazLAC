@@ -75,8 +75,6 @@ private slots:
 
     void timer_handler();
 
-    void mode_changed();
-
     void verificar_mode_changed();
 
     void VOLpost_Handler(LACAN_MSG msg);
