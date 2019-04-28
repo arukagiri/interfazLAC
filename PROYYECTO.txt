@@ -1,15 +1,11 @@
 ==================================================================================================================================
 INTERFAZ:
 
-ventana comandar --> variable IBAT hace caca porque tiene limites negativos
-ver de chequear la posibilidad de variables negativas URGENTE
-
 ver de consultar el estado(on/off) de los dispostivos
 
 cambiar variable para deshabilitar boton de gen en estado de red
 
-VENTANA ENVIAR MENSAJE ... HACERLA NUEVA
-
+ver si la potencia esta configurada para mandarse en watts
 
 ==================================================================================================================================
 FINAL:

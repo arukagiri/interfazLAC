@@ -186,7 +186,7 @@
           <item>
            <widget class="QLabel" name="label_19">
             <property name="text">
-             <string>Potencia (kW):</string>
+             <string>Potencia (W):</string>
             </property>
            </widget>
           </item>
@@ -308,7 +308,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>

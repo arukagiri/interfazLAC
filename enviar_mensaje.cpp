@@ -5,18 +5,7 @@
 #include <QDebug>
 #include <QMap>
 
-#define BROAD 0
-//enum DESTINOS {BROAD,GEN_EOL,VOL,BOOST};
-enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
-
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
-
-/*enum TIPO_VAR {MAX,MIN,SETP,INST};
-enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
-enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS,COUP,DECOUP,MAG,TRIP};
-enum ERRORES  {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT_TRIP,EXT_TRIP};
-enum RESULTADOS {OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};*/
-
 
 Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
@@ -152,7 +141,7 @@ void Enviar_Mensaje::MENSAJE_changed(){
 
 void Enviar_Mensaje::HB_selected(){
 
-    ui->list_DESTINO->setCurrentIndex(BROAD);
+    ui->list_DESTINO->setCurrentText("Broadcast");
     ui->list_DESTINO->setDisabled(true);
 
     ui->list_VARIABLE->setDisabled(true);
@@ -244,7 +233,7 @@ void Enviar_Mensaje::ERR_selected(){
 
     ui->list_ERROR->setEnabled(true);
 
-    ui->list_DESTINO->setCurrentIndex(BROAD);
+    ui->list_DESTINO->setCurrentText("Broadcast");
     ui->list_DESTINO->setDisabled(true);
 
     ui->list_VARIABLE->setDisabled(true);
