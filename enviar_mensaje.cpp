@@ -108,6 +108,8 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
         }
     }
 
+    ui->list_VARIABLE->addItem("Modo", LACAN_VAR_MOD);
+
     DO_selected();
 
 }
@@ -261,13 +263,15 @@ void Enviar_Mensaje::VAR_Changed(){
 }
 
 void Enviar_Mensaje::set_TIPO_VAR(){
-    switch (ui->list_VARIABLE->currentIndex()) {
-    case MOD:
+    switch (ui->list_VARIABLE->currentData().toInt()) {
+    case LACAN_VAR_MOD:
         ui->spin_valor->setDisabled(true);
         ui->list_TIPO->clear();
-        ui->list_TIPO->addItem("Potencia");
-        ui->list_TIPO->addItem("Velocidad");
-        ui->list_TIPO->addItem("Torque");
+        ui->list_TIPO->addItem("Potencia", LACAN_VAR_MOD_POT);
+        ui->list_TIPO->addItem("Velocidad", LACAN_VAR_MOD_VEL);
+        ui->list_TIPO->addItem("Torque", LACAN_VAR_MOD_TORQ);
+        ui->list_TIPO->addItem("MPPT", LACAN_VAR_MOD_MPPT);
+        ui->list_TIPO->addItem("Inercia", LACAN_VAR_MOD_INER);
         break;
     default:
         switch (ui->list_MENSAJE->currentIndex()) {
@@ -305,8 +309,10 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     err_cod = uint16_t(ui->list_ERROR->currentData().toInt());
 
     QString varString = ui->list_VARIABLE->currentText();
-
-    if(ui->list_TIPO->currentText() == "Set Point"){
+    if(varString == "Modo"){
+        data.var_int = uint16_t(ui->list_TIPO->currentData().toInt());
+        var = LACAN_VAR_MOD;
+    }else if(ui->list_TIPO->currentText() == "Set Point"){
         var=varmap[varString].setp;
     }else if(ui->list_TIPO->currentText() == "Instantanea"){
         var=varmap[varString].instantanea;

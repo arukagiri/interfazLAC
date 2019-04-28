@@ -79,7 +79,7 @@
 
 #define LACAN_VAR_MOD           0xC0
 
-//Modos
+//Modos NOTA: estos valores corresponden al campo de datos y no al de tipo de variable en los mensajes
 #define LACAN_VAR_MOD_VEL       0x00
 #define LACAN_VAR_MOD_MPPT      0x01
 #define LACAN_VAR_MOD_TORQ      0x02
