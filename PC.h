@@ -43,8 +43,6 @@
 #define LACAN_CMD_START         0x1F // HABILITAR SALIDA
 #define LACAN_CMD_DECOUPLE      0x28
 #define LACAN_CMD_MAGNETIZE     0x2F
-#define LACAN_CMD_MPPT_ENABLE   0x38
-#define LACAN_CMD_MPPT_DISABLE  0x3F
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02

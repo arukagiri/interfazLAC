@@ -46,8 +46,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
     ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);
     ui->list_COMANDO->addItem("Reset", LACAN_CMD_RESET);
-    ui->list_COMANDO->addItem("MPPT_Enable", LACAN_CMD_MPPT_ENABLE);
-    ui->list_COMANDO->addItem("MPPT_Disable", LACAN_CMD_MPPT_DISABLE);
     ui->list_COMANDO->addItem("Acoplar", LACAN_CMD_COUPLE);
     ui->list_COMANDO->addItem("Desacoplar", LACAN_CMD_DECOUPLE);
     ui->list_COMANDO->addItem("Magnetizar", LACAN_CMD_MAGNETIZE);
