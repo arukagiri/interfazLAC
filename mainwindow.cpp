@@ -524,8 +524,8 @@ void MainWindow::create_varmap_vol(){
     LACAN_VAR W_VOL;
     W_VOL.instantanea=LACAN_VAR_W_INST;
     W_VOL.setp=LACAN_VAR_W_SETP;
-    W_VOL.max=LACAN_VAR_GEN_W_MAX;
-    W_VOL.min=LACAN_VAR_GEN_W_MIN;
+    W_VOL.max=LACAN_VAR_VOL_W_MAX;
+    W_VOL.min=LACAN_VAR_VOL_W_MIN;
     LACAN_VAR ISD_VOL;
     ISD_VOL.instantanea=LACAN_VAR_ISD_INST;
     ISD_VOL.setp=LACAN_VAR_ISD_SETP;

@@ -77,8 +77,6 @@ private slots:
 
     void timer_handler();
 
-    void mode_changed();
-
     void verificar_mode_changed();
 
     void GENpost_Handler(LACAN_MSG msg);

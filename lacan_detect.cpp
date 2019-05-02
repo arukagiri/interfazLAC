@@ -187,12 +187,6 @@ QString detect_cmd(uint8_t cmd){
     case LACAN_CMD_STOP:
         return "Stop";
 
-    case LACAN_CMD_MPPT_ENABLE:
-        return "MPPT Enable";
-
-    case LACAN_CMD_MPPT_DISABLE:
-        return "MPPT Disable";
-
     default:
         return "No especificada o soportada";
     }

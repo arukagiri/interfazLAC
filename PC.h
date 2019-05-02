@@ -43,8 +43,6 @@
 #define LACAN_CMD_START         0x1F // HABILITAR SALIDA
 #define LACAN_CMD_DECOUPLE      0x28
 #define LACAN_CMD_MAGNETIZE     0x2F
-#define LACAN_CMD_MPPT_ENABLE   0x38
-#define LACAN_CMD_MPPT_DISABLE  0x3F
 
 // Diccionario de variables (VAR). 8 bits (0x00 a 0xff)
 #define LACAN_VAR_STATUS        0x02
@@ -79,7 +77,7 @@
 
 #define LACAN_VAR_MOD           0xC0
 
-//Modos
+//Modos NOTA: estos valores corresponden al campo de datos y no al de tipo de variable en los mensajes
 #define LACAN_VAR_MOD_VEL       0x00
 #define LACAN_VAR_MOD_MPPT      0x01
 #define LACAN_VAR_MOD_TORQ      0x02

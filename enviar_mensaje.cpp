@@ -7,15 +7,6 @@
 
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
 
-enum DESTINOS {BROAD,GEN_EOL,VOL,BOOST};
-enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
-enum TIPO_VAR {MAX,MIN,SETP,INST};
-enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
-enum COMANDOS {START,STOP,RESET,MPPT_EN,MPPT_DIS,COUP,DECOUP,MAG,TRIP};
-enum ERRORES  {GENER,OVERV,UNDERV,OVERI,BAT_OVERI,OVERTEMP,OVERW,UNDERW,NO_HB,INT_TRIP,EXT_TRIP};
-enum RESULTADOS {OK,MISS_PREREQ,REC,NOT_IMPLEMENTED,OUT_OF_RANGE,BUSY,DENIED,GEN_FAIL};
-
-
 Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 
     QDialog(parent),
@@ -55,8 +46,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
     ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);
     ui->list_COMANDO->addItem("Reset", LACAN_CMD_RESET);
-    ui->list_COMANDO->addItem("MPPT_Enable", LACAN_CMD_MPPT_ENABLE);
-    ui->list_COMANDO->addItem("MPPT_Disable", LACAN_CMD_MPPT_DISABLE);
     ui->list_COMANDO->addItem("Acoplar", LACAN_CMD_COUPLE);
     ui->list_COMANDO->addItem("Desacoplar", LACAN_CMD_DECOUPLE);
     ui->list_COMANDO->addItem("Magnetizar", LACAN_CMD_MAGNETIZE);
@@ -106,6 +95,8 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
         }
     }
 
+    ui->list_VARIABLE->addItem("Modo", LACAN_VAR_MOD);
+
     DO_selected();
 
 }
@@ -148,7 +139,7 @@ void Enviar_Mensaje::MENSAJE_changed(){
 
 void Enviar_Mensaje::HB_selected(){
 
-    ui->list_DESTINO->setCurrentIndex(BROAD);
+    ui->list_DESTINO->setCurrentText("Broadcast");
     ui->list_DESTINO->setDisabled(true);
 
     ui->list_VARIABLE->setDisabled(true);
@@ -240,7 +231,7 @@ void Enviar_Mensaje::ERR_selected(){
 
     ui->list_ERROR->setEnabled(true);
 
-    ui->list_DESTINO->setCurrentIndex(BROAD);
+    ui->list_DESTINO->setCurrentText("Broadcast");
     ui->list_DESTINO->setDisabled(true);
 
     ui->list_VARIABLE->setDisabled(true);
@@ -259,13 +250,15 @@ void Enviar_Mensaje::VAR_Changed(){
 }
 
 void Enviar_Mensaje::set_TIPO_VAR(){
-    switch (ui->list_VARIABLE->currentIndex()) {
-    case MOD:
+    switch (ui->list_VARIABLE->currentData().toInt()) {
+    case LACAN_VAR_MOD:
         ui->spin_valor->setDisabled(true);
         ui->list_TIPO->clear();
-        ui->list_TIPO->addItem("Potencia");
-        ui->list_TIPO->addItem("Velocidad");
-        ui->list_TIPO->addItem("Torque");
+        ui->list_TIPO->addItem("Potencia", LACAN_VAR_MOD_POT);
+        ui->list_TIPO->addItem("Velocidad", LACAN_VAR_MOD_VEL);
+        ui->list_TIPO->addItem("Torque", LACAN_VAR_MOD_TORQ);
+        ui->list_TIPO->addItem("MPPT", LACAN_VAR_MOD_MPPT);
+        ui->list_TIPO->addItem("Inercia", LACAN_VAR_MOD_INER);
         break;
     default:
         switch (ui->list_MENSAJE->currentIndex()) {
@@ -303,8 +296,10 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
     err_cod = uint16_t(ui->list_ERROR->currentData().toInt());
 
     QString varString = ui->list_VARIABLE->currentText();
-
-    if(ui->list_TIPO->currentText() == "Set Point"){
+    if(varString == "Modo"){
+        data.var_int = uint16_t(ui->list_TIPO->currentData().toInt());
+        var = LACAN_VAR_MOD;
+    }else if(ui->list_TIPO->currentText() == "Set Point"){
         var=varmap[varString].setp;
     }else if(ui->list_TIPO->currentText() == "Instantanea"){
         var=varmap[varString].instantanea;

@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "PC.h"
 #include <QShortcut>
+#include <QtMath>
 
 volante::volante(QWidget *parent) :
     QDialog(parent),
@@ -24,7 +25,7 @@ volante::volante(QWidget *parent) :
     ui->combo_modo->addItem("Variador de Velocidad (1)",QVariant(LACAN_VAR_MOD_INER));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
-    mode_changed();
+    refresh_values();
 
 //Inicializacion de Labels
     ui->label_vol_io->setText("----");
@@ -112,7 +113,6 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_I_BAT_INST:
             vol_ibat = recibed_val.var_float;
         break;
-
         case LACAN_VAR_W_SETP:
             speed_ref=recibed_val.var_float;
         break;
@@ -125,7 +125,7 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
         case LACAN_VAR_MOD:
             actual_mode=recibed_val.var_char[0];
             ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
-            mode_changed();
+            refresh_values();
         break;
     default:
         break;
@@ -165,8 +165,13 @@ void volante::refresh_values(){
     if(double(id_ref) > refValue)
         ui->spin_vol_isd_ref->setEnabled(true);
 
-
     ui->spin_vol_isd_ref->setValue(double(id_ref));
+
+    double conv2Hz = 60/(2*M_PI);
+
+    float vol_vel_Hz = vol_vel * float(conv2Hz);
+
+    vol_ener = vol_po/vol_vel_Hz;
 
     if(double(vol_vo)>refValue)
         ui->label_vol_vo->setText(QString::number(double(vol_vo),'f',2));
@@ -181,7 +186,7 @@ void volante::refresh_values(){
     if(double(vol_vel)>refValue)
         ui->label_vol_vel->setText(QString::number(double(vol_vel),'f',2));
     if(double(vol_ener)>refValue)
-        ui->label_vol_vel->setText(QString::number(double(vol_ener),'f',2));
+        ui->label_vol_ener->setText(QString::number(double(vol_ener),'f',2));
 }
 
 void volante::on_pushButton_start_clicked()
@@ -226,10 +231,6 @@ void volante::verificar_mode_changed(){
     else{
         actual_mode=previous_mode;
     }
-}
-
-void volante::mode_changed(){
-    refresh_values();
 }
 
 //habilita y deshabilita los campos, dependiendo el modo actual
