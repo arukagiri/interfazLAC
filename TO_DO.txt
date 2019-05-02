@@ -1,1 +1,0 @@
-ver de verificar destino en la ventana enviar mensaje (quedo con el destno con elñ cual se abre la ventana)
