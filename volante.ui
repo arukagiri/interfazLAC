@@ -279,35 +279,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_8">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>90</y>
-     <width>121</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
-    <item>
-     <widget class="QLabel" name="text_speed_ref_2">
-      <property name="text">
-       <string>Speed Ref:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QDoubleSpinBox" name="spin_vol_speed_ref">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -367,31 +338,16 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QLabel" name="label_modo">
+       <widget class="QLabel" name="label_mod">
         <property name="text">
          <string>Modo:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combo_modo">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>140</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>140</width>
-          <height>16777215</height>
-         </size>
+       <widget class="QLabel" name="label_modo">
+        <property name="text">
+         <string>modo</string>
         </property>
        </widget>
       </item>
