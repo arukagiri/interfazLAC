@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>80</y>
-     <width>881</width>
-     <height>481</height>
+     <y>120</y>
+     <width>861</width>
+     <height>421</height>
     </rect>
    </property>
    <property name="text">
@@ -35,8 +35,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>260</y>
+     <x>20</x>
+     <y>130</y>
      <width>172</width>
      <height>25</height>
     </rect>
@@ -64,7 +64,7 @@
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>590</x>
      <y>220</y>
      <width>119</width>
      <height>25</height>
@@ -354,6 +354,28 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_edit">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Consolas</family>
+     <pointsize>19</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>MODO EDICION</string>
+   </property>
   </widget>
  </widget>
  <resources>

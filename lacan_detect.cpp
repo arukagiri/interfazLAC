@@ -154,6 +154,12 @@ QString detect_var(uint8_t var){
        case LACAN_VAR_V_BAT_SETP:
            return "Tension de Bateria SetPoint";
 
+       case LACAN_VAR_STANDBY_W_INST:
+           return "Velocidad StandBy Instantanea";
+
+       case LACAN_VAR_STANDBY_W_SETP:
+           return "Velocidad StandBy SetPoint";
+
        case LACAN_VAR_MOD:
            return "Modo";
 
@@ -206,6 +212,33 @@ QString detect_mode(uint8_t modo){
 
     case LACAN_VAR_MOD_MPPT:
         return "Modo MPPT";
+
+    case LACAN_VAR_MOD_INER:
+        return "Modo ";
+
+    case LACAN_VAR_MOD_PREARRANQUE:
+        return "Modo Prearranque";
+
+    case LACAN_VAR_MOD_INICIO:
+        return "Modo Inicio";
+
+    case LACAN_VAR_MOD_ARRANQUE:
+        return "Modo Arranque";
+
+    case LACAN_VAR_MOD_COMPENSACION:
+        return "Modo Compensacion";
+
+    case LACAN_VAR_MOD_LIMITACION:
+        return "Modo Limitacion";
+
+    case LACAN_VAR_MOD_APAGADO:
+        return "Modo Apagado";
+
+    case LACAN_VAR_MOD_RECUPERACION:
+        return "Modo Recuperacion";
+
+    case LACAN_VAR_MOD_PROTEGIDO:
+        return "Modo Protegido";
 
     default:
         return "No especificada/soportada";
