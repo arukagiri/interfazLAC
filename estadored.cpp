@@ -192,29 +192,29 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
             break;
 
        case LACAN_ID_VOLANTE:
-        //se la paso a la pantalla del gen, si esta abierta
-        emit postforVOL_arrived(msg);
+            //se la paso a la pantalla del gen, si esta abierta
+            emit postforVOL_arrived(msg);
 
-        switch (variable) {
-            case LACAN_VAR_IO_INST:
-                vol_io = recibed_val.var_float;
-                break;
-            case LACAN_VAR_VO_INST:
-                vol_vo = recibed_val.var_float;
-                break;
-            case LACAN_VAR_TORQ_INST:
-                vol_tor = recibed_val.var_float;
-                break;
-            case LACAN_VAR_W_INST:
-                vol_vel = recibed_val.var_float;
-                break;
-            case LACAN_VAR_MOD:
-                vol_mod = recibed_val.var_char[0];
-                break;
-            default:
-                break;
-        }
-        break;
+            switch (variable) {
+                case LACAN_VAR_IO_INST:
+                    vol_io = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_VO_INST:
+                    vol_vo = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_TORQ_INST:
+                    vol_tor = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_W_INST:
+                    vol_vel = recibed_val.var_float;
+                    break;
+                case LACAN_VAR_MOD:
+                    vol_mod = recibed_val.var_char[0];
+                    break;
+                default:
+                    break;
+            }
+            break;
 
             /*case LACAN_ID_BOOST:
                 switch (variable) {
@@ -244,7 +244,7 @@ void EstadoRed::on_button_vol_clicked()
     send_queries = false;
 
     connect(vol_win, SIGNAL(volWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
-    connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(GENpost_Handler(LACAN_MSG)));
+    connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(VOLpost_Handler(LACAN_MSG)));
 }
 
 void EstadoRed::on_button_gen_clicked()

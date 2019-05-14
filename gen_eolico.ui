@@ -357,7 +357,7 @@
     <item>
      <widget class="QLabel" name="label_pot_ref">
       <property name="text">
-       <string>Pot Ref (kW):</string>
+       <string>Pot Ref (W):</string>
       </property>
      </widget>
     </item>
@@ -479,7 +479,7 @@
         <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>Potencia (kW):</string>
+           <string>Potencia (W):</string>
           </property>
          </widget>
         </item>
@@ -504,7 +504,7 @@
         <item>
          <widget class="QLabel" name="label_gen_po">
           <property name="text">
-           <string>Potencia (kW):</string>
+           <string>Potencia </string>
           </property>
          </widget>
         </item>

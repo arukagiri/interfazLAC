@@ -101,59 +101,66 @@ void Gen_Eolico::timer_handler(){
 
 //Me fijo que variable es la que llego, y le asigno el valor correspondiente, a la variable propia de la clase
 void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
-      recibed_val.var_char[0]=msg.BYTE2;
-      recibed_val.var_char[1]=msg.BYTE3;
-      recibed_val.var_char[2]=msg.BYTE4;
-      recibed_val.var_char[3]=msg.BYTE5;
-      switch (msg.BYTE1) {
-        case LACAN_VAR_VO_INST:
-            gen_vo = recibed_val.var_float;
-            break;
-        case LACAN_VAR_IO_INST:
-            gen_io = recibed_val.var_float;
-            break;
-        case LACAN_VAR_PO_INST:
-            gen_po = recibed_val.var_float;
-            break;
-        case LACAN_VAR_W_INST:
-            gen_vel = recibed_val.var_float;
-            break;
-        case LACAN_VAR_TORQ_INST:
-            gen_tor = recibed_val.var_float;
-            break;
-        case LACAN_VAR_I_BAT_INST:
-            gen_ibat = recibed_val.var_float;
-            break;
-        case LACAN_VAR_VO_SETP:
-            lim_vdc = recibed_val.var_float;
-            break;
-        case LACAN_VAR_W_SETP:
-            speed_ref=recibed_val.var_float;
-            //prev_speed_ref=speed_ref;
-            break;
-        case LACAN_VAR_TORQ_SETP:
-            torque_ref=recibed_val.var_float;
-            break;
-        case LACAN_VAR_PO_SETP:
-            pot_ref = recibed_val.var_float;
-            break;
-        case LACAN_VAR_I_BAT_SETP: //o la de setpoint
-            lim_ibat = recibed_val.var_float;
-            break;
-        case LACAN_VAR_IEF_SETP:
-            lim_ief = recibed_val.var_float;
-            break;
-        case LACAN_VAR_ISD_SETP:
-            isd_ref = recibed_val.var_float;
-            break;
-        case LACAN_VAR_MOD:
-            actual_mode=recibed_val.var_char[0];
-            ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(actual_mode));
-            //refresh_mode();    version1
-            refresh_values();  //ver si va este o el anterior (cambio el 17/3)
-            break;
-        default:
-            break;
+
+    int actual_mode_index = -1;
+
+    recibed_val.var_char[0]=msg.BYTE2;
+    recibed_val.var_char[1]=msg.BYTE3;
+    recibed_val.var_char[2]=msg.BYTE4;
+    recibed_val.var_char[3]=msg.BYTE5;
+    switch (msg.BYTE1) {
+    case LACAN_VAR_VO_INST:
+        gen_vo = recibed_val.var_float;
+        break;
+    case LACAN_VAR_IO_INST:
+        gen_io = recibed_val.var_float;
+        break;
+    case LACAN_VAR_PO_INST:
+        gen_po = recibed_val.var_float;
+        break;
+    case LACAN_VAR_W_INST:
+        gen_vel = recibed_val.var_float;
+        break;
+    case LACAN_VAR_TORQ_INST:
+        gen_tor = recibed_val.var_float;
+        break;
+    case LACAN_VAR_I_BAT_INST:
+        gen_ibat = recibed_val.var_float;
+        break;
+    case LACAN_VAR_VO_SETP:
+        lim_vdc = recibed_val.var_float;
+        break;
+    case LACAN_VAR_W_SETP:
+        speed_ref=recibed_val.var_float;
+        //prev_speed_ref=speed_ref;
+        break;
+    case LACAN_VAR_TORQ_SETP:
+        torque_ref=recibed_val.var_float;
+        break;
+    case LACAN_VAR_PO_SETP:
+        pot_ref = recibed_val.var_float;
+        break;
+    case LACAN_VAR_I_BAT_SETP:
+        lim_ibat = recibed_val.var_float;
+        break;
+    case LACAN_VAR_IEF_SETP:
+        lim_ief = recibed_val.var_float;
+        break;
+    case LACAN_VAR_ISD_SETP:
+        isd_ref = recibed_val.var_float;
+        break;
+    case LACAN_VAR_MOD:
+        actual_mode=recibed_val.var_char[0];
+        actual_mode_index = ui->combo_modo->findData(actual_mode);
+        if(actual_mode_index>-1){
+            ui->combo_modo->setEnabled(true);
+            ui->combo_modo->setCurrentIndex(actual_mode_index);
+        }
+        //refresh_mode();    version1
+        refresh_values();  //ver si va este o el anterior (cambio el 17/3)
+        break;
+    default:
+        break;
     }
 }
 
@@ -367,7 +374,7 @@ void Gen_Eolico::focusReturned(){
     send_queries = true;
 }
 
-void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
+void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
     blockAllSpinSignals(true);
     spin->clearFocus();
@@ -377,16 +384,16 @@ void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
     QString str = "El valor a enviar es: ";
     str.append(QString::number(double(value)));
     str.append(". Confirma que desea enviar este valor?");
-    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
-    reply = dialog->exec();
-    if(reply){
+    reply=QMessageBox::question(this,"Valor a enviar",str,QMessageBox::Yes|QMessageBox::No);
+
+    if(reply==QMessageBox::Yes){
         data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
         mw->LACAN_Set(var, data, 1, dest);
         mw->agregar_log_sent();
         referenceChanged = true;
     }
     blockAllSpinSignals(false);
-    spin->setValue(double(value));
+    spin->setValue(double(prevValue));
     ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
@@ -402,37 +409,37 @@ void Gen_Eolico::blockAllSpinSignals(bool b){
 
 void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_speed_ref, LACAN_VAR_W_SETP);
+    processEditingFinished(ui->spin_gen_speed_ref, LACAN_VAR_W_SETP, speed_ref);
 }
 
 void Gen_Eolico::on_spin_gen_pot_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_pot_ref, LACAN_VAR_PO_SETP);
+    processEditingFinished(ui->spin_gen_pot_ref, LACAN_VAR_PO_SETP, pot_ref);
 }
 
 void Gen_Eolico::on_spin_gen_torque_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_torque_ref, LACAN_VAR_TORQ_SETP);
+    processEditingFinished(ui->spin_gen_torque_ref, LACAN_VAR_TORQ_SETP, torque_ref);
 }
 
 void Gen_Eolico::on_spin_gen_lim_ief_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_lim_ief_ref, LACAN_VAR_IEF_SETP);
+    processEditingFinished(ui->spin_gen_lim_ief_ref, LACAN_VAR_IEF_SETP, lim_ief);
 }
 
 void Gen_Eolico::on_spin_gen_isd_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_isd_ref, LACAN_VAR_ISD_SETP);
+    processEditingFinished(ui->spin_gen_isd_ref, LACAN_VAR_ISD_SETP, isd_ref);
 }
 
 void Gen_Eolico::on_spin_gen_lim_ibat_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_lim_ibat_ref, LACAN_VAR_I_BAT_SETP);
+    processEditingFinished(ui->spin_gen_lim_ibat_ref, LACAN_VAR_I_BAT_SETP, lim_ibat);
 }
 
 void Gen_Eolico::on_spin_gen_lim_vdc_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_gen_lim_vdc_ref, LACAN_VAR_VO_SETP);
+    processEditingFinished(ui->spin_gen_lim_vdc_ref, LACAN_VAR_VO_SETP, lim_vdc);
 }
 
 void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)

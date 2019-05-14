@@ -47,7 +47,7 @@
      <item>
       <widget class="QCheckBox" name="autocon_checkBox">
        <property name="text">
-        <string>Auto-Conect (no usar si no está seguro)</string>
+        <string>Auto-Conect</string>
        </property>
       </widget>
      </item>
