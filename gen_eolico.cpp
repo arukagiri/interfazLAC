@@ -206,6 +206,7 @@ void Gen_Eolico::refresh_values(){
 
     refresh_mode();
 
+    //Verifica  que haya llegado al menos un valor valido. Solo se aplica a las variables de SET (que tienen SpinBox)
     if(double(isd_ref) > refValue)
         ui->spin_gen_isd_ref->setEnabled(true);
     if(double(lim_ibat) > refValue)
@@ -215,7 +216,7 @@ void Gen_Eolico::refresh_values(){
     if(double(lim_vdc) > refValue)
         ui->spin_gen_lim_vdc_ref->setEnabled(true);
 
-    //Variables SET
+    //Variables SET (SpinBox)
     ui->spin_gen_isd_ref->setValue(double(isd_ref));
     ui->spin_gen_lim_ibat_ref->setValue(double(lim_ibat));
     ui->spin_gen_lim_ief_ref->setValue(double(lim_ief));
@@ -224,7 +225,7 @@ void Gen_Eolico::refresh_values(){
     ui->spin_gen_speed_ref->setValue(double(speed_ref));
     ui->spin_gen_torque_ref->setValue(double(torque_ref));
 
-    //Variables de Salida
+    //Variables de Salida (Labels)
     if(double(gen_vo)>refValue)
         ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
     if(double(gen_io)>refValue)

@@ -47,6 +47,8 @@ volante::volante(QWidget *parent) :
 
     QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+
+    ui->label_edit->setText("<font color='gray'>MODO EDICION</font>");
 }
 
 volante::~volante()
@@ -170,9 +172,36 @@ void volante::refresh_values(){
         ui->label_vol_vel->setText(QString::number(double(vol_vel),'f',2));
     if(double(vol_ener)>refValue)
         ui->label_vol_ener->setText(QString::number(double(vol_ener),'f',2));
-    if(double(actual_mode)>refValue)
-        ui->label_modo->setText(QString::number(actual_mode));
-
+    if(double(actual_mode)>refValue){
+        switch(actual_mode){
+        case LACAN_VAR_MOD_PREARRANQUE:
+            ui->label_modo->setText("PREARRANQUE");
+            break;
+        case LACAN_VAR_MOD_INICIO:
+            ui->label_modo->setText("INICIO");
+            break;
+        case LACAN_VAR_MOD_ARRANQUE:
+            ui->label_modo->setText("ARRANQUE");
+            break;
+        case LACAN_VAR_MOD_COMPENSACION:
+            ui->label_modo->setText("CMPENSACION");
+            break;
+        case LACAN_VAR_MOD_LIMITACION:
+            ui->label_modo->setText("LIMITACION");
+            break;
+        case LACAN_VAR_MOD_APAGADO:
+            ui->label_modo->setText("APAGADO");
+            break;
+        case LACAN_VAR_MOD_RECUPERACION:
+            ui->label_modo->setText("RECUPERACION");
+            break;
+        case LACAN_VAR_MOD_PROTEGIDO:
+            ui->label_modo->setText("PROTEGIDO");
+            break;
+        default:
+            ui->label_modo->setText("DESCONCIDO");
+        }
+    }
 }
 
 void volante::on_pushButton_start_clicked()
@@ -292,6 +321,9 @@ void volante::on_edit_checkBox_stateChanged(int check)
 
         ui->spin_vol_sbyspeed_ref->setReadOnly(false);
         ui->spin_vol_isd_ref->setReadOnly(false);
+
+        ui->label_edit->setText("<font color='red'>MODO EDICION</font>");
+
     }else{
         send_queries = true;
 
@@ -303,6 +335,8 @@ void volante::on_edit_checkBox_stateChanged(int check)
 
         ui->spin_vol_sbyspeed_ref->setReadOnly(true);
         ui->spin_vol_isd_ref->setReadOnly(true);
+
+        ui->label_edit->setText("<font color='gray'>MODO EDICION</font>");
     }
 }
 

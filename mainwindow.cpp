@@ -521,11 +521,11 @@ void MainWindow::create_varmap_gen(){
 }
 
 void MainWindow::create_varmap_vol(){
-    LACAN_VAR W_VOL;
-    W_VOL.instantanea=LACAN_VAR_W_INST;
-    W_VOL.setp=LACAN_VAR_W_SETP;
-    W_VOL.max=LACAN_VAR_VOL_W_MAX;
-    W_VOL.min=LACAN_VAR_VOL_W_MIN;
+    //LACAN_VAR W_VOL;
+    //W_VOL.instantanea=LACAN_VAR_W_INST;
+    //W_VOL.setp=LACAN_VAR_W_SETP;
+    //W_VOL.max=LACAN_VAR_VOL_W_MAX;
+    //W_VOL.min=LACAN_VAR_VOL_W_MIN;
     LACAN_VAR ISD_VOL;
     ISD_VOL.instantanea=LACAN_VAR_ISD_INST;
     ISD_VOL.setp=LACAN_VAR_ISD_SETP;
@@ -550,7 +550,7 @@ void MainWindow::create_varmap_vol(){
     IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
 
     varmap_vol["Corriente de ID"]=ISD_VOL;
-    varmap_vol["Velocidad Angular"]=W_VOL;
+    //varmap_vol["Velocidad Angular"]=W_VOL;
     varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
     varmap_vol["Potencia de Salida"]=PO_VOL;
     varmap_vol["Torque"]=TORQ_VOL;
