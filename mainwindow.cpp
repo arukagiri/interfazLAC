@@ -140,13 +140,13 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
             abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
         }
         else{
-            val_union.var_char[0]=char(msg_log.back().BYTE3);
-            val_union.var_char[1]=char(msg_log.back().BYTE4);
-            val_union.var_char[2]=char(msg_log.back().BYTE5);
-            val_union.var_char[3]=char(msg_log.back().BYTE6);
+            val_union.var_char[0]=uchar(msg_log.back().BYTE3);
+            val_union.var_char[1]=uchar(msg_log.back().BYTE4);
+            val_union.var_char[2]=uchar(msg_log.back().BYTE5);
+            val_union.var_char[3]=uchar(msg_log.back().BYTE6);
 
             val_float = val_union.var_float;
-            abs_msg.var_val=QString::number(double(val_float));
+            abs_msg.var_val=QString::number(double(val_float),'f',2);
         }
         break;
 
@@ -169,13 +169,13 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
             abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
         }
         else{
-            val_union.var_char[0]=char(msg_log.back().BYTE2);
-            val_union.var_char[1]=char(msg_log.back().BYTE3);
-            val_union.var_char[2]=char(msg_log.back().BYTE4);
-            val_union.var_char[3]=char(msg_log.back().BYTE5);
+            val_union.var_char[0]=uchar(msg_log.back().BYTE2);
+            val_union.var_char[1]=uchar(msg_log.back().BYTE3);
+            val_union.var_char[2]=uchar(msg_log.back().BYTE4);
+            val_union.var_char[3]=uchar(msg_log.back().BYTE5);
 
             val_float = val_union.var_float;
-            abs_msg.var_val=QString::number(double(val_float));
+            abs_msg.var_val=QString::number(double(val_float),'f',2);
         }
         break;
 

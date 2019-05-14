@@ -317,10 +317,13 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->pushButton_start->setDisabled(true);
         ui->pushButton_stop->setDisabled(true);
 
+        ui->spin_vol_sbyspeed_ref->clearFocus();
+        ui->spin_vol_isd_ref->clearFocus();
+
         blockAllSpinSignals(false);
 
         ui->spin_vol_sbyspeed_ref->setReadOnly(false);
-        ui->spin_vol_isd_ref->setReadOnly(false);
+        ui->spin_vol_isd_ref->setReadOnly(false);        
 
         ui->label_edit->setText("<font color='red'>MODO EDICION</font>");
 

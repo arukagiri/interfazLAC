@@ -453,6 +453,15 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->pushButton_stop->setDisabled(true);
         ui->combo_modo->setDisabled(true);
 
+
+        ui->spin_gen_isd_ref->clearFocus();
+        ui->spin_gen_lim_ibat_ref->clearFocus();
+        ui->spin_gen_lim_ief_ref->clearFocus();
+        ui->spin_gen_lim_vdc_ref->clearFocus();
+        ui->spin_gen_pot_ref->clearFocus();
+        ui->spin_gen_speed_ref->clearFocus();
+        ui->spin_gen_torque_ref->clearFocus();
+
         blockAllSpinSignals(false);
 
         ui->spin_gen_isd_ref->setReadOnly(false);
