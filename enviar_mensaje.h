@@ -7,6 +7,8 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#define CANTIDAD_DISPOSITIVOS 2
+
 namespace Ui {
 class Enviar_Mensaje;
 }
