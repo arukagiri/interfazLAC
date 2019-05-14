@@ -67,7 +67,7 @@ private:
     void refresh_values();
     void send_qry_variables();
     void send_qry_references();
-    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var);
+    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue);
     void blockAllSpinSignals(bool b);
 
 signals:

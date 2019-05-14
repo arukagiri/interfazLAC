@@ -37,7 +37,7 @@
     <rect>
      <x>210</x>
      <y>260</y>
-     <width>143</width>
+     <width>172</width>
      <height>25</height>
     </rect>
    </property>
@@ -45,7 +45,7 @@
     <item>
      <widget class="QLabel" name="text_speed_ref">
       <property name="text">
-       <string>StandBy speed:</string>
+       <string>StandBy speed (rpm):</string>
       </property>
      </widget>
     </item>
@@ -66,7 +66,7 @@
     <rect>
      <x>700</x>
      <y>220</y>
-     <width>101</width>
+     <width>119</width>
      <height>25</height>
     </rect>
    </property>
@@ -74,7 +74,7 @@
     <item>
      <widget class="QLabel" name="text_id_ref">
       <property name="text">
-       <string>Id Ref:</string>
+       <string>Id Ref (A):</string>
       </property>
      </widget>
     </item>
@@ -193,7 +193,7 @@
           <item>
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>Energia (kJ):</string>
+             <string>Energia (J):</string>
             </property>
            </widget>
           </item>

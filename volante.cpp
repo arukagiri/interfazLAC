@@ -234,25 +234,27 @@ void volante::closeEvent(QCloseEvent *e){
 //   actual_mode = uint16_t(ui->combo_modo->itemData(index).toInt());
 //}
 
-void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var)
+void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
     blockAllSpinSignals(true);
     spin->clearFocus();
     data_can data;
     float value = float(spin->value());
-    int reply;
+    QMessageBox::StandardButton reply;
     QString str = "El valor a enviar es: ";
     str.append(QString::number(double(value)));
     str.append(". Confirma que desea enviar este valor?");
-    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
-    reply = dialog->exec();
-    if(reply){
+//    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
+    reply=QMessageBox::question(this,"Valor a enviar",str,QMessageBox::Yes|QMessageBox::No);
+
+    if(reply==QMessageBox::Yes){
         data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
         mw->LACAN_Set(var, data, 1, dest);
         mw->agregar_log_sent();
         referenceChanged = true;
     }
     blockAllSpinSignals(false);
+    spin->setValue(double(prevValue));
     ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
@@ -269,14 +271,12 @@ void volante::blockAllSpinSignals(bool b){
 
 void volante::on_spin_vol_sbyspeed_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_vol_sbyspeed_ref, LACAN_VAR_W_SETP);
-    ui->spin_vol_sbyspeed_ref->setValue(double(standby_ref));
+    processEditingFinished(ui->spin_vol_sbyspeed_ref, LACAN_VAR_STANDBY_W_SETP, standby_ref);
 }
 
 void volante::on_spin_vol_isd_ref_editingFinished()
 {
-    processEditingFinished(ui->spin_vol_isd_ref, LACAN_VAR_ISD_SETP);
-    ui->spin_vol_isd_ref->setValue(double(id_ref));
+    processEditingFinished(ui->spin_vol_isd_ref, LACAN_VAR_ISD_SETP, id_ref);
 }
 
 void volante::on_edit_checkBox_stateChanged(int check)
