@@ -124,6 +124,8 @@ private slots:
 
     void on_received_searchBar_textChanged(const QString &filter);
 
+    void on_pushButton_clicked();
+
 private:
 
     void filter_on_sent_searchBar(QString filter);

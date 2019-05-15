@@ -29,7 +29,7 @@
 
 
 /***Funciones genericas***/
-//Carga de mensajes al log en un txt, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
+//Carga de mensajes al log en un csv, se crea un archivo nuevo por mes en una carpeta llamada Log de Mensajes LACAN, la cual
 //(normalmente) se guarda en la carpeta Documentos del usuario.
 void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
     static uint8_t cont=0;
@@ -140,13 +140,13 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
             abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
         }
         else{
-            val_union.var_char[0]=char(msg_log.back().BYTE3);
-            val_union.var_char[1]=char(msg_log.back().BYTE4);
-            val_union.var_char[2]=char(msg_log.back().BYTE5);
-            val_union.var_char[3]=char(msg_log.back().BYTE6);
+            val_union.var_char[0]=uchar(msg_log.back().BYTE3);
+            val_union.var_char[1]=uchar(msg_log.back().BYTE4);
+            val_union.var_char[2]=uchar(msg_log.back().BYTE5);
+            val_union.var_char[3]=uchar(msg_log.back().BYTE6);
 
             val_float = val_union.var_float;
-            abs_msg.var_val=QString::number(double(val_float));
+            abs_msg.var_val=QString::number(double(val_float),'f',2);
         }
         break;
 
@@ -169,13 +169,13 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
             abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
         }
         else{
-            val_union.var_char[0]=char(msg_log.back().BYTE2);
-            val_union.var_char[1]=char(msg_log.back().BYTE3);
-            val_union.var_char[2]=char(msg_log.back().BYTE4);
-            val_union.var_char[3]=char(msg_log.back().BYTE5);
+            val_union.var_char[0]=uchar(msg_log.back().BYTE2);
+            val_union.var_char[1]=uchar(msg_log.back().BYTE3);
+            val_union.var_char[2]=uchar(msg_log.back().BYTE4);
+            val_union.var_char[3]=uchar(msg_log.back().BYTE5);
 
             val_float = val_union.var_float;
-            abs_msg.var_val=QString::number(double(val_float));
+            abs_msg.var_val=QString::number(double(val_float),'f',2);
         }
         break;
 
@@ -521,11 +521,11 @@ void MainWindow::create_varmap_gen(){
 }
 
 void MainWindow::create_varmap_vol(){
-    LACAN_VAR W_VOL;
-    W_VOL.instantanea=LACAN_VAR_W_INST;
-    W_VOL.setp=LACAN_VAR_W_SETP;
-    W_VOL.max=LACAN_VAR_VOL_W_MAX;
-    W_VOL.min=LACAN_VAR_VOL_W_MIN;
+    //LACAN_VAR W_VOL;
+    //W_VOL.instantanea=LACAN_VAR_W_INST;
+    //W_VOL.setp=LACAN_VAR_W_SETP;
+    //W_VOL.max=LACAN_VAR_VOL_W_MAX;
+    //W_VOL.min=LACAN_VAR_VOL_W_MIN;
     LACAN_VAR ISD_VOL;
     ISD_VOL.instantanea=LACAN_VAR_ISD_INST;
     ISD_VOL.setp=LACAN_VAR_ISD_SETP;
@@ -550,7 +550,7 @@ void MainWindow::create_varmap_vol(){
     IBAT_VOL.setp=LACAN_VAR_I_BAT_SETP;
 
     varmap_vol["Corriente de ID"]=ISD_VOL;
-    varmap_vol["Velocidad Angular"]=W_VOL;
+    //varmap_vol["Velocidad Angular"]=W_VOL;
     varmap_vol["Velocidad angular Standby"]=W_STBY_VOL;
     varmap_vol["Potencia de Salida"]=PO_VOL;
     varmap_vol["Torque"]=TORQ_VOL;
@@ -692,13 +692,12 @@ int MainWindow::LACAN_Msg_Handler(LACAN_MSG &mje, uint16_t& notsup_count, uint16
 
 //Maneja el caso de la llegada de un mensaje de error
 void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
-    QString msg_err ="Luli, no te asustes. Este es un mensaje de error pero no es un error de QT. Lo que esta ocurriendo es que algo se cago, probablemente si miras el code Compuse no esta andando el micro. Y nada el resto todo pillo Salu2. \n Dispositivo: ";
+    QString msg_err ="Se ha recibido un mensaje de error. \n Dispositivo: ";
     msg_err = msg_err +  QString::number(source) + "\nError: " + QString::number(err_cod) ;
     QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }
 
 //Maneja la llegada de un mensaje del tipo Post
-//VER q vamos a hacer aca
 void MainWindow::LACAN_POST_Handler(uint16_t source,uint16_t variable, data_can data){
     //VER crear archivo para cada variable e ir guardando en bloc de notas
     static uint post_cont = 0;
@@ -1434,3 +1433,24 @@ void MainWindow::on_pushButton_clicked(bool checked)
     LACAN_Post(LACAN_VAR_STANDBY_W_SETP,val);
 }*/
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    QString file_folder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString file_folder_backup = QDir::currentPath();
+    QString file_path = "/Log de Mensajes LACAN";
+    QString fullpath;
+
+    if(QDir(file_folder).exists()){
+        fullpath = file_folder + file_path;
+    }else{
+        fullpath = file_folder_backup + file_path;
+    }
+
+    if(QDir(fullpath).exists()){
+        QDesktopServices::openUrl( QUrl::fromLocalFile( fullpath ) );
+    }else{
+        QMessageBox::warning(this, "Error abriendo el directorio", "Todavia no han llegado mensajes para loguear, con lo cual no existe la carpeta.",QMessageBox::Ok);
+    }
+
+}

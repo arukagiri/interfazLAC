@@ -37,23 +37,26 @@ private:
 
     data_can recibed_val;
 
+    //paramétros del volante
+    const double J = 0.5726;
+
     //Variables de Entrada
-    float id_ref = -5;
-    float speed_ref = -5;
-    float standby_ref = -5;
+    float id_ref = refValue;
+    float speed_ref = refValue;
+    float standby_ref = refValue;
 
     //Variables de Salida
-    float vol_vo = -5;
-    float vol_io = -5;
-    float vol_po = -5;
-    float vol_ibat = -5;
-    float vol_vel = -5;
-    float vol_tor = -5;
-    float vol_ener = -5;
+    float vol_vo = refValue;
+    float vol_io = refValue;
+    float vol_po = refValue;
+    float vol_ibat = refValue;
+    float vol_vel = refValue;
+    float vol_tor = refValue;
+    float vol_ener = refValue;
     bool send_queries;
     bool referenceChanged;
 
-    uint16_t actual_mode;
+    uint16_t actual_mode = uint16_t(refValue);
     uint16_t previous_mode;
     uint16_t cmd;
     data_can val;
@@ -61,11 +64,10 @@ private:
 
     QTimer *time_2sec;
 
-    void refresh_mode();
     void refresh_values();
     void send_qry_variables();
     void send_qry_references();
-    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var);
+    void processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue);
     void blockAllSpinSignals(bool b);
 
 signals:
@@ -75,7 +77,7 @@ private slots:
 
     void timer_handler();
 
-    void verificar_mode_changed();
+//    void verificar_mode_changed();
 
     void VOLpost_Handler(LACAN_MSG msg);
 
@@ -85,9 +87,9 @@ private slots:
 
     void on_pushButton_stop_clicked();
 
-    void on_combo_modo_currentIndexChanged(int index);
+//    void on_combo_modo_currentIndexChanged(int index);
 
-    void on_spin_vol_speed_ref_editingFinished();
+//    void on_spin_vol_speed_ref_editingFinished();
 
     void on_spin_vol_sbyspeed_ref_editingFinished();
 

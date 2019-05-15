@@ -78,11 +78,19 @@
 #define LACAN_VAR_MOD           0xC0
 
 //Modos NOTA: estos valores corresponden al campo de datos y no al de tipo de variable en los mensajes
-#define LACAN_VAR_MOD_VEL       0x00
-#define LACAN_VAR_MOD_MPPT      0x01
-#define LACAN_VAR_MOD_TORQ      0x02
-#define LACAN_VAR_MOD_POT       0x03
-#define LACAN_VAR_MOD_INER      0x04
+#define LACAN_VAR_MOD_VEL           0x00
+#define LACAN_VAR_MOD_MPPT          0x01
+#define LACAN_VAR_MOD_TORQ          0x02
+#define LACAN_VAR_MOD_POT           0x03
+#define LACAN_VAR_MOD_INER          0x04
+#define LACAN_VAR_MOD_PREARRANQUE   0x05
+#define LACAN_VAR_MOD_INICIO        0x06
+#define LACAN_VAR_MOD_ARRANQUE      0x07
+#define LACAN_VAR_MOD_COMPENSACION  0x08
+#define LACAN_VAR_MOD_LIMITACION    0x09
+#define LACAN_VAR_MOD_APAGADO       0x10
+#define LACAN_VAR_MOD_RECUPERACION  0x11
+#define LACAN_VAR_MOD_PROTEGIDO     0x12
 
 
 // Diccionario de resultados (RES). 8 bits (0x00 a 0xff)

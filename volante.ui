@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>80</y>
-     <width>881</width>
-     <height>481</height>
+     <y>120</y>
+     <width>861</width>
+     <height>421</height>
     </rect>
    </property>
    <property name="text">
@@ -35,9 +35,9 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>260</y>
-     <width>143</width>
+     <x>20</x>
+     <y>130</y>
+     <width>172</width>
      <height>25</height>
     </rect>
    </property>
@@ -45,7 +45,7 @@
     <item>
      <widget class="QLabel" name="text_speed_ref">
       <property name="text">
-       <string>StandBy speed:</string>
+       <string>StandBy speed (rpm):</string>
       </property>
      </widget>
     </item>
@@ -64,9 +64,9 @@
   <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>590</x>
      <y>220</y>
-     <width>101</width>
+     <width>119</width>
      <height>25</height>
     </rect>
    </property>
@@ -74,7 +74,7 @@
     <item>
      <widget class="QLabel" name="text_id_ref">
       <property name="text">
-       <string>Id Ref:</string>
+       <string>Id Ref (A):</string>
       </property>
      </widget>
     </item>
@@ -193,7 +193,7 @@
           <item>
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>Energia (kJ):</string>
+             <string>Energia (J):</string>
             </property>
            </widget>
           </item>
@@ -279,35 +279,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_8">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>90</y>
-     <width>121</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
-    <item>
-     <widget class="QLabel" name="text_speed_ref_2">
-      <property name="text">
-       <string>Speed Ref:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QDoubleSpinBox" name="spin_vol_speed_ref">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -367,55 +338,50 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QLabel" name="label_modo">
+       <widget class="QLabel" name="label_mod">
         <property name="text">
          <string>Modo:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combo_modo">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>140</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>140</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
-      <item>
-       <widget class="QPushButton" name="pushButton_apply">
+       <widget class="QLabel" name="label_modo">
         <property name="text">
-         <string>Apply</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_cancel">
-        <property name="text">
-         <string>Cancel</string>
+         <string>modo</string>
         </property>
        </widget>
       </item>
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_edit">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>211</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Consolas</family>
+     <pointsize>19</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="imagenes.qrc">:/Imagenes/MODO_EDICION.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources>

@@ -31,7 +31,7 @@ Consultar::Consultar(QWidget *parent, uint16_t destMw) :
         varmap = mw->varmap_gen;
 
         ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
-        ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
+        //ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
         ui->list_VARIABLE_QRY->addItem("Torque");
         ui->list_VARIABLE_QRY->addItem("Tension de Salida");
         ui->list_VARIABLE_QRY->addItem("Corriente de ISD");
