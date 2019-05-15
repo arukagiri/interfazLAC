@@ -361,10 +361,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>171</width>
-     <height>41</height>
+     <x>10</x>
+     <y>10</y>
+     <width>211</width>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
@@ -374,7 +374,13 @@
     </font>
    </property>
    <property name="text">
-    <string>MODO EDICION</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="imagenes.qrc">:/Imagenes/MODO_EDICION.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

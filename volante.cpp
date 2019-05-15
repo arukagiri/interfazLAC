@@ -48,7 +48,7 @@ volante::volante(QWidget *parent) :
     QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
-    ui->label_edit->setText("<font color='gray'>MODO EDICION</font>");
+    ui->label_edit->setDisabled(true);
 }
 
 volante::~volante()
@@ -325,7 +325,7 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->spin_vol_sbyspeed_ref->setReadOnly(false);
         ui->spin_vol_isd_ref->setReadOnly(false);        
 
-        ui->label_edit->setText("<font color='red'>MODO EDICION</font>");
+        ui->label_edit->setEnabled(true);
 
     }else{
         send_queries = true;
@@ -339,7 +339,7 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->spin_vol_sbyspeed_ref->setReadOnly(true);
         ui->spin_vol_isd_ref->setReadOnly(true);
 
-        ui->label_edit->setText("<font color='gray'>MODO EDICION</font>");
+        ui->label_edit->setDisabled(true);
     }
 }
 

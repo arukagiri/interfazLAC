@@ -67,6 +67,8 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
     QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+
+    ui->label_edit->setDisabled(true);
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -471,6 +473,9 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->spin_gen_pot_ref->setReadOnly(false);
         ui->spin_gen_speed_ref->setReadOnly(false);
         ui->spin_gen_torque_ref->setReadOnly(false);
+
+        ui->label_edit->setEnabled(true);
+
     }else{
         send_queries = true;
 
@@ -488,6 +493,8 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->spin_gen_pot_ref->setReadOnly(true);
         ui->spin_gen_speed_ref->setReadOnly(true);
         ui->spin_gen_torque_ref->setReadOnly(true);
+
+        ui->label_edit->setDisabled(true);
     }
 }
 
