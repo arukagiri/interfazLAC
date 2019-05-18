@@ -44,6 +44,8 @@ Comandar::Comandar(QWidget *parent, uint16_t destEx) :
             ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
             ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
             ui->list_COMANDO->addItem("Reset",QVariant(LACAN_CMD_RESET));
+            ui->list_COMANDO->addItem("Enable",QVariant(LACAN_CMD_ENABLE));
+            ui->list_COMANDO->addItem("Disable",QVariant(LACAN_CMD_DISABLE));
             cmd = LACAN_CMD_START;  //inicializo con el primero
 
             //var_set=LACAN_VAR_PO_SETP;
@@ -68,8 +70,11 @@ Comandar::Comandar(QWidget *parent, uint16_t destEx) :
             //mode_set = LACAN_VAR_MOD_VEL;   //inicializo con el primero
 
             ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
+            ui->list_COMANDO->addItem("Shutdown",QVariant(LACAN_CMD_SHUTDOWN));
             ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
             ui->list_COMANDO->addItem("Reset",QVariant(LACAN_CMD_RESET));
+            ui->list_COMANDO->addItem("Enable",QVariant(LACAN_CMD_ENABLE));
+            ui->list_COMANDO->addItem("Disable",QVariant(LACAN_CMD_DISABLE));
             cmd = LACAN_CMD_START;
 
         break;

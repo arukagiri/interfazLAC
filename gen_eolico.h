@@ -106,7 +106,6 @@ private slots:
     void on_edit_checkBox_stateChanged(int checked);
 
     void changeEditState();
-
 };
 
 #endif // GEN_EOLICO_H

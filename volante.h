@@ -98,6 +98,7 @@ private slots:
     void on_edit_checkBox_stateChanged(int check);
 
     void changeEditState();
+    void on_pushButton_shutdown_clicked();
 };
 
 #endif // VOLANTE_H

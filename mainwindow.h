@@ -126,6 +126,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButton_gen_enable_clicked();
+
+    void on_pushButton_gen_disable_clicked();
+
 private:
 
     void filter_on_sent_searchBar(QString filter);
@@ -139,6 +143,8 @@ private:
     void create_varmap_vol();
 
     uint16_t verificar_destino();
+
+    uint16_t cmd_enable;
 
 public:
     ReaderThread* readerth;

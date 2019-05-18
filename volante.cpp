@@ -220,12 +220,23 @@ void volante::on_pushButton_stop_clicked()
     mw->agregar_log_sent();
 }
 
+
+void volante::on_pushButton_shutdown_clicked()
+{
+    cmd=LACAN_CMD_SHUTDOWN;
+    mw->LACAN_Do(cmd,false,dest);
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+}
+
 void volante::on_pushButton_comandar_clicked()
 {
     Comandar *comwin = new Comandar(mw,dest);
     comwin->setModal(true);
     comwin->show();
 }
+
+
 
 //void volante::verificar_mode_changed(){
 //    QMessageBox::StandardButton reply;
@@ -347,3 +358,4 @@ void volante::changeEditState()
 {
     ui->edit_checkBox->toggle();
 }
+

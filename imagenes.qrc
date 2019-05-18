@@ -22,5 +22,7 @@
         <file>Imagenes/lacan.png</file>
         <file>Imagenes/LACAN-LOGO.png</file>
         <file>Imagenes/MODO_EDICION.png</file>
+        <file>Imagenes/stop2.png</file>
+        <file>Imagenes/STOP3.png</file>
     </qresource>
 </RCC>
