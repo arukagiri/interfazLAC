@@ -37,6 +37,14 @@ private slots:
 
     void on_button_boost_clicked();
 
+    void on_pushButton_gen_enable_clicked();
+
+    void on_pushButton_gen_disable_clicked();
+
+    void on_pushButton_vol_enable_clicked();
+
+    void on_pushButton_vol_disable_clicked();
+
 private:
     Ui::EstadoRed *ui;
     MainWindow* mw ;
@@ -62,6 +70,9 @@ private:
     float vol_vel;
     float vol_tor;
     uint16_t vol_mod;
+
+    uint16_t cmd;
+    uint16_t dest;
 
     void refresh_values(void);
     void send_qry(void);

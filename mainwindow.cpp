@@ -1454,3 +1454,20 @@ void MainWindow::on_pushButton_clicked()
     }
 
 }
+
+void MainWindow::on_pushButton_gen_enable_clicked()
+{
+    cmd_enable = LACAN_CMD_ENABLE;
+    this->LACAN_Do(cmd_enable,false,LACAN_ID_BROADCAST);
+    connect(&(this->msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
+    this->agregar_log_sent();
+}
+
+void MainWindow::on_pushButton_gen_disable_clicked()
+{
+    cmd_enable = LACAN_CMD_DISABLE;
+    this->LACAN_Do(cmd_enable,false,LACAN_ID_BROADCAST);
+    connect(&(this->msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
+    this->agregar_log_sent();
+
+}

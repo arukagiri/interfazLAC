@@ -193,6 +193,15 @@ QString detect_cmd(uint8_t cmd){
     case LACAN_CMD_STOP:
         return "Stop";
 
+    case LACAN_CMD_SHUTDOWN:
+        return "Shutdown";
+
+    case LACAN_CMD_ENABLE:
+        return "Enable";
+
+    case LACAN_CMD_DISABLE:
+        return "Disable";
+
     default:
         return "No especificada o soportada";
     }

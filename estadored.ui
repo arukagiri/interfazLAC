@@ -13,29 +13,6 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="button_pc">
-   <property name="geometry">
-    <rect>
-     <x>180</x>
-     <y>260</y>
-     <width>161</width>
-     <height>151</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="imagenes.qrc">
-     <normaloff>:/Imagenes/PC.png</normaloff>:/Imagenes/PC.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>170</width>
-     <height>170</height>
-    </size>
-   </property>
-  </widget>
   <widget class="QPushButton" name="button_vol">
    <property name="geometry">
     <rect>
@@ -508,6 +485,84 @@
        </layout>
       </item>
      </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>180</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_12">
+    <item>
+     <widget class="QPushButton" name="pushButton_gen_enable">
+      <property name="text">
+       <string>Enable</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_gen_disable">
+      <property name="text">
+       <string>Disable</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_4">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>180</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_13">
+    <item>
+     <widget class="QPushButton" name="pushButton_boost_enable">
+      <property name="text">
+       <string>Enable</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_boost_disable">
+      <property name="text">
+       <string>Disable</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_5">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>310</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_14">
+    <item>
+     <widget class="QPushButton" name="pushButton_vol_enable">
+      <property name="text">
+       <string>Enable</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_vol_disable">
+      <property name="text">
+       <string>Disable</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

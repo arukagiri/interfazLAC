@@ -271,6 +271,40 @@ void EstadoRed::on_button_boost_clicked()
 }
 
 
+void EstadoRed::on_pushButton_gen_enable_clicked(){
+    dest = LACAN_ID_GEN;
+    cmd = LACAN_CMD_ENABLE;
+    mw->LACAN_Do(cmd,false,dest);
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+}
+
+void EstadoRed::on_pushButton_gen_disable_clicked(){
+    dest = LACAN_ID_GEN;
+    cmd = LACAN_CMD_DISABLE;
+    mw->LACAN_Do(cmd,false,dest);
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+}
+
+void EstadoRed::on_pushButton_vol_enable_clicked(){
+    dest = LACAN_ID_VOLANTE;
+    cmd = LACAN_CMD_ENABLE;
+    mw->LACAN_Do(cmd,false,dest);
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+
+}
+
+void EstadoRed::on_pushButton_vol_disable_clicked(){
+    dest = LACAN_ID_VOLANTE;
+    cmd = LACAN_CMD_DISABLE;
+    mw->LACAN_Do(cmd,false,dest);
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+}
+
+
 void EstadoRed::closeEvent(QCloseEvent *e){
     mw->change_ERflag();
     time_2sec->stop();
@@ -287,3 +321,4 @@ EstadoRed::~EstadoRed()
 void EstadoRed::handle_dispWindowsClosed(){
    send_queries = true;
 }
+
