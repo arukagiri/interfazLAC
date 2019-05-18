@@ -28,7 +28,7 @@ Para realizar el *deployment* de la aplicación en Windows debe ejecutarse el ap
 * Borrar todos los archivos dentro de *release* menos el **.exe** de la aplicación.
 * Ejecutar **windeployqt.exe** usando como parametro el *path* de dicho **.exe**. 
 
-**NOTA:**El directorio de release debe tener incluido el path del compilador y las herramientas de Qt (Ej. C:\Qt\Tools\mingw530_32\bin).
+**NOTA:** El directorio de release debe tener incluido el path del compilador y las herramientas de Qt (Ej. C:\Qt\Tools\mingw530_32\bin).
 
 ## Construido con
 
