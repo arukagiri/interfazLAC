@@ -2,7 +2,6 @@
 #include "ui_enviar_mensaje.h"
 #include <QtCore>
 #include <QtGui>
-#include <QDebug>
 #include <QMap>
 
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
@@ -31,17 +30,6 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_DESTINO->addItem("Generador", LACAN_ID_GEN);
     ui->list_DESTINO->addItem("Volante", LACAN_ID_VOLANTE);
     ui->list_DESTINO->addItem("Boost", LACAN_ID_BOOST);
-
-//    ui->list_VARIABLE->addItem("Corriente de Entrada");
-//    ui->list_VARIABLE->addItem("Corriente de Salida");
-//    ui->list_VARIABLE->addItem("Corriente de ISD");
-//    ui->list_VARIABLE->addItem("Corriente Eficaz");
-//    ui->list_VARIABLE->addItem("Potencia de Entrada");
-//    ui->list_VARIABLE->addItem("Potencia de Salida");
-//    ui->list_VARIABLE->addItem("Tension de Entrada");
-//    ui->list_VARIABLE->addItem("Tension de Salida");
-//    ui->list_VARIABLE->addItem("Velocidad Angular");
-//    ui->list_VARIABLE->addItem("Modo");
 
     ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
     ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);

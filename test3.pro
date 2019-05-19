@@ -33,7 +33,6 @@ SOURCES += \
     enviar_mensaje.cpp \
     estadored.cpp \
     gen_eolico.cpp \
-    tiempo.cpp \
     better_serialfunc.cpp \
     addnewdevdialog.cpp \
     volante.cpp \
@@ -52,7 +51,6 @@ HEADERS += \
     enviar_mensaje.h \
     estadored.h \
     gen_eolico.h \
-    tiempo.h \
     pc.h \
     lacan_detect.h \
     better_serialfunc.h \

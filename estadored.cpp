@@ -1,8 +1,6 @@
 #include "estadored.h"
 #include "ui_estadored.h"
 #include "gen_eolico.h"
-#include <QPixmap>
-#include <QDebug>
 #include <QLabel>
 #include "PC.h"
 #include <QTimer>
@@ -45,7 +43,6 @@ EstadoRed::EstadoRed(QWidget *parent) :
     send_qry();
     set_states();
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-    //send_qry();
     send_queries = true;
     time_2sec->start(2000);
 
@@ -54,10 +51,10 @@ EstadoRed::EstadoRed(QWidget *parent) :
 void EstadoRed::refresh_values(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        ui->label_gen_vo->setText(QString::number(gen_vo,'f',2));
-        ui->label_gen_io->setText(QString::number(gen_io,'f',2));
-        ui->label_gen_velocidad->setText(QString::number(gen_vel,'f',2));
-        ui->label_gen_torque->setText(QString::number(gen_tor,'f',2));
+        ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
+        ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
+        ui->label_gen_velocidad->setText(QString::number(double(gen_vel),'f',2));
+        ui->label_gen_torque->setText(QString::number(double(gen_tor),'f',2));
         ui->label_gen_modo->setText(detect_mode(gen_mod));
     }
     else{
@@ -69,10 +66,10 @@ void EstadoRed::refresh_values(){
     }
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
-        ui->label_vol_vo->setText(QString::number(vol_vo,'f',2));
-        ui->label_vol_io->setText(QString::number(vol_io,'f',2));
-        ui->label_vol_velocidad->setText(QString::number(vol_vel,'f',2));
-        ui->label_vol_torque->setText(QString::number(vol_tor,'f',2));
+        ui->label_vol_vo->setText(QString::number(double(vol_vo),'f',2));
+        ui->label_vol_io->setText(QString::number(double(vol_io),'f',2));
+        ui->label_vol_velocidad->setText(QString::number(double(vol_vel),'f',2));
+        ui->label_vol_torque->setText(QString::number(double(vol_tor),'f',2));
         ui->label_vol_modo->setText(detect_mode(vol_mod));
     }
     else{
@@ -83,30 +80,12 @@ void EstadoRed::refresh_values(){
         ui->label_vol_modo->setText("Modo: ----");
     }
 
-    /*if(mw->device_is_connected(LACAN_ID_BOOST)){
-        ui->label_boost_vo->setText(QString::number(boost_vo,'f',2));
-        ui->label_boost_io->setText(QString::number(boost_io,'f',2));
-        ui->label_boost_vi->setText(QString::number(boost_vi,'f',2));
-        ui->label_boost_ii->setText(QString::number(boost_io,'f',2));
-        ui->label_boost_modo->setText(detect_mode(boost_mod));
-    }
-    else{
-        ui->label_boost_vo->setText("----");
-        ui->label_boost_io->setText("----");
-        ui->label_boost_vi->setText("----");
-        ui->label_boost_ii->setText("----");
-        ui->label_boost_modo->setText("Modo: ----");
-    }*/
-
-
 }
 
 void EstadoRed::send_qry(){
 
     uint16_t dest=0;
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        //VER Antes no tenia ningun argumento correspondiente a showAck y andaba...
-        //se lo tuve q poner al pasar todo a la MW
         dest=LACAN_ID_GEN;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
@@ -215,21 +194,8 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
                     break;
             }
             break;
-
-            /*case LACAN_ID_BOOST:
-                switch (variable) {
-                case LACAN_VAR_IO_INST:
-                    boost_io=msg.BYTE2;
-                    break;
-                case LACAN_VAR_VO_INST:
-                    boost_vo=msg.BYTE2;
-                    break;
-                default:
-                    break;
-                }
-                break;*/
-    default:
-        break;
+        default:
+            break;
     }
 
 }

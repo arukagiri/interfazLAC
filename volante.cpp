@@ -236,29 +236,6 @@ void volante::on_pushButton_comandar_clicked()
     comwin->show();
 }
 
-
-
-//void volante::verificar_mode_changed(){
-//    QMessageBox::StandardButton reply;
-//    QString str="¿Esta seguro que desea cambiar al modo ";
-//    str.append(ui->combo_modo->currentText());
-//    str.append(" ?");
-//    reply = QMessageBox::question(this,"Confirm",str, QMessageBox::Yes | QMessageBox::No );
-//    if(reply==QMessageBox::Yes){
-//        data_can modo;
-//        modo.var_char[0] = uchar(actual_mode);
-//        modo.var_char[1] = 0;
-//        modo.var_char[2] = 0;
-//        modo.var_char[3] = 0;
-//        mw->LACAN_Set(LACAN_VAR_MOD,modo,false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
-//        mw->agregar_log_sent();
-//    }
-//    else{
-//        actual_mode=previous_mode;
-//    }
-//}
-
 void volante::closeEvent(QCloseEvent *e){
     time_2sec->stop();
     delete time_2sec;
@@ -267,12 +244,6 @@ void volante::closeEvent(QCloseEvent *e){
 
     QDialog::closeEvent(e);
 }
-
-//void volante::on_combo_modo_currentIndexChanged(int index)
-//{
-//   previous_mode = actual_mode;     //guardo el modo anterior por si el usuario cancela el cambio
-//   actual_mode = uint16_t(ui->combo_modo->itemData(index).toInt());
-//}
 
 void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
@@ -284,7 +255,6 @@ void volante::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float p
     QString str = "El valor a enviar es: ";
     str.append(QString::number(double(value)));
     str.append(". Confirma que desea enviar este valor?");
-//    QMessageBox* dialog = new QMessageBox(QMessageBox::Question, "Valor a enviar", str, QMessageBox::Yes | QMessageBox::No, this);
     reply=QMessageBox::question(this,"Valor a enviar",str,QMessageBox::Yes|QMessageBox::No);
 
     if(reply==QMessageBox::Yes){
@@ -302,12 +272,6 @@ void volante::blockAllSpinSignals(bool b){
     ui->spin_vol_isd_ref->blockSignals(b);
     ui->spin_vol_sbyspeed_ref->blockSignals(b);
 }
-
-//void volante::on_spin_vol_speed_ref_editingFinished()
-//{
-//    processEditingFinished(ui->spin_vol_speed_ref, LACAN_VAR_W_SETP);
-//    ui->spin_vol_speed_ref->setValue(double(speed_ref));
-//}
 
 void volante::on_spin_vol_sbyspeed_ref_editingFinished()
 {

@@ -16,7 +16,6 @@ class ReaderThread : public QThread
     LACAN_MSG mensaje_recibido(char *sub_pila);
 public:
     ReaderThread(QSerialPort& serial_port);
-    //virtual void run() override;
 signals:
     void receivedMsg(LACAN_MSG msg);
     void msgLost(uint amountLostTillNow);

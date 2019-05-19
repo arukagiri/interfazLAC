@@ -36,7 +36,6 @@ default:
 
 //Errores
 QString detect_err(uint8_t err){
-    qDebug()<<"ERROR DENTRO DE DETECT = "<<err;
     switch (err){
         case LACAN_ERR_GENERIC_ERR:
         return "Generic Error";
@@ -208,7 +207,7 @@ QString detect_cmd(uint8_t cmd){
 }
 
 //Modo
-QString detect_mode(uint8_t modo){
+QString detect_mode(uint16_t modo){
     switch (modo){
     case LACAN_VAR_MOD_POT:
         return "Modo Potencia";

@@ -1,5 +1,4 @@
 #include "readerthread.h"
-#include <QDebug>
 
 ReaderThread::ReaderThread(QSerialPort& serial_port)
 {
@@ -7,7 +6,7 @@ ReaderThread::ReaderThread(QSerialPort& serial_port)
 }
 
 void ReaderThread::handleRead(){
-    uint cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
+    uint cant_msg=0, msgLeft=0;     //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
     uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
 
@@ -23,9 +22,6 @@ void ReaderThread::handleRead(){
 
             //Copio un mensaje de la pila al buffer(el primero que llego)
             for(uint j=0;j<first_byte[1];j++){
-                //sub_pila[h]=pila.at(j);
-                //h++;
-                //VER esto deberia suplir lo q se hace arriba
                 sub_pila[j]=pila.at(j);
             }
 
@@ -114,8 +110,7 @@ uint ReaderThread::readport(vector<char> &pila, uint16_t* first_byte, QSerialPor
 
 
             if(((buffer[current_byte])&0xFF)==0x55){
-                if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
-                    //current_byte=0; //reseteamos variables para volverlas a usar en el proximo mensaje
+                if(uchar(current_byte-first_byte[cant_msg])>=uchar((dlc+5)-1)){
                     dlc=0;
                     cant_msg++;
                     lastMsgIsFull=true;
@@ -129,7 +124,7 @@ uint ReaderThread::readport(vector<char> &pila, uint16_t* first_byte, QSerialPor
                 }
             }
             else{
-                if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
+                if(uchar(current_byte-first_byte[cant_msg])>=uchar((dlc+5)-1)){
                     index_buffer=first_byte[cant_msg];
                     losedMsgCount++;
                     continue;
@@ -172,27 +167,27 @@ LACAN_MSG ReaderThread::mensaje_recibido(char *sub_pila){
     mje.DLC=sub_pila[1]&DLC_MASK;//Me quedo unicamente con el DLC (la primer mitad del byte es 0xC)
     //Como los bytes de ID se mandan al reves, tenemos la parte menos significativa del campo de funcion
     //en el primer byte (primeros 3 bits) y la mas significativa en el segundo (ultimos 3 bits)
-    uint16_t fun=((sub_pila[2]&BOTTOM_FUN_MASK)>>FUN_MOV_BOTTOM)|((sub_pila[3]&UPPER_FUN_MASK)<<FUN_MOV_UPPER);
+    uint16_t fun=uint16_t(((sub_pila[2]&BOTTOM_FUN_MASK)>>FUN_MOV_BOTTOM)|((sub_pila[3]&UPPER_FUN_MASK)<<FUN_MOV_UPPER));
     uint16_t source=sub_pila[2]&LACAN_IDENT_MASK;
-    mje.ID=(fun<<FUN_MOV_FORSOURCE)|source;//armamos la ID de la forma en la cual esta diseñado CAN para facil entendimiento y utilizacion
+    mje.ID=uint16_t((fun<<FUN_MOV_FORSOURCE)|source);//armamos la ID de la forma en la cual esta diseñado CAN para facil entendimiento y utilizacion
     //Se almacenan los datos en la struct diseñada para el mensaje, el switch se comporta como cascada (sin breaks)
     switch(mje.DLC){
     case(8):
-        mje.BYTE7=sub_pila[11];
+        mje.BYTE7=uchar(sub_pila[11]);
     [[clang::fallthrough]]; case(7):
-        mje.BYTE6=sub_pila[10];
+        mje.BYTE6=uchar(sub_pila[10]);
     [[clang::fallthrough]]; case(6):
-        mje.BYTE5=sub_pila[9];
+        mje.BYTE5=uchar(sub_pila[9]);
     [[clang::fallthrough]]; case(5):
-        mje.BYTE4=sub_pila[8];
+        mje.BYTE4=uchar(sub_pila[8]);
     [[clang::fallthrough]]; case(4):
-        mje.BYTE3=sub_pila[7];
+        mje.BYTE3=uchar(sub_pila[7]);
     [[clang::fallthrough]]; case(3):
-        mje.BYTE2=sub_pila[6];
+        mje.BYTE2=uchar(sub_pila[6]);
     [[clang::fallthrough]]; case(2):
-        mje.BYTE1=sub_pila[5];
+        mje.BYTE1=uchar(sub_pila[5]);
     [[clang::fallthrough]]; case(1):
-        mje.BYTE0=sub_pila[4];
+        mje.BYTE0=uchar(sub_pila[4]);
     }
      return mje;
 }
