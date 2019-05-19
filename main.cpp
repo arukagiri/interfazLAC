@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "openport.h"
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
@@ -13,4 +14,5 @@ int main(int argc, char *argv[])
     op->show();
 
     return a.exec();
+
 }

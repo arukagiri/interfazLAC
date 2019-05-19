@@ -10,46 +10,50 @@ void ReaderThread::handleRead(){
     uint cant_msg=0, msgLeft=0; //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
     uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
-    static uint16_t notsup_count, notsup_gen;
 
-    //Leemos el puerto pasando la pila en la cual se guardaran los mensajes, el array donde se indica la posicion del
-    //principio de cada uno, y obviamente el puerto utilizado. Devuelve la cantidad de mensajes enteros leidos
-    cant_msg=readport2(pila, first_byte, *thread_serial_port);
-    msgLeft = cant_msg;//En un principio la cantidad de mensajes que faltan procesar es la misma que los leidos del puerto
-    //Se procesa cada mensaje en cada ciclo
-    for(uint i=0;i<cant_msg;i++){
-        LACAN_MSG msg;
-        char sub_pila[13]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
+    try {
+        //Leemos el puerto pasando la pila en la cual se guardaran los mensajes, el array donde se indica la posicion del
+        //principio de cada uno, y obviamente el puerto utilizado. Devuelve la cantidad de mensajes enteros leidos
+        cant_msg=readport(pila, first_byte, *thread_serial_port);
+        msgLeft = cant_msg;//En un principio la cantidad de mensajes que faltan procesar es la misma que los leidos del puerto
+        //Se procesa cada mensaje en cada ciclo
+        for(uint i=0;i<cant_msg;i++){
+            LACAN_MSG msg;
+            char sub_pila[13]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
 
-        //Copio un mensaje de la pila al buffer(el primero que llego)
-        for(uint j=0;j<first_byte[1];j++){
-            //sub_pila[h]=pila.at(j);
-            //h++;
-            //VER esto deberia suplir lo q se hace arriba
-            sub_pila[j]=pila.at(j);
+            //Copio un mensaje de la pila al buffer(el primero que llego)
+            for(uint j=0;j<first_byte[1];j++){
+                //sub_pila[h]=pila.at(j);
+                //h++;
+                //VER esto deberia suplir lo q se hace arriba
+                sub_pila[j]=pila.at(j);
+            }
+
+            //Borro el mensaje que acabo de copiar a la sub pila
+            pila.erase(pila.begin()+first_byte[0],pila.begin()+first_byte[1]);
+
+            //Reconfiguro los indices q indican el comienzo de cada mensaje (saco la longitud del proximo mensaje y se la sumo
+            //al indice que indica el final del anterior)
+            for(uint k=1; k<msgLeft; k++){
+                first_byte[k]=first_byte[k+1]-first_byte[k]+first_byte[k-1];
+            }
+            msgLeft--;//Disminuyo la cantidad de mensajes que faltan procesar
+
+            //Transformo el mensaje de bytes al tipo de dato LACAN_MSG para trabajarlo mas facilmente
+            msg=mensaje_recibido(sub_pila);
+            emit receivedMsg(msg);
+
         }
-
-        //Borro el mensaje que acabo de copiar a la sub pila
-        pila.erase(pila.begin()+first_byte[0],pila.begin()+first_byte[1]);
-
-        //Reconfiguro los indices q indican el comienzo de cada mensaje (saco la longitud del proximo mensaje y se la sumo
-        //al indice que indica el final del anterior)
-        for(uint k=1; k<msgLeft; k++){
-            first_byte[k]=first_byte[k+1]-first_byte[k]+first_byte[k-1];
-        }
-        msgLeft--;//Disminuyo la cantidad de mensajes que faltan procesar
-
-        //Transformo el mensaje de bytes al tipo de dato LACAN_MSG para trabajarlo mas facilmente
-        msg=mensaje_recibido2(sub_pila);
-        emit receivedMsg(msg);
-
+    } catch (...) {
+        pila.clear();
     }
+
 
 }
 
 //Se encarga de leer el puerto, busca un nuevo dato, si ReadChar no lo encuentra regresa automaticamente
 //Verifica los primeros 12bits para verificar que es un mensaje valido, no se contempla la verificacion del final del mensaje
-uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
+uint ReaderThread::readport(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
     qint64 newdataflag = 0;
     static char buffer[200];
     uint cantBytes=0;
@@ -67,102 +71,103 @@ uint ReaderThread::readport2(vector<char> &pila, uint16_t* first_byte, QSerialPo
         index_buffer++;        //ya apunta a la siguiente
         uint current_byte = index_buffer - 1;
 
-        qDebug()<<"nuevo byte: "<<QString::number(buffer[index_buffer-1]);
-
-        if((buffer[current_byte]&0xFF)==0xAA){
-            if(current_byte-first_byte[cant_msg]!=0){
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                continue;
-            }else{
-                llegoAA = true;
-                continue;
-            }
-        }
-        else{
-            if(current_byte-first_byte[cant_msg]==0){
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                continue;
-            }
-        }
-
-        if((((buffer[current_byte]&0xFF)>>4)==0xC) && llegoAA){  //ultimos 4 bits de cabecera
-            if(current_byte-first_byte[cant_msg]==1){
-                dlc=buffer[current_byte]&15;                //extraigo dlc
-                llegoAA = false;
-                continue;
+        try {
+            if((buffer[current_byte]&0xFF)==0xAA){
+                if(current_byte-first_byte[cant_msg]!=0){
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    continue;
+                }else{
+                    llegoAA = true;
+                    continue;
+                }
             }
             else{
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                llegoAA = false;
-                continue;
+                if(current_byte-first_byte[cant_msg]==0){
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    continue;
+                }
             }
-        }
-        else{
-            if(current_byte-first_byte[cant_msg]==1){
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                llegoAA = false;
-                continue;
+
+            if((((buffer[current_byte]&0xFF)>>4)==0xC) && llegoAA){  //ultimos 4 bits de cabecera
+                if(current_byte-first_byte[cant_msg]==1){
+                    dlc=buffer[current_byte]&15;                //extraigo dlc
+                    llegoAA = false;
+                    continue;
+                }
+                else{
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    llegoAA = false;
+                    continue;
+                }
             }
-        }
-
-
-        if(((buffer[current_byte])&0xFF)==0x55){
-            if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
-                qDebug()<<"ENTRO UN MENSAJE COMPLETO";
-                //current_byte=0; //reseteamos variables para volverlas a usar en el proximo mensaje
-                dlc=0;
-                cant_msg++;
-                lastMsgIsFull=true;
-                first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
-                continue;                                   //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
-            }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
             else{
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                continue;
+                if(current_byte-first_byte[cant_msg]==1){
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    llegoAA = false;
+                    continue;
+                }
             }
+
+
+            if(((buffer[current_byte])&0xFF)==0x55){
+                if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
+                    //current_byte=0; //reseteamos variables para volverlas a usar en el proximo mensaje
+                    dlc=0;
+                    cant_msg++;
+                    lastMsgIsFull=true;
+                    first_byte[cant_msg]=index_buffer;    //notar que index buffer ya apunta a la siguiente
+                    continue;                                   //guardo la primer direccion del siguiente mensaje, si es que existe (current_byte ya apunta al proximo)
+                }                                  //osea, si es la primera vez que entra, estoy guardando en el segundo elemento de first_byte, la posicion del 0xAA del segundo mensaje que puede llegar
+                else{
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    continue;
+                }
+            }
+            else{
+                if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
+                    index_buffer=first_byte[cant_msg];
+                    losedMsgCount++;
+                    continue;
+                }
+            }
+        } catch (...) {
+            index_buffer = first_byte[cant_msg];
+        }
+
+    }
+
+    try {
+        for(int i=(first_byte[cant_msg]-1);i>-1;i--){
+            pila.push_back(buffer[first_byte[cant_msg]-1-i]);
+        }
+
+        if(lastMsgIsFull){
+            index_buffer=0;
         }
         else{
-            if(current_byte-first_byte[cant_msg]>=((dlc+5)-1)){
-                index_buffer=first_byte[cant_msg];
-                losedMsgCount++;
-                continue;
+            index_buffer -= first_byte[cant_msg];
+
+            for(uint j=0;j<index_buffer;j++){
+                buffer[j]=buffer[first_byte[cant_msg]+j];
             }
         }
 
+        emit msgLost(losedMsgCount);
+
+    } catch (...) {
+        cant_msg = 0;
+        index_buffer = 0;
     }
-
-//    for(uint i=cantBytes;i>0;i--){
-//        pila.push_back(buffer[index_buffer-i]);
-//    }
-    for(int i=(first_byte[cant_msg]-1);i>-1;i--){
-        pila.push_back(buffer[first_byte[cant_msg]-1-i]);
-    }
-
-//    index_buffer = 0;
-    if(lastMsgIsFull){
-        index_buffer=0;
-    }
-    else{
-        index_buffer -= first_byte[cant_msg];
-
-        for(uint j=0;j<index_buffer;j++){
-            buffer[j]=buffer[first_byte[cant_msg]+j];
-        }
-    }
-
-    emit msgLost(losedMsgCount);
-
-    qDebug()<<losedMsgCount;
 
     return cant_msg;
 }
 
-LACAN_MSG ReaderThread::mensaje_recibido2(char *sub_pila){
+LACAN_MSG ReaderThread::mensaje_recibido(char *sub_pila){
     LACAN_MSG mje;
     mje.DLC=sub_pila[1]&DLC_MASK;//Me quedo unicamente con el DLC (la primer mitad del byte es 0xC)
     //Como los bytes de ID se mandan al reves, tenemos la parte menos significativa del campo de funcion
