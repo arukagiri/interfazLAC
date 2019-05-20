@@ -291,6 +291,7 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->pushButton_comandar->setDisabled(true);
         ui->pushButton_start->setDisabled(true);
         ui->pushButton_stop->setDisabled(true);
+        ui->pushButton_shutdown->setDisabled(true);
 
         ui->spin_vol_sbyspeed_ref->clearFocus();
         ui->spin_vol_isd_ref->clearFocus();
@@ -308,6 +309,7 @@ void volante::on_edit_checkBox_stateChanged(int check)
         ui->pushButton_comandar->setDisabled(false);
         ui->pushButton_start->setDisabled(false);
         ui->pushButton_stop->setDisabled(false);
+        ui->pushButton_shutdown->setDisabled(false);
 
         blockAllSpinSignals(true);
 

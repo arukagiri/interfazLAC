@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>EstadoRed</class>
  <widget class="QDialog" name="EstadoRed">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -507,6 +510,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_gen_disable">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Disable</string>
       </property>
@@ -533,6 +539,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_boost_disable">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Disable</string>
       </property>
@@ -559,6 +568,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_vol_disable">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Disable</string>
       </property>

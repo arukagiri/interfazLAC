@@ -364,7 +364,7 @@ void Gen_Eolico::focusReturned(){
 void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
     blockAllSpinSignals(true);
-    spin->clearFocus();
+    //spin->clearFocus();
     data_can data;
     float value = float(spin->value());
     int reply;
@@ -381,10 +381,12 @@ void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, floa
     }
     blockAllSpinSignals(false);
     spin->setValue(double(prevValue));
+
     ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
 void Gen_Eolico::blockAllSpinSignals(bool b){
+
     ui->spin_gen_isd_ref->blockSignals(b);
     ui->spin_gen_lim_ibat_ref->blockSignals(b);
     ui->spin_gen_lim_ief_ref->blockSignals(b);
@@ -392,6 +394,14 @@ void Gen_Eolico::blockAllSpinSignals(bool b){
     ui->spin_gen_pot_ref->blockSignals(b);
     ui->spin_gen_speed_ref->blockSignals(b);
     ui->spin_gen_torque_ref->blockSignals(b);
+}
+
+void Gen_Eolico::blockAllButtonsSignals(bool b){
+
+    ui->pushButton_comandar->blockSignals(b);
+    ui->pushButton_start->blockSignals(b);
+    ui->pushButton_stop->blockSignals(b);
+    ui->combo_modo->blockSignals(b);
 }
 
 void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
@@ -450,6 +460,7 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->spin_gen_torque_ref->clearFocus();
 
         blockAllSpinSignals(false);
+        blockAllButtonsSignals(true);
 
         ui->spin_gen_isd_ref->setReadOnly(false);
         ui->spin_gen_lim_ibat_ref->setReadOnly(false);
@@ -470,6 +481,7 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->combo_modo->setDisabled(false);
 
         blockAllSpinSignals(true);
+        blockAllButtonsSignals(false);
 
         ui->spin_gen_isd_ref->setReadOnly(true);
         ui->spin_gen_lim_ibat_ref->setReadOnly(true);

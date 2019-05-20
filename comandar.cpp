@@ -81,6 +81,7 @@ void Comandar::on_button_ENVIAR_clicked()
 
     if(ui->radio_DO->isChecked()){
         mw->LACAN_Do(cmd,1,dest);
+        mw->agregar_log_sent();
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
