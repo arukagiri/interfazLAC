@@ -62,6 +62,7 @@ void volante::timer_handler(){
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
 //    if(true){
         if(send_queries){
+            ui->pushButton_start->blockSignals(false);
             refresh_values();       //actualiza los valores de la pantalla
             count++;
             send_qry_variables();
@@ -287,6 +288,8 @@ void volante::on_edit_checkBox_stateChanged(int check)
 {
     if(check){
         send_queries = false;
+
+        ui->pushButton_start->blockSignals(true);
 
         ui->pushButton_comandar->setDisabled(true);
         ui->pushButton_start->setDisabled(true);
