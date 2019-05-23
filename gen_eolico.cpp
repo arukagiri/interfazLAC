@@ -22,9 +22,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
-    ui->combo_modo->addItem("Potencia (1)",QVariant(LACAN_VAR_MOD_POT));
+    ui->combo_modo->addItem("MPPT (1)",QVariant(LACAN_VAR_MOD_MPPT));
     ui->combo_modo->addItem("Torque (2)",QVariant(LACAN_VAR_MOD_TORQ));
-    ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
+    ui->combo_modo->addItem("Potencia (3)",QVariant(LACAN_VAR_MOD_POT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
 
@@ -179,8 +179,6 @@ void Gen_Eolico::send_qry_variables(){
 }
 
 void Gen_Eolico::send_qry_references(){
-    mw->LACAN_Query(LACAN_VAR_STATUS,false,dest);   //status
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //speed_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_SETP,false,dest);   //po_ref

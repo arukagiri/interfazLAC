@@ -70,7 +70,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Usa el atajo Ctrl+E para cambiar este checkBox&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Editable</string>
+         <string>Editable (Ctrl+E)</string>
         </property>
        </widget>
       </item>

@@ -78,9 +78,6 @@ QString detect_err(uint8_t err){
 //Variables
 QString detect_var(uint8_t var){
        switch (var){
-       case LACAN_VAR_STATUS:
-           return "Vector de Estado";
-
        case LACAN_VAR_II_INST:
            return "Corriente de Entrada Instantanea";
 
@@ -100,10 +97,10 @@ QString detect_var(uint8_t var){
            return "Corriente de ISD SetPoint";
 
        case LACAN_VAR_IEF_INST:
-           return "Corriente de Eficaz Instantanea";
+           return "Corriente Eficaz Instantanea";
 
        case LACAN_VAR_IEF_SETP:
-           return "Corriente de Eficaz SetPoint";
+           return "Corriente Eficaz SetPoint";
 
        case LACAN_VAR_PI_INST:
            return "Potencia de Entrada Instantanea";
