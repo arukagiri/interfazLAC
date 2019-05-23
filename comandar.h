@@ -18,7 +18,6 @@ class Comandar : public QDialog
 
 public:
     explicit Comandar(QWidget *parent, uint16_t dest);
-    //explicit Comandar(uint16_t destino, QWidget *parent);
     ~Comandar();
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
@@ -29,7 +28,7 @@ private:
     uint16_t mode_set;
     MainWindow* mw;
     uint16_t dest;
-    uint16_t minimo;
+    double minimo;
     void set_tipo();
     void SET_ACTUAL_VAR();
 

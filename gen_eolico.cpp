@@ -27,7 +27,6 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
-    //refresh_values();
 
 //Inicializacion de Labels
     ui->label_gen_io->setText("----");
@@ -80,8 +79,8 @@ void Gen_Eolico::timer_handler(){
     static uint count = 0;
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-//    if(true){
         if(send_queries){
+            ui->pushButton_start->blockSignals(false);
             refresh_values();       //actualiza los valores de la pantalla
             count++;
             send_qry_variables();
@@ -134,7 +133,6 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
         break;
     case LACAN_VAR_W_SETP:
         speed_ref=recibed_val.var_float;
-        //prev_speed_ref=speed_ref;
         break;
     case LACAN_VAR_TORQ_SETP:
         torque_ref=recibed_val.var_float;
@@ -158,7 +156,6 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
             ui->combo_modo->setEnabled(true);
             ui->combo_modo->setCurrentIndex(actual_mode_index);
         }
-        //refresh_mode();    version1
         refresh_values();  //ver si va este o el anterior (cambio el 17/3)
         break;
     default:
@@ -242,10 +239,6 @@ void Gen_Eolico::refresh_values(){
         ui->label_gen_vel->setText(QString::number(double(gen_vel),'f',2));
 }
 
-//VER SI ANDA EL TEMA DEL CODE (mw->code)
-//entre  "mw->LACAN_Do(cmd,false,dest);" donde se crea el vecotor de ack que espera la respuesta  y
-// "connect(&(mw->msg_ack.back()->ack_timer)..." que uso el .back (osea el ultimo que asumo que se creo en el envio anteior)
-//quiza podria llegar otro ack y hacer pura caca
 void Gen_Eolico::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
@@ -292,16 +285,9 @@ void Gen_Eolico::verificar_mode_changed(){
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->agregar_log_sent();
         referenceChanged = true;
-        //version1
-        //refresh_values();
     }
     else{
-        //version2
         actual_mode=previous_mode;
-
-        //version1
-        //actual_mode=previous_mode;
-        //ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(previous_mode));
     }
 }
 
@@ -379,7 +365,7 @@ void Gen_Eolico::focusReturned(){
 void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
     blockAllSpinSignals(true);
-    spin->clearFocus();
+    //spin->clearFocus();
     data_can data;
     float value = float(spin->value());
     int reply;
@@ -396,10 +382,12 @@ void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, floa
     }
     blockAllSpinSignals(false);
     spin->setValue(double(prevValue));
+
     ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
 }
 
 void Gen_Eolico::blockAllSpinSignals(bool b){
+
     ui->spin_gen_isd_ref->blockSignals(b);
     ui->spin_gen_lim_ibat_ref->blockSignals(b);
     ui->spin_gen_lim_ief_ref->blockSignals(b);
@@ -449,6 +437,8 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
     if(checked)
     {
         send_queries = false;
+
+        ui->pushButton_start->blockSignals(true);
 
         ui->pushButton_comandar->setDisabled(true);
         ui->pushButton_start->setDisabled(true);

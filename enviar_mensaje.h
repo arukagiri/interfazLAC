@@ -40,7 +40,6 @@ private:
 
 private slots:
     void MENSAJE_changed(void);
-
     void DO_selected(void);
     void SET_selected(void);
     void ACK_selected(void);
@@ -49,9 +48,7 @@ private slots:
     void POST_selected(void);
     void HB_selected(void);
     void VAR_Changed();
-
     void on_button_ENVIAR_MENSAJE_clicked();
-    //void on_list_DESTINO_currentIndexChanged(int index);
 };
 
 #endif // ENVIAR_MENSAJE_H

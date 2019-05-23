@@ -2,7 +2,6 @@
 #include "ui_enviar_mensaje.h"
 #include <QtCore>
 #include <QtGui>
-#include <QDebug>
 #include <QMap>
 
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
@@ -32,24 +31,16 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     ui->list_DESTINO->addItem("Volante", LACAN_ID_VOLANTE);
     ui->list_DESTINO->addItem("Boost", LACAN_ID_BOOST);
 
-//    ui->list_VARIABLE->addItem("Corriente de Entrada");
-//    ui->list_VARIABLE->addItem("Corriente de Salida");
-//    ui->list_VARIABLE->addItem("Corriente de ISD");
-//    ui->list_VARIABLE->addItem("Corriente Eficaz");
-//    ui->list_VARIABLE->addItem("Potencia de Entrada");
-//    ui->list_VARIABLE->addItem("Potencia de Salida");
-//    ui->list_VARIABLE->addItem("Tension de Entrada");
-//    ui->list_VARIABLE->addItem("Tension de Salida");
-//    ui->list_VARIABLE->addItem("Velocidad Angular");
-//    ui->list_VARIABLE->addItem("Modo");
-
     ui->list_COMANDO->addItem("Start", LACAN_CMD_START);
     ui->list_COMANDO->addItem("Stop", LACAN_CMD_STOP);
     ui->list_COMANDO->addItem("Reset", LACAN_CMD_RESET);
+    ui->list_COMANDO->addItem("Shutdown", LACAN_CMD_SHUTDOWN);
     ui->list_COMANDO->addItem("Acoplar", LACAN_CMD_COUPLE);
     ui->list_COMANDO->addItem("Desacoplar", LACAN_CMD_DECOUPLE);
     ui->list_COMANDO->addItem("Magnetizar", LACAN_CMD_MAGNETIZE);
     ui->list_COMANDO->addItem("Trip", LACAN_CMD_TRIP);
+    ui->list_COMANDO->addItem("Enable", LACAN_CMD_ENABLE);
+    ui->list_COMANDO->addItem("Disable", LACAN_CMD_DISABLE);
 
     ui->list_ERROR->addItem("Generic Error", LACAN_ERR_GENERIC_ERR);
     ui->list_ERROR->addItem("Over Voltage", LACAN_ERR_OVERVOLTAGE);

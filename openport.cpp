@@ -2,7 +2,6 @@
 #include "ui_openport.h"
 #include "mainwindow.h"
 #include <QMessageBox>
-#include <QDebug>
 #include "better_serialfunc.h"
 
 OpenPort::OpenPort(QWidget *parent) :
@@ -44,7 +43,6 @@ void OpenPort::on_pushButton_clicked()
         //sale del foreach con retval=1 solo si encontro un puerto que se puede abrir
         foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
             serial_port=new QSerialPort(info);
-            //serial_port->setBaudRate(QSerialPort::Baud115200);
             serial_port->setBaudRate(SERIAL_BAUD);
             serial_port->setDataBits(QSerialPort::Data8);
             serial_port->setParity(QSerialPort::NoParity);
@@ -57,7 +55,6 @@ void OpenPort::on_pushButton_clicked()
         }
     }else{
         serial_port=new QSerialPort(ui->ports_comboBox->currentText());
-        //serial_port->setBaudRate(QSerialPort::Baud115200);
         serial_port->setBaudRate(SERIAL_BAUD);;
         serial_port->setDataBits(QSerialPort::Data8);
         serial_port->setParity(QSerialPort::NoParity);
@@ -67,7 +64,7 @@ void OpenPort::on_pushButton_clicked()
     }
     uint8_t bdr=CAN_BAUD_HEXA; //250Kbps
     //uint8_t bdr2=0x09; //50Kbps
-    sendinit2(*serial_port,bdr);
+    sendinit(*serial_port,bdr);
 
     this->close();
 

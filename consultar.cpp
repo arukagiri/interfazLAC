@@ -1,15 +1,9 @@
 #include "consultar.h"
 #include "ui_consultar.h"
 #include "PC.h"
-#include <QDebug>
 #include <iostream>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-//enum VARIABLES {II, IO, ISD, IEF, PI, PO, VI, VO, W, MOD};
-//enum TIPO_VAR {MAX,MIN,SETP,INST};
-//enum TIPO_MOD {MOD_P, MOD_V, MOD_T};
-
 
 Consultar::Consultar(QWidget *parent, uint16_t destMw) :
 
@@ -18,8 +12,6 @@ Consultar::Consultar(QWidget *parent, uint16_t destMw) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Consultar");
-    //this->setFixedSize(ui->verticalLayout_2->sizeHint());
-    //this->setLayout(ui->verticalLayout_2);
 
     mw = qobject_cast<MainWindow*>(this->parent());
     dest=destMw;
@@ -31,7 +23,6 @@ Consultar::Consultar(QWidget *parent, uint16_t destMw) :
         varmap = mw->varmap_gen;
 
         ui->list_VARIABLE_QRY->addItem("Potencia de Salida");
-        //ui->list_VARIABLE_QRY->addItem("Velocidad Angular");
         ui->list_VARIABLE_QRY->addItem("Torque");
         ui->list_VARIABLE_QRY->addItem("Tension de Salida");
         ui->list_VARIABLE_QRY->addItem("Corriente de ISD");

@@ -74,7 +74,6 @@ signals:
      void postforER_arrived(LACAN_MSG msg);
 
 public slots:
-     void refreshLostMsgCount(uint totalAmountLost);
 
      void handlePortError(QSerialPort::SerialPortError error);
 
@@ -84,7 +83,7 @@ public slots:
 
      void verificarHB();
 
-     void no_ACK_Handler(void); //VER: FALTA IMPLEMENTAR, instrucciones a realizar cuando no se recibe un ack que se esta esperando luego de un tiempo(TIMEOUT_ACK)
+     void no_ACK_Handler(void);
 
      void LACAN_ERR_Handler(uint16_t source,uint16_t err_cod);
 
@@ -102,13 +101,7 @@ private slots:
 
     void on_button_ESTADO_RED_clicked();
 
-    //void on_button_START_clicked();
-
-    //void on_button_STOP_clicked();
-
     void on_button_ByteSend_clicked();
-
-    //void on_pushButton_clicked(bool checked);
 
     void handleSendTimeout();
 

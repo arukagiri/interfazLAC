@@ -4,7 +4,6 @@
 #include <QtGui>
 #include <QMessageBox>
 #include "PC.h"
-#include <QDebug>
 #include <QWidget>
 #include <QMap>
 
@@ -47,28 +46,14 @@ Comandar::Comandar(QWidget *parent, uint16_t destEx) :
             ui->list_COMANDO->addItem("Enable",QVariant(LACAN_CMD_ENABLE));
             ui->list_COMANDO->addItem("Disable",QVariant(LACAN_CMD_DISABLE));
             cmd = LACAN_CMD_START;  //inicializo con el primero
-
-            //var_set=LACAN_VAR_PO_SETP;
-            //ui->spin_valor->setMaximum(varmap["Potencia de Salida"].max);
-            //ui->spin_valor->setMinimum(varmap["Potencia de Salida"].min);
-            //cmd=LACAN_CMD_START;
-            //mode_set=LACAN_VAR_MOD_MPPT;
         break;
         case LACAN_ID_VOLANTE:
             ui->label_DESTINO->setText("Volante de Inercia");
 
             varmap = mw->varmap_vol;
 
-            //ui->list_VARIABLE->addItem("Velocidad Angular");
             ui->list_VARIABLE->addItem("Corriente de ID");
             ui->list_VARIABLE->addItem("Velocidad angular Standby");
-            //ui->list_VARIABLE->addItem("Modo");
-
-            //ui->list_MOD_SET->addItem("Velocidad",QVariant(LACAN_VAR_MOD_VEL));
-            //ui->list_MOD_SET->addItem("Inercia",QVariant(LACAN_VAR_MOD_INER));
-            //ui->list_MOD_SET->setDisabled(true);
-            //mode_set = LACAN_VAR_MOD_VEL;   //inicializo con el primero
-
             ui->list_COMANDO->addItem("Start",QVariant(LACAN_CMD_START));
             ui->list_COMANDO->addItem("Shutdown",QVariant(LACAN_CMD_SHUTDOWN));
             ui->list_COMANDO->addItem("Stop",QVariant(LACAN_CMD_STOP));
@@ -87,8 +72,6 @@ Comandar::Comandar(QWidget *parent, uint16_t destEx) :
     connect(ui->radio_SET,SIGNAL(clicked(bool)),this,SLOT(SET_selected()));
 
     connect(ui->list_VARIABLE,SIGNAL(currentTextChanged(QString)),this,SLOT(SET_VAR_Changed()));
-
-    //ui->spin_valor->setInputMask("99999");    //para insertar solo numeros
 }
 
 void Comandar::on_button_ENVIAR_clicked()
@@ -98,10 +81,11 @@ void Comandar::on_button_ENVIAR_clicked()
 
     if(ui->radio_DO->isChecked()){
         mw->LACAN_Do(cmd,1,dest);
+        mw->agregar_log_sent();
     }else if(ui->radio_SET->isChecked()){
         data_can data;
         if (ui->list_VARIABLE->currentText() == "Modo"){
-            data.var_char[0]=mode_set;
+            data.var_char[0]=uchar(mode_set);
             data.var_char[1]=0;
             data.var_char[2]=0;
             data.var_char[3]=0;
@@ -110,7 +94,7 @@ void Comandar::on_button_ENVIAR_clicked()
         }
         else{
             if(ui->spin_valor->value()>minimo){
-                data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+                data.var_float=float(ui->spin_valor->value()); //si esta seleccionado algo que no sea modo, manda el valor de spin
                 mw->LACAN_Set(var_set,data,1,dest);
                 mw->agregar_log_sent();
             }
@@ -121,13 +105,10 @@ void Comandar::on_button_ENVIAR_clicked()
                 str.append(". Confirma que desea enviar este valor?");
                 reply = QMessageBox::question(this,"Valor Minimo",str, QMessageBox::Yes | QMessageBox::No );
                 if(reply==QMessageBox::Yes){
-                    data.var_float=ui->spin_valor->value(); //si esta seleccionado algo que no sea modo, manda el valor de spin
+                    data.var_float=float(ui->spin_valor->value()); //si esta seleccionado algo que no sea modo, manda el valor de spin
                     mw->LACAN_Set(var_set,data,1,dest);
                     mw->agregar_log_sent();
                 }
-                //else{
-
-                //}
             }
         }
     }else{
@@ -170,24 +151,21 @@ void Comandar::SET_VAR_Changed(){               //habilita y deshabilita los cam
 void Comandar::SET_ACTUAL_VAR(){
    QString var_selectedstr;
    var_selectedstr=ui->list_VARIABLE->currentText();
-   qDebug()<<var_selectedstr;
    var_set = varmap[var_selectedstr].setp;
    ui->spin_valor->setMaximum(varmap[var_selectedstr].max);
    ui->spin_valor->setMinimum(varmap[var_selectedstr].min);
    minimo=varmap[var_selectedstr].min;
-   qDebug()<<" ";
-   qDebug()<<"MINIMOOOOO: "+QString::number(minimo);
 }
 
 
 void Comandar::on_list_MOD_SET_currentIndexChanged(int index)
 {
-    mode_set = ui->list_MOD_SET->itemData(index).toInt();
+    mode_set = uint16_t(ui->list_MOD_SET->itemData(index).toInt());
 }
 
 void Comandar::on_list_COMANDO_currentIndexChanged(int index)
 {
-    cmd = ui->list_COMANDO->itemData(index).toInt();
+    cmd = uint16_t(ui->list_COMANDO->itemData(index).toInt());
 }
 
 void Comandar::closeEvent(QCloseEvent *e){

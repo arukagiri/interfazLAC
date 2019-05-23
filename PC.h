@@ -43,7 +43,7 @@
 #define LACAN_CMD_COUPLE        0x18
 #define LACAN_CMD_START         0x1F // HABILITAR SALIDA
 #define LACAN_CMD_ENABLE        0x20 // HABILITAR COMUNICACION
-#define LACAN_CMD_DISABLE        0x21 // DESHABILITAR COMUNICACION
+#define LACAN_CMD_DISABLE       0x21 // DESHABILITAR COMUNICACION
 #define LACAN_CMD_DECOUPLE      0x28
 #define LACAN_CMD_MAGNETIZE     0x2F
 
@@ -153,7 +153,6 @@
 #define HB_TIME 5000                 //en milisegundos(5 seg), es el periodo en el cual los integrantes de la red deben enviar sus HB
 #define DEAD_HB_TIME HB_TIME*3+500   //tiempo que debe transcurrir desde el ultimo HB para considerar un nodo inactivo (15.5 seg)
 #define DEAD_MSJ_ACK_TIME 30000      //tiempo para borrar del vector un mensaje desde que recibio su correspondiente ack
-//#define WAIT_ACK_TIME 500            //tiempo de espera un ack
 #define WAIT_ACK_TIME 3000            //tiempo de espera un ack
 
 //union apta para manejar un vector que contiene el estado del dispositivo, es decir,
@@ -173,25 +172,17 @@ union data_can{
 
 //Estructura a base de bits para armar el mensaje con el formato CAN standard
 struct LACAN_MSG{
-   uint16_t SENTIDO:1;
-   uint16_t DLC:4;
-   uint16_t ID:11;
-  /* uint16_t BYTE0:8;
-   uint16_t BYTE1:8;
-   uint16_t BYTE2:8;
-   uint16_t BYTE3:8;
-   uint16_t BYTE4:8;
-   uint16_t BYTE5:8;
-   uint16_t BYTE6:8;
-   uint16_t BYTE7:8;*/
-  uchar BYTE0;
-  uchar BYTE1;
-  uchar BYTE2;
-  uchar BYTE3;
-  uchar BYTE4;
-  uchar BYTE5;
-  uchar BYTE6;
-  uchar BYTE7;
+    uint16_t SENTIDO:1;
+    uint16_t DLC:4;
+    uint16_t ID:11;
+    uchar BYTE0;
+    uchar BYTE1;
+    uchar BYTE2;
+    uchar BYTE3;
+    uchar BYTE4;
+    uchar BYTE5;
+    uchar BYTE6;
+    uchar BYTE7;
 };
 
 typedef struct LACAN_MSG LACAN_MSG;
@@ -222,7 +213,6 @@ struct  HB_CONTROL{
 
 typedef struct HB_CONTROL HB_CONTROL;
 
-//QString fun, com, dest, var_type, var_val, code;
 struct ABSTRACTED_MSG{
 
     QString fun, com, dest, orig, var_type, var_val, err_code, ack_res, ack_code,curr_time;

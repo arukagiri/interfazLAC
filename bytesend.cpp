@@ -40,13 +40,11 @@ ByteSend::ByteSend(QWidget *parent) :
 
     ui->id1->setInputMask("HH;");
     ui->id1->setText("");
-    //ui->id1->setCursorPosition(0);
 
     ui->id2->setInputMask("9");   //este byte debe ser menor a 7 porque la id es de 11 bits
     QValidator *val = new QIntValidator(0, 7, this);
     ui->id2->setValidator(val);
     ui->id2->setText("");
-    //ui->id2->setCursorPosition(0);
 
 }
 
@@ -59,8 +57,8 @@ void ByteSend::on_sendButton_clicked(){
     bool okID1=true;
     bool okID2=true;
 
-    byteID1=ui->id1->text().toInt(&okID1,base);
-    byteID2=ui->id2->text().toInt(&okID2,base);
+    byteID1=uchar(ui->id1->text().toInt(&okID1,base));
+    byteID2=uchar(ui->id2->text().toInt(&okID2,base));
 
     msg.ID=(byteID2<<8 | byteID1)&LACAN_ID_STANDARD_MASK;   //los pongo al reves porque el adaptador me los davuelta
 
@@ -70,49 +68,48 @@ void ByteSend::on_sendButton_clicked(){
 
     switch(actual_dlc){
         case 8:
-            msg.BYTE7=ui->data7->text().toInt(&okDLC,base);
+            msg.BYTE7=uchar(ui->data7->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 7:
-            msg.BYTE6=ui->data6->text().toInt(&okDLC,base);
+            msg.BYTE6=uchar(ui->data6->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 6:
-            msg.BYTE5=ui->data5->text().toInt(&okDLC,base);
+            msg.BYTE5=uchar(ui->data5->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 5:
-            msg.BYTE4=ui->data4->text().toInt(&okDLC,base);
+            msg.BYTE4=uchar(ui->data4->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 4:
-            msg.BYTE3=ui->data3->text().toInt(&okDLC,base);
+            msg.BYTE3=uchar(ui->data3->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 3:
-            msg.BYTE2=ui->data2->text().toInt(&okDLC,base);
+            msg.BYTE2=uchar(ui->data2->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 2:
-            msg.BYTE1=ui->data1->text().toInt(&okDLC,base);
+            msg.BYTE1=uchar(ui->data1->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
         [[clang::fallthrough]]; case 1:
-            msg.BYTE0=ui->data0->text().toInt(&okDLC,base);
+            msg.BYTE0=uchar(ui->data0->text().toInt(&okDLC,base));
             if(!okDLC){
                 break;
             }
     }
     if(okDLC&&okID1&&okID2){
-        serialsend2(*(mw->serial_port),msg);
-        //mw->msg_log.push_back(msg);
+        serialsend(*(mw->serial_port),msg);
     }else{
         QMessageBox::warning(this,"Error","Error al enviar el mensaje");
     }
@@ -120,7 +117,7 @@ void ByteSend::on_sendButton_clicked(){
 }
 
 void ByteSend::on_dlc_currentIndexChanged(int index){
-    actual_dlc = ui->dlc->itemData(index).toInt();
+    actual_dlc = uchar(ui->dlc->itemData(index).toInt());
 
     switch (actual_dlc) {
     case 1:

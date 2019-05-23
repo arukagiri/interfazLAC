@@ -33,7 +33,6 @@ SOURCES += \
     enviar_mensaje.cpp \
     estadored.cpp \
     gen_eolico.cpp \
-    tiempo.cpp \
     better_serialfunc.cpp \
     addnewdevdialog.cpp \
     volante.cpp \
@@ -42,7 +41,8 @@ SOURCES += \
     openport.cpp \
     boost.cpp \
     senderthread.cpp \
-    readerthread.cpp
+    readerthread.cpp \
+    lacan_app.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -51,7 +51,6 @@ HEADERS += \
     enviar_mensaje.h \
     estadored.h \
     gen_eolico.h \
-    tiempo.h \
     pc.h \
     lacan_detect.h \
     better_serialfunc.h \
@@ -64,7 +63,8 @@ HEADERS += \
     boost.h \
     senderthread.h \
     readerthread.h \
-    lacan_limits_broad.h
+    lacan_limits_broad.h \
+    lacan_app.h
 
 FORMS += \
         mainwindow.ui \

@@ -77,8 +77,6 @@ private slots:
 
     void timer_handler();
 
-//    void verificar_mode_changed();
-
     void VOLpost_Handler(LACAN_MSG msg);
 
     void on_pushButton_comandar_clicked();
@@ -87,10 +85,6 @@ private slots:
 
     void on_pushButton_stop_clicked();
 
-//    void on_combo_modo_currentIndexChanged(int index);
-
-//    void on_spin_vol_speed_ref_editingFinished();
-
     void on_spin_vol_sbyspeed_ref_editingFinished();
 
     void on_spin_vol_isd_ref_editingFinished();
@@ -98,6 +92,7 @@ private slots:
     void on_edit_checkBox_stateChanged(int check);
 
     void changeEditState();
+
     void on_pushButton_shutdown_clicked();
 };
 
