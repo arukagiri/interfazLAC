@@ -52,7 +52,7 @@ public:
 
      void add_new_device(uint16_t source);
 
-     void change_ERflag(void);
+     void change_ERflag(bool);
 
      void agregar_log_sent();
 

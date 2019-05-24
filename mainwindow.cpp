@@ -66,7 +66,7 @@ void agregar_textlog(ABSTRACTED_MSG abs_msg, QString way){
 }
 
 //Funcion interna para transformar el contenido de los mensajes en strings para poder cargarlos en el txt
-ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
+ABSTRACTED_MSG abstract_msg(LACAN_MSG msg){
     QString format_time="hh:mm:ss";
     QString format_date="yyyy-MM-dd";
     QDateTime curr_date_time=QDateTime::currentDateTime();
@@ -76,7 +76,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
     //Transformacion del destino y remitente en strings segun el ID del mensaje
     //DESTINO
-    switch((msg_log.back().BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
+    switch((msg.BYTE0 >> LACAN_BYTE0_RESERVED)&LACAN_IDENT_MASK){
     case LACAN_ID_BOOST:
         abs_msg.dest="Boost\t";
         break;
@@ -95,7 +95,7 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     }
 
     //REMITENTE
-    switch(msg_log.back().ID&LACAN_IDENT_MASK){
+    switch(msg.ID&LACAN_IDENT_MASK){
     case LACAN_ID_BOOST:
         abs_msg.orig="Boost\t";
         break;
@@ -117,31 +117,31 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
     //La debida transformacion de los campos se realizan con las funciones detect, las cuales se encuentran en lacan_detect
     //(no son mas que switches gigantes)
     //FUNCION
-    switch((msg_log.back().ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
+    switch((msg.ID&LACAN_FUN_MASK)>>LACAN_IDENT_BITS){
     case LACAN_FUN_ERR:
         abs_msg.fun="Error";
-        abs_msg.err_code=detect_err(msg_log.back().BYTE1);
+        abs_msg.err_code=detect_err(msg.BYTE1);
         break;
 
     case LACAN_FUN_DO:
         abs_msg.fun="Do";
-        abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
-        abs_msg.com=detect_cmd(msg_log.back().BYTE2);
+        abs_msg.ack_code=QString::number(msg.BYTE1);
+        abs_msg.com=detect_cmd(msg.BYTE2);
         break;
 
     case LACAN_FUN_SET:
         abs_msg.fun="Set";
-        abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
-        abs_msg.var_type=detect_var(msg_log.back().BYTE2);
+        abs_msg.ack_code=QString::number(msg.BYTE1);
+        abs_msg.var_type=detect_var(msg.BYTE2);
 
         if(abs_msg.var_type=="Modo"){
-            abs_msg.var_val = detect_mode(msg_log.back().BYTE3);
+            abs_msg.var_val = detect_mode(msg.BYTE3);
         }
         else{
-            val_union.var_char[0]=uchar(msg_log.back().BYTE3);
-            val_union.var_char[1]=uchar(msg_log.back().BYTE4);
-            val_union.var_char[2]=uchar(msg_log.back().BYTE5);
-            val_union.var_char[3]=uchar(msg_log.back().BYTE6);
+            val_union.var_char[0]=uchar(msg.BYTE3);
+            val_union.var_char[1]=uchar(msg.BYTE4);
+            val_union.var_char[2]=uchar(msg.BYTE5);
+            val_union.var_char[3]=uchar(msg.BYTE6);
 
             val_float = val_union.var_float;
             abs_msg.var_val=QString::number(double(val_float),'f',2);
@@ -150,27 +150,27 @@ ABSTRACTED_MSG abstract_msg(vector <LACAN_MSG> msg_log){
 
     case LACAN_FUN_QRY:
         abs_msg.fun="Query";
-        abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
-        abs_msg.var_type=detect_var(msg_log.back().BYTE2);
+        abs_msg.ack_code=QString::number(msg.BYTE1);
+        abs_msg.var_type=detect_var(msg.BYTE2);
         break;
 
     case LACAN_FUN_ACK:
         abs_msg.fun="Acknowledge";
-        abs_msg.ack_res=detect_res(msg_log.back().BYTE2);
-        abs_msg.ack_code=QString::number(msg_log.back().BYTE1);
+        abs_msg.ack_res=detect_res(msg.BYTE2);
+        abs_msg.ack_code=QString::number(msg.BYTE1);
         break;
 
     case LACAN_FUN_POST:
         abs_msg.fun="Post";
-        abs_msg.var_type=detect_var(msg_log.back().BYTE1);
+        abs_msg.var_type=detect_var(msg.BYTE1);
         if(abs_msg.var_type=="Modo"){
-            abs_msg.var_val = detect_mode(msg_log.back().BYTE2);
+            abs_msg.var_val = detect_mode(msg.BYTE2);
         }
         else{
-            val_union.var_char[0]=uchar(msg_log.back().BYTE2);
-            val_union.var_char[1]=uchar(msg_log.back().BYTE3);
-            val_union.var_char[2]=uchar(msg_log.back().BYTE4);
-            val_union.var_char[3]=uchar(msg_log.back().BYTE5);
+            val_union.var_char[0]=uchar(msg.BYTE2);
+            val_union.var_char[1]=uchar(msg.BYTE3);
+            val_union.var_char[2]=uchar(msg.BYTE4);
+            val_union.var_char[3]=uchar(msg.BYTE5);
 
             val_float = val_union.var_float;
             abs_msg.var_val=QString::number(double(val_float),'f',2);
@@ -240,7 +240,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     HB_CONTROL* newdev;
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
-    newdev->hb_status=INACTIVE;
+    newdev->hb_status=ACTIVE;
     hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_BOOST;
@@ -292,7 +292,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     //Conecto la señal que indica que hay datos para leer en el buffer del puerto con nuestro slot para procesarla
     connect(serial_port, SIGNAL(readyRead()), readerth, SLOT(handleRead()));
     connect(readerth, SIGNAL(receivedMsg(LACAN_MSG)), this, SLOT(handleProcessedMsg(LACAN_MSG)));
-    connect(readerth, SIGNAL(msgLost(uint)), this, SLOT(refreshLostMsgCount(uint)));
 
     //Conecto la señal que indica un error en el puerto serie con nuestro slot para manejarla
     connect(serial_port, SIGNAL(errorOccurred(QSerialPort::SerialPortError)), this, SLOT(handlePortError(QSerialPort::SerialPortError)));
@@ -314,7 +313,9 @@ uint16_t MainWindow::verificar_destino(){
 void MainWindow::agregar_log_sent(){
     ABSTRACTED_MSG abs_msg;
     //Abstraigo a string el ultimo mensaje del vector con la funcion antes vista
-    abs_msg=abstract_msg(msg_log);
+    abs_msg=abstract_msg(msg_log.back());
+    msg_log.pop_back();
+    //para la gran cantidad de queries q se mandan al estar en la ventana de DB
     //Si se encuentra activado el log de mensajes, verifico que no estemos por encima del limite para agregar
     //el mensaje al log widget
     if(do_log){
@@ -365,7 +366,8 @@ void MainWindow::agregar_log_sent(){
 
 void MainWindow::agregar_log_rec(){
     ABSTRACTED_MSG abs_msg;
-    abs_msg=abstract_msg(msg_log);
+    abs_msg=abstract_msg(msg_log.back());
+    msg_log.pop_back();
     if(do_log){
         if(list_rec_cont>=LOG_LIMIT){  //limite de mensajes
             QMessageBox::StandardButton reply;
@@ -413,12 +415,8 @@ void MainWindow::agregar_log_rec(){
 void MainWindow::no_ACK_Handler(void){}
 
 //Se encarga de cambiar el valor de la ERflag cualquiera sea su valor
-void MainWindow::change_ERflag(){
-    if(ERflag){
-        ERflag=false;
-    }else{
-        ERflag=true;
-    }
+void MainWindow::change_ERflag(bool value){
+    ERflag = value;
 }
 
 //Agregado de nuevo dispositivo luego de su deteccion
@@ -887,21 +885,24 @@ int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack, uint16_t des
         code++;
 
     stack.push_back(msg);
-    msg_log.push_back(*msg);
 
-    TIMED_MSG* new_msg=new TIMED_MSG();
+    if(!ERflag)
+    {
+        msg_log.push_back(*msg);
+        TIMED_MSG* new_msg=new TIMED_MSG();
 
-    if(show_ack == true){
-        new_msg->show_miss_ack = true;
+        if(show_ack){
+            new_msg->show_miss_ack = true;
+        }
+
+        new_msg->msg=*msg;
+        new_msg->ack_status=PENDACK;
+        new_msg->ack_timer.setSingleShot(true);
+        new_msg->ack_timer.start(WAIT_ACK_TIME);
+        new_msg->retries = RETRIES;
+
+        msg_ack.push_back(new_msg);
     }
-
-    new_msg->msg=*msg;
-    new_msg->ack_status=PENDACK;
-    new_msg->ack_timer.setSingleShot(true);
-    new_msg->ack_timer.start(WAIT_ACK_TIME);
-    new_msg->retries = RETRIES;
-
-    msg_ack.push_back(new_msg);
 
     return LACAN_SUCCESS;
 }
@@ -1198,14 +1199,9 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 void MainWindow::on_button_ESTADO_RED_clicked()
 {
     EstadoRed *estwin = new EstadoRed(this);
-    estwin->setModal(true);
-    estwin->show();
 
-    //Como estado de red a su vez envia mensajes cuya respuesta debe mostrarse en si misma es necesaria
-    //una flag que indique que dicha ventana se encuentra abierta y que ademas las respuestas entrantes corresponderan
-    //a los mensajes que ella envio
-    ERflag=true;
-    connect(this, SIGNAL(postforER_arrived(LACAN_MSG)), estwin, SLOT(ERpost_Handler(LACAN_MSG)));
+    estwin->setModal(true);
+    estwin->show();    
 }
 
 //Ventana Envio de mensajes
