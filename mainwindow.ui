@@ -7,16 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>907</width>
-    <height>599</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout_9">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <layout class="QHBoxLayout" name="horizontalLayout_16">
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="enabled">
@@ -118,13 +118,13 @@
              <property name="minimumSize">
               <size>
                <width>150</width>
-               <height>100</height>
+               <height>120</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>150</width>
-               <height>100</height>
+               <height>120</height>
               </size>
              </property>
             </widget>
@@ -205,6 +205,9 @@
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
@@ -230,62 +233,55 @@
             <property name="title">
              <string>Mensajes específicos (solo para pruebas)</string>
             </property>
-            <widget class="QPushButton" name="button_ENVIAR_MENSAJE">
-             <property name="geometry">
-              <rect>
-               <x>24</x>
-               <y>25</y>
-               <width>90</width>
-               <height>23</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Enviar Mensaje</string>
-             </property>
-            </widget>
-            <widget class="QPushButton" name="button_ByteSend">
-             <property name="geometry">
-              <rect>
-               <x>134</x>
-               <y>25</y>
-               <width>90</width>
-               <height>23</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Enviar Bytes</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QPushButton" name="button_ENVIAR_MENSAJE">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>90</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Enviar Mensaje</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="button_ByteSend">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>90</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Enviar Bytes</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
            <spacer name="horizontalSpacer_12">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -299,6 +295,12 @@
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title">
            <string>Red LACAN</string>
           </property>
@@ -321,19 +323,6 @@
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_6">
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item>
               <widget class="QPushButton" name="pushButton_gen_enable">
                <property name="text">
@@ -366,19 +355,6 @@
                 <string>Disable All</string>
                </property>
               </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </item>
@@ -765,7 +741,7 @@ border: 1px solid black;</string>
      <x>0</x>
      <y>0</y>
      <width>907</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
