@@ -22,9 +22,9 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
-    ui->combo_modo->addItem("Potencia (1)",QVariant(LACAN_VAR_MOD_POT));
+    ui->combo_modo->addItem("MPPT (1)",QVariant(LACAN_VAR_MOD_MPPT));
     ui->combo_modo->addItem("Torque (2)",QVariant(LACAN_VAR_MOD_TORQ));
-    ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
+    ui->combo_modo->addItem("Potencia (3)",QVariant(LACAN_VAR_MOD_POT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
 
@@ -80,6 +80,7 @@ void Gen_Eolico::timer_handler(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
         if(send_queries){
+            ui->pushButton_start->blockSignals(false);
             refresh_values();       //actualiza los valores de la pantalla
             count++;
             send_qry_variables();
@@ -178,8 +179,6 @@ void Gen_Eolico::send_qry_variables(){
 }
 
 void Gen_Eolico::send_qry_references(){
-    mw->LACAN_Query(LACAN_VAR_STATUS,false,dest);   //status
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //speed_ref
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_SETP,false,dest);   //po_ref
@@ -396,14 +395,6 @@ void Gen_Eolico::blockAllSpinSignals(bool b){
     ui->spin_gen_torque_ref->blockSignals(b);
 }
 
-void Gen_Eolico::blockAllButtonsSignals(bool b){
-
-    ui->pushButton_comandar->blockSignals(b);
-    ui->pushButton_start->blockSignals(b);
-    ui->pushButton_stop->blockSignals(b);
-    ui->combo_modo->blockSignals(b);
-}
-
 void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
 {
     processEditingFinished(ui->spin_gen_speed_ref, LACAN_VAR_W_SETP, speed_ref);
@@ -445,6 +436,8 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
     {
         send_queries = false;
 
+        ui->pushButton_start->blockSignals(true);
+
         ui->pushButton_comandar->setDisabled(true);
         ui->pushButton_start->setDisabled(true);
         ui->pushButton_stop->setDisabled(true);
@@ -460,7 +453,6 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->spin_gen_torque_ref->clearFocus();
 
         blockAllSpinSignals(false);
-        blockAllButtonsSignals(true);
 
         ui->spin_gen_isd_ref->setReadOnly(false);
         ui->spin_gen_lim_ibat_ref->setReadOnly(false);
@@ -481,7 +473,6 @@ void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
         ui->combo_modo->setDisabled(false);
 
         blockAllSpinSignals(true);
-        blockAllButtonsSignals(false);
 
         ui->spin_gen_isd_ref->setReadOnly(true);
         ui->spin_gen_lim_ibat_ref->setReadOnly(true);

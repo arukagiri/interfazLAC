@@ -45,7 +45,6 @@ ByteSend::ByteSend(QWidget *parent) :
     QValidator *val = new QIntValidator(0, 7, this);
     ui->id2->setValidator(val);
     ui->id2->setText("");
-
 }
 
 void ByteSend::on_sendButton_clicked(){

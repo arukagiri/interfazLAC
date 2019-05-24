@@ -47,7 +47,6 @@ private:
     void send_qry_references();
     void processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue);
     void blockAllSpinSignals(bool b);
-    void blockAllButtonsSignals(bool b);
     //variables para guardar el valor a mostrar
 
     data_can recibed_val;
