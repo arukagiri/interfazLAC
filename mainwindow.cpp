@@ -691,6 +691,7 @@ void MainWindow::LACAN_ACK_Handler(uint16_t BYTE1){
     //Recorro el vector que almacena los mensajes que requieren ACK para identificar al que coincide con el
     //ACK entrante para asi cambiar su estado de ACK a recibido
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
+        assert((*it_ack));
         if((*it_ack)->msg.BYTE1==BYTE1){
             (*it_ack)->ack_status=RECEIVED;
             (*it_ack)->ack_timer.start(DEAD_MSJ_ACK_TIME);//Resetea el tiempo del mensaje para borrarlo luego segun un tiempo limite
@@ -999,6 +1000,7 @@ void MainWindow::verificarACK(){
 
     for(vector<TIMED_MSG*>::iterator it_ack=msg_ack.begin();it_ack<msg_ack.end();it_ack++){
         //Si se recibio el ACK y el timer no esta activo (es decir ya finalizo el conteo) se borra el mensaje
+        assert((*it_ack));
         if((*it_ack)->ack_status==RECEIVED){
             if(!((*it_ack)->ack_timer.isActive())){
                 msg_ack.erase(it_ack);
@@ -1011,25 +1013,19 @@ void MainWindow::verificarACK(){
                 (*it_ack)->ack_status=ACK_TIMEOUT;
                  //Si no llega el ACK de un mensaje original, se intentaran 3 reenvios de dicho mensaje en caso de
                  //una perdida de mensajes esporadica (aunque no deberia ocurrir)
-                if((*it_ack)->retries<=0 && show_miss_ack_flag == false){  //Si no quedan reintentos
-                    if((*it_ack)->show_miss_ack==true){ //Y el mensaje se mando desde la mainwindows
-                        //Se levanta una bandera para indicar que se debe enunciar el no recibimiento de ACK
-                        show_miss_ack_flag = true;
-                        //Se muestra una ventana para comunicarle al usuario que el dispositivo con el cual se quiere
-                        //comunicar no esta disponible
-                        QMessageBox::StandardButton reply;
-                        QString name = disp_map.key(((*it_ack)->msg.BYTE0) >> LACAN_BYTE0_RESERVED);
-                        QString mje = "Se ha agotado el tiempo de espera de la respuesta del " + name + ".";
-                        reply = QMessageBox::warning(this,"Error al enviar",mje,QMessageBox::Ok);
-                        if(reply){
-                            //El error ya fue enunciado con lo cual bajamos la flag para no mostrar nuevamente la ventana
-                            show_miss_ack_flag = false;
-                        }
-                    }
+                if((*it_ack)->retries<=0){  //Si no quedan reintentos
                     //Desconectamos el mensaje de sus respectivos slots y lo borramos
                     disconnect(&(msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
                     no_ACK_Handler();
                     msg_ack.erase(it_ack);
+                    if((*it_ack)->show_miss_ack==true){ //El mensaje se mando desde la mainwindows
+                        //Se muestra una ventana para comunicarle al usuario que el dispositivo con el cual se quiere
+                        //comunicar no esta disponible
+                        QString name = disp_map.key(((*it_ack)->msg.BYTE0) >> LACAN_BYTE0_RESERVED);
+                        QString mje = "Se ha agotado el tiempo de espera de la respuesta del " + name + ".";
+                        QMessageBox::warning(this,"Error al enviar",mje,QMessageBox::Ok);
+                        //El error ya fue enunciado con lo cual bajamos la flag para no mostrar nuevamente la ventana
+                    }
                 }
                 else{   //Si aun quedan reintentos, vuelve a enviar el mensaje y descuenta reintentos
                     serialsend(*(this->serial_port),(*it_ack)->msg);
@@ -1328,6 +1324,7 @@ void MainWindow::on_pushButton_gen_enable_clicked()
 {
     cmd_enable = LACAN_CMD_ENABLE;
     this->LACAN_Do(cmd_enable,false,LACAN_ID_BROADCAST);
+    assert(msg_ack.back());
     connect(&(this->msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
     this->agregar_log_sent();
 }
@@ -1336,6 +1333,7 @@ void MainWindow::on_pushButton_gen_disable_clicked()
 {
     cmd_enable = LACAN_CMD_DISABLE;
     this->LACAN_Do(cmd_enable,false,LACAN_ID_BROADCAST);
+    assert(msg_ack.back());
     connect(&(this->msg_ack.back()->ack_timer),SIGNAL(timeout()), this, SLOT(verificarACK()));
     this->agregar_log_sent();
 

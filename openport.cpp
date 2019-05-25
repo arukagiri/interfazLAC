@@ -11,6 +11,7 @@ OpenPort::OpenPort(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowTitle("Config COM");
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
         ui->ports_comboBox->addItem(info.portName());

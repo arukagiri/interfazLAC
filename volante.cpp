@@ -211,6 +211,7 @@ void volante::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -219,6 +220,7 @@ void volante::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -228,6 +230,7 @@ void volante::on_pushButton_shutdown_clicked()
 {
     cmd=LACAN_CMD_SHUTDOWN;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }

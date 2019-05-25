@@ -95,6 +95,7 @@ void Consultar::on_button_ENVIAR_QRY_clicked()
     mw->LACAN_Query(consulta,1,dest);
     //verifico que haya un elemento nuevo en el vector para no tratar de conectar dos veces un mismo elemento
     if(mw->msg_ack.size()>prevsize){
+        assert(mw->msg_ack.back());
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
     mw->agregar_log_sent();

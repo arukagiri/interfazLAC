@@ -241,6 +241,7 @@ void Gen_Eolico::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
@@ -250,6 +251,7 @@ void Gen_Eolico::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
@@ -280,6 +282,7 @@ void Gen_Eolico::verificar_mode_changed(){
         modo.var_char[2] = 0;
         modo.var_char[3] = 0;
         mw->LACAN_Set(LACAN_VAR_MOD,modo,false,dest);
+        assert(mw->msg_ack.back());
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->agregar_log_sent();
         referenceChanged = true;

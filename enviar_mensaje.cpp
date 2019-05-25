@@ -324,6 +324,7 @@ void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 
 
     if(mw->msg_ack.size()>prevsize){
+        assert(mw->msg_ack.back());
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
