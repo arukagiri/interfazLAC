@@ -16,6 +16,8 @@ volante::volante(QWidget *parent) :
 
     this->setWindowTitle("Volante de Inercia");
 
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
     mw = qobject_cast<MainWindow*>(this->parent());
 
     send_queries = true;

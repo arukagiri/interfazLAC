@@ -13,6 +13,12 @@
     <height>487</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -496,7 +502,7 @@
     <rect>
      <x>220</x>
      <y>180</y>
-     <width>158</width>
+     <width>168</width>
      <height>25</height>
     </rect>
    </property>
@@ -525,7 +531,7 @@
     <rect>
      <x>660</x>
      <y>180</y>
-     <width>158</width>
+     <width>168</width>
      <height>25</height>
     </rect>
    </property>
@@ -554,7 +560,7 @@
     <rect>
      <x>720</x>
      <y>310</y>
-     <width>158</width>
+     <width>168</width>
      <height>25</height>
     </rect>
    </property>

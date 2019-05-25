@@ -251,6 +251,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev->hb_status=INACTIVE;
     hb_con.push_back(newdev);
 
+    add_device_ui(LACAN_ID_GEN); //TEST
+
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
          connect(&((*it_hb)->hb_timer), SIGNAL(timeout()), this, SLOT(verificarHB()));
     }
@@ -315,10 +317,11 @@ void MainWindow::agregar_log_sent(){
     //Abstraigo a string el ultimo mensaje del vector con la funcion antes vista
     abs_msg=abstract_msg(msg_log.back());
     msg_log.pop_back();
+    bool iWantQueries = !(ERflag && (abs_msg.fun == "Query"));
     //para la gran cantidad de queries q se mandan al estar en la ventana de DB
     //Si se encuentra activado el log de mensajes, verifico que no estemos por encima del limite para agregar
     //el mensaje al log widget
-    if(do_log){
+    if(do_log && iWantQueries){
         if(list_send_cont>=LOG_LIMIT){  //limite de mensajes
             //Si se supera el limite se le pregunta al usuario si quiere reiniciar el log (borrando mensajes anteriores)
             //o si quiere detener la sesion para mantener dichos mensajes en pantalla
@@ -572,7 +575,7 @@ void MainWindow::create_varmap_broadcast(){
     IBAT_BROAD.max=LACAN_VAR_BROAD_IBAT_MAX;
     IBAT_BROAD.min=LACAN_VAR_BROAD_IBAT_MIN;
 
-    varmap_broad["Corriente de ID"]=ISD_BROAD;
+    varmap_broad["Corriente de ISD"]=ISD_BROAD;
     varmap_broad["Potencia de Salida"]=PO_BROAD;
     varmap_broad["Tension de Salida"]=VO_BROAD;
     varmap_broad["Corriente de Bateria"]=IBAT_BROAD;
@@ -885,10 +888,10 @@ int16_t MainWindow::LACAN_Query(uint16_t variable,uint8_t show_ack, uint16_t des
         code++;
 
     stack.push_back(msg);
+    msg_log.push_back(*msg);
 
     if(!ERflag)
     {
-        msg_log.push_back(*msg);
         TIMED_MSG* new_msg=new TIMED_MSG();
 
         if(show_ack){

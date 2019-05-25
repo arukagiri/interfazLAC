@@ -15,8 +15,8 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
-
     this->setWindowTitle("Generador Eolico");
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     send_queries = true;
 

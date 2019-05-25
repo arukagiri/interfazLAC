@@ -22,6 +22,8 @@ EstadoRed::EstadoRed(QWidget *parent) :
 
     ui->setupUi(this);
 
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
     this->setWindowTitle("Estado de Red");
 
     time_2sec = new QTimer();
