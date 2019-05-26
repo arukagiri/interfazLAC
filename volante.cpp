@@ -5,7 +5,6 @@
 #include <QtGui>
 #include <QTimer>
 #include "PC.h"
-#include <QShortcut>
 #include <QtMath>
 
 volante::volante(QWidget *parent) :
@@ -47,7 +46,7 @@ volante::volante(QWidget *parent) :
     send_qry_references();
     referenceChanged=false;
 
-    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
@@ -56,6 +55,10 @@ volante::volante(QWidget *parent) :
 volante::~volante()
 {
     delete ui;
+    disconnect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+    delete editHotKey;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
 }
 
 void volante::timer_handler(){
@@ -225,7 +228,6 @@ void volante::on_pushButton_stop_clicked()
     mw->agregar_log_sent();
 }
 
-
 void volante::on_pushButton_shutdown_clicked()
 {
     cmd=LACAN_CMD_SHUTDOWN;
@@ -244,7 +246,6 @@ void volante::on_pushButton_comandar_clicked()
 
 void volante::closeEvent(QCloseEvent *e){
     time_2sec->stop();
-    delete time_2sec;
 
     emit volWindowsClosed();
 
