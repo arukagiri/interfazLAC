@@ -73,7 +73,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
     connect(ui->list_ERROR,SIGNAL(currentTextChanged(QString)),this,SLOT(ERR_Changed()));
     connect(ui->list_RESULTADO,SIGNAL(currentTextChanged(QString)),this,SLOT(RESULT_Changed()));
 
-    QMap<QString,LACAN_VAR>* dev_maps = new QMap<QString,LACAN_VAR>[CANTIDAD_DISPOSITIVOS];
+    dev_maps = new QMap<QString,LACAN_VAR>[CANTIDAD_DISPOSITIVOS];
     dev_maps[0] = mw->varmap_gen;
     dev_maps[1] = mw->varmap_vol;
 
@@ -95,6 +95,7 @@ Enviar_Mensaje::Enviar_Mensaje(QWidget *parent) :
 Enviar_Mensaje::~Enviar_Mensaje()
 {
     delete ui;
+    delete dev_maps;
 }
 
 void Enviar_Mensaje::MENSAJE_changed(){

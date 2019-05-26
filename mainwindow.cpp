@@ -460,6 +460,7 @@ void MainWindow::add_new_device(uint16_t source){
     //este sera el nombre con el cual aparezca en toda la plataforma, cuando acepta la venta se redirige al proceso
     //a la siguiente funcion
     AddNewDevDialog *diag=new AddNewDevDialog(this);
+    diag->setAttribute(Qt::WA_DeleteOnClose);
     diag->setModal(true);
     connect(diag, SIGNAL(dev_name_set(QString)), this, SLOT(add_dev_name(QString)));
     diag->show();
@@ -764,6 +765,7 @@ void MainWindow::LACAN_HB_Handler(uint16_t source){
     //Si no se encontro en ningun lado, se pregunta al usuario si quiere agregar este dispositivo
     if(!(devFound||stalkerFound)){
         QMessageBox *addnewdev= new QMessageBox(this);
+        addnewdev->setAttribute(Qt::WA_DeleteOnClose);
         addnewdev->setIcon(QMessageBox::Question);
         addnewdev->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         addnewdev->setDefaultButton(QMessageBox::Yes);
@@ -991,6 +993,7 @@ void MainWindow::handlePortError(QSerialPort::SerialPortError error){
         //emita mas de una vez, con esto evitamos el spamming de ventanas)
         if(!NoUSB){
             QMessageBox *noConnection= new QMessageBox();
+            noConnection->setAttribute(Qt::WA_DeleteOnClose);
             noConnection->setIcon(QMessageBox::Warning);
             noConnection->setStandardButtons(QMessageBox::Ok);
             noConnection->setText("Error con el puerto USB serie");
@@ -1142,6 +1145,7 @@ void MainWindow::do_stuff(){
             if(retval){//Si se puede conectar con el puerto...
                 //Abrimos una ventana para informarle al usuario de la reconexion
                 QMessageBox *connectionRegained= new QMessageBox();
+                connectionRegained->setAttribute(Qt::WA_DeleteOnClose);
                 connectionRegained->setIcon(QMessageBox::Information);
                 connectionRegained->setStandardButtons(QMessageBox::Ok);
                 connectionRegained->setText("Se ha recuperado la conexion con el adaptador");
@@ -1159,6 +1163,7 @@ void MainWindow::do_stuff(){
                     //Avisa al usuario de la incapacidad para reconectar, pero indicando que se volvera a intentar
                     //un cierto numero de veces
                     QMessageBox *connectionLost= new QMessageBox();
+                    connectionLost->setAttribute(Qt::WA_DeleteOnClose);
                     connectionLost->setIcon(QMessageBox::Warning);
                     connectionLost->setStandardButtons(QMessageBox::Ok);
                     connectionLost->setText("Se ha perdido la conexion con el adaptador"

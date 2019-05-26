@@ -129,27 +129,18 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
 
 void volante::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //vol_vo
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //vol_io
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_I_BAT_INST,false,dest);   //vol_ibat
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_INST,false,dest);   //vol_vel
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_TORQ_INST,false,dest);   //vol_ibat
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_INST,false,dest);   //vol_po
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 
     mw->LACAN_Query(LACAN_VAR_MOD,false,dest);   //modo
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 void volante::send_qry_references(){
     mw->LACAN_Query(LACAN_VAR_ISD_SETP,false,dest);   //id_ref
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_STANDBY_W_SETP,false,dest);   //standby_ref
-//    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 void volante::refresh_values(){
@@ -240,6 +231,7 @@ void volante::on_pushButton_shutdown_clicked()
 void volante::on_pushButton_comandar_clicked()
 {
     Comandar *comwin = new Comandar(mw,dest);
+    comwin->setAttribute(Qt::WA_DeleteOnClose);
     comwin->setModal(true);
     comwin->show();
 }
