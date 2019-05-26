@@ -57,11 +57,16 @@ EstadoRed::EstadoRed(QWidget *parent) :
 void EstadoRed::refresh_values(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
-        ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
-        ui->label_gen_velocidad->setText(QString::number(double(gen_vel),'f',2));
-        ui->label_gen_torque->setText(QString::number(double(gen_tor),'f',2));
-        ui->label_gen_modo->setText(detect_mode(gen_mod));
+        if(gen_vo>refValue)
+            ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
+        if(gen_io>refValue)
+            ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
+        if(gen_vel>refValue)
+            ui->label_gen_velocidad->setText(QString::number(double(gen_vel),'f',2));
+        if(gen_tor>refValue)
+            ui->label_gen_torque->setText(QString::number(double(gen_tor),'f',2));
+        if(gen_vo<modRefValue)
+            ui->label_gen_modo->setText(detect_mode(gen_mod));
     }
     else{
         ui->label_gen_vo->setText("----");
@@ -209,6 +214,7 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
 void EstadoRed::on_button_vol_clicked()
 {
     volante *vol_win = new volante(mw);
+    vol_win->setAttribute(Qt::WA_DeleteOnClose);
     vol_win->setModal(true);
     vol_win->show();
 
@@ -221,6 +227,7 @@ void EstadoRed::on_button_vol_clicked()
 void EstadoRed::on_button_gen_clicked()
 {
     Gen_Eolico *gen_win = new Gen_Eolico(mw);
+    gen_win->setAttribute(Qt::WA_DeleteOnClose);
     gen_win->setModal(true);
     gen_win->show();
 
@@ -233,6 +240,7 @@ void EstadoRed::on_button_gen_clicked()
 void EstadoRed::on_button_boost_clicked()
 {
     boost *boost_win = new boost(mw);
+    boost_win->setAttribute(Qt::WA_DeleteOnClose);
     boost_win->setModal(true);
     boost_win->show();
 
@@ -283,13 +291,14 @@ void EstadoRed::on_pushButton_vol_disable_clicked(){
 void EstadoRed::closeEvent(QCloseEvent *e){
     mw->change_ERflag(false);
     time_2sec->stop();
-    delete time_2sec;
     QDialog::closeEvent(e);
 }
 
 EstadoRed::~EstadoRed()
 {
     delete ui;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
 }
 
 

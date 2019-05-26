@@ -51,25 +51,27 @@ private:
     QTimer *time_2sec;
 
     data_can recibed_val;
+    float refValue = -5.0;
+    uint16_t modRefValue = 0xFFFF;
 
-    bool send_queries;
-    float gen_vo;
-    float gen_io;
-    float gen_vel;
-    float gen_tor;
-    uint16_t gen_mod;
+    bool send_queries=false;
+    float gen_vo = refValue;
+    float gen_io = refValue;
+    float gen_vel = refValue;
+    float gen_tor = refValue;
+    uint16_t gen_mod = modRefValue;
 
-    float boost_vo;
-    float boost_io;
-    float boost_vi;
-    float boost_ii;
-    uint16_t boos_mod;
+    float boost_vo = refValue;
+    float boost_io = refValue;
+    float boost_vi = refValue;
+    float boost_ii = refValue;
+    uint16_t boos_mod = modRefValue;
 
-    float vol_vo;
-    float vol_io;
-    float vol_vel;
-    float vol_tor;
-    uint16_t vol_mod;
+    float vol_vo = refValue;
+    float vol_io = refValue;
+    float vol_vel = refValue;
+    float vol_tor = refValue;
+    uint16_t vol_mod = modRefValue;
 
     uint16_t cmd;
     uint16_t dest;

@@ -215,8 +215,9 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     //cuenta tics del microprocesador, obteniendose precision de por lo menos 100us, en este caso se usara cada 0,5s para
     //realizar el envio de los mensajes de manera escpaciada para no saturar el adaptador debido a la diferencia de velocidades
     //CAN y serie
-    msgSender=new SenderThread(this);
+    msgSender=new SenderThread();
     connect(msgSender,SIGNAL(sendTimeout()),this,SLOT(handleSendTimeout()));
+    connect(this, SIGNAL(mustStopSenderThread(bool)), msgSender, SLOT(changeMustRun(bool)));
     msgSender->start();
 
     //Inicializacion de los dispositivos que se muestran como conectados en la lista de la UI, si pasa un tiempo
@@ -304,19 +305,23 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    this->mustStopSenderThread(true);
+    msgSender->quit();
+    msgSender->wait();
     delete msgSender;
     delete periodicTimer;
     delete serial_port;
+    readerth->quit();
+    readerth->wait();
     delete readerth;
-    delete newdev;
 
-    for(auto p : msg_ack){
-        delete p;
+    for(auto pAck : msg_ack){
+        delete pAck;
     }
     msg_ack.clear();
 
-    for(auto p : hb_con){
-        delete p;
+    for(auto pHb : hb_con){
+        delete pHb;
     }
     hb_con.clear();
 
@@ -1202,6 +1207,7 @@ void MainWindow::on_button_COMANDAR_clicked()
     uint16_t dest = verificar_destino();
     if(dest  != LACAN_ID_BROADCAST){
         Comandar *comwin = new Comandar(this,dest);//Creamos la ventana
+        comwin->setAttribute(Qt::WA_DeleteOnClose);
         comwin->setModal(true);//La hacemos modal (no se puede hacer click en otra ventana hasta cerrar esta)
         comwin->show();//Mostramos la ventana
     }
@@ -1215,6 +1221,7 @@ void MainWindow::on_button_CONSULTAR_clicked()
 {
     uint16_t dest = verificar_destino();
     Consultar *conswin = new Consultar(this,dest);
+    conswin->setAttribute(Qt::WA_DeleteOnClose);
     conswin->setModal(true);
     conswin->show();
 }
@@ -1223,7 +1230,7 @@ void MainWindow::on_button_CONSULTAR_clicked()
 void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 {
     Enviar_Mensaje *envwin = new Enviar_Mensaje(this);
-
+    envwin->setAttribute(Qt::WA_DeleteOnClose);
     envwin->setModal(true);
     envwin->show();
 }
@@ -1232,7 +1239,7 @@ void MainWindow::on_button_ENVIAR_MENSAJE_clicked()
 void MainWindow::on_button_ESTADO_RED_clicked()
 {
     EstadoRed *estwin = new EstadoRed(this);
-
+    estwin->setAttribute(Qt::WA_DeleteOnClose);
     estwin->setModal(true);
     estwin->show();    
 }
@@ -1241,6 +1248,7 @@ void MainWindow::on_button_ESTADO_RED_clicked()
 void MainWindow::on_button_ByteSend_clicked()
 {
     ByteSend *bytewin = new ByteSend(this);
+    bytewin->setAttribute(Qt::WA_DeleteOnClose);
     bytewin->setModal(true);
     bytewin->show();
 }

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     OpenPort* op=new OpenPort();
 
     op->show();
-
+    op->setAttribute(Qt::WA_DeleteOnClose);
     return a.exec();
 
 }

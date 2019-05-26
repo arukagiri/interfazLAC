@@ -72,6 +72,7 @@ public:
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
+     void mustStopSenderThread(bool);
 
 public slots:
 

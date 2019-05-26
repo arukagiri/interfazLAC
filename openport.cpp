@@ -73,10 +73,10 @@ void OpenPort::on_pushButton_clicked()
         QMessageBox::warning(this, "Ups",
                                        "No se pudo conectar con el puerto",
                                        QMessageBox::Ok);
-        //return;
     }
 
     MainWindow* mw=new MainWindow(*serial_port);
+    mw->setAttribute(Qt::WA_DeleteOnClose);
     mw->show();
 }
 

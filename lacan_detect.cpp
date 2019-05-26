@@ -246,7 +246,7 @@ QString detect_mode(uint16_t modo){
         return "Modo Protegido";
 
     default:
-        return "No especificada/soportada";
+        return "No especificado/soportado";
 
     }
 }

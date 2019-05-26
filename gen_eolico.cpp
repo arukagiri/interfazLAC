@@ -6,7 +6,6 @@
 #include <QTimer>
 #include "PC.h"
 #include "lacan_limits_gen.h"
-#include <QShortcut>
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
@@ -64,7 +63,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     send_qry_variables();
     referenceChanged = false;
 
-    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
@@ -73,6 +72,10 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 Gen_Eolico::~Gen_Eolico()
 {
     delete ui;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
+    disconnect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+    delete editHotKey;
 }
 
 void Gen_Eolico::timer_handler(){
@@ -352,10 +355,7 @@ void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
 
 void Gen_Eolico::closeEvent(QCloseEvent *e){
     time_2sec->stop();
-    delete time_2sec;
-
     emit genWindowsClosed();
-
     QDialog::closeEvent(e);
 }
 

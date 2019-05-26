@@ -17,6 +17,7 @@ SenderThread::SenderThread(QObject *parent) : QThread(parent)
 }
 
 void SenderThread::run(){
+    mustRun=true;
     double timeout_uint = 1000000/((CAN_BAUD/8)/BIGGEST_CAN_MSG); //Tiempo minimo necesario del lado del CAN para enviar el mensaje mas largo (en us)
     uint timeout_rounded = uint(timeout_uint*1.1); //Se otorga un margen del 10%
 
@@ -25,8 +26,14 @@ void SenderThread::run(){
     std::mutex cv_m;
     std::unique_lock<std::mutex> lk(cv_m);
 
-    while(true){
-        if(!cv.wait_for(lk, timeout, [this](){return send==0;}))
+    while(mustRun){
+        if(!cv.wait_for(lk, timeout, [this](){return send==0;})){
+            QCoreApplication::processEvents();
             emit sendTimeout();
+        }
     }
+}
+
+void SenderThread::changeMustRun(bool stop){
+    mustRun=!stop;
 }
