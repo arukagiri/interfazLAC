@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtGui>
 #include "lacan_limits_vol.h"
+#include <QShortcut>
 
 namespace Ui {
 class volante;
@@ -34,6 +35,7 @@ private:
     MainWindow* mw ;
     uint16_t dest=LACAN_ID_VOLANTE;
     int refValue = -5; // un valor que sea menor que cualquiera de los limites
+    QShortcut* editHotKey;
 
     data_can recibed_val;
 

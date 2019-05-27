@@ -40,11 +40,11 @@ public:
 
      int16_t LACAN_Post(uint16_t  variable, data_can data, uint16_t dest);
 
-     int16_t LACAN_Set(uint16_t variable, data_can data, uint8_t show_ack, uint16_t dest);
+     int16_t LACAN_Set(uint16_t variable, data_can data, bool show_ack, uint16_t dest);
 
-     int16_t LACAN_Query(uint16_t variable,uint8_t show_ack, uint16_t dest);
+     int16_t LACAN_Query(uint16_t variable,bool show_ack, uint16_t dest);
 
-     int16_t LACAN_Do(uint16_t cmd, uint8_t show_ack, uint16_t dest);
+     int16_t LACAN_Do(uint16_t cmd, bool show_ack, uint16_t dest);
 
      void erase_device_ui(uint16_t inactiveDev);
 
@@ -52,7 +52,7 @@ public:
 
      void add_new_device(uint16_t source);
 
-     void change_ERflag(void);
+     void change_ERflag(bool);
 
      void agregar_log_sent();
 
@@ -72,6 +72,7 @@ public:
 
 signals:
      void postforER_arrived(LACAN_MSG msg);
+     void mustStopSenderThread(bool);
 
 public slots:
 
@@ -142,7 +143,7 @@ private:
 public:
     ReaderThread* readerth;
     SenderThread* msgSender;
-    QSerialPort *serial_port;
+    QSerialPort* serial_port;
     //uint16_t dest;
     vector <LACAN_MSG> msg_log;
     uint8_t code=0;
@@ -161,8 +162,8 @@ public:
     QMap <QString,LACAN_VAR> varmap_gen;
     QMap <QString,LACAN_VAR> varmap_vol;
     QMap <QString,LACAN_VAR> varmap_broad;
-    QMap<QString, uint16_t> disp_map;
-    HB_CONTROL newdev;
+    QMap <QString, uint16_t> disp_map;
+    HB_CONTROL* newdev;
     QTimer* periodicTimer;
     deque<LACAN_MSG*> stack;
 };

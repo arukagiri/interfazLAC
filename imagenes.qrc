@@ -24,5 +24,7 @@
         <file>Imagenes/MODO_EDICION.png</file>
         <file>Imagenes/stop2.png</file>
         <file>Imagenes/STOP3.png</file>
+        <file>Imagenes/stop_normal.png</file>
+        <file>Imagenes/stop_press.png</file>
     </qresource>
 </RCC>

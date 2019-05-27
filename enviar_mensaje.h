@@ -36,8 +36,8 @@ private:
     void set_TIPO_VAR();
 
     QMap<QString,LACAN_VAR> varmap;
-    QMap<QString,uint16_t> d_map;
-
+//    QMap<QString,uint16_t> d_map;
+    QMap<QString,LACAN_VAR>* dev_maps;
 private slots:
     void MENSAJE_changed(void);
     void DO_selected(void);

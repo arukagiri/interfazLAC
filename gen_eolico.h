@@ -9,6 +9,7 @@
 #include "mainwindow.h"
 #include <QString>
 #include <QDoubleSpinBox>
+#include <QShortcut>
 
 namespace Ui {
 class Gen_Eolico;
@@ -38,7 +39,7 @@ private:
     bool send_queries;
     QTimer *time_2sec;
     int refValue = -5; // un valor que sea menor que cualquiera de los limites
-
+    QShortcut* editHotKey;
 
     void refresh_mode();
     void refresh_values();

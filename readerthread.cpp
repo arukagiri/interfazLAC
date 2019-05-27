@@ -1,4 +1,5 @@
 #include "readerthread.h"
+#include "assert.h"
 
 ReaderThread::ReaderThread(QSerialPort& serial_port)
 {
@@ -7,7 +8,7 @@ ReaderThread::ReaderThread(QSerialPort& serial_port)
 
 void ReaderThread::handleRead(){
     uint cant_msg=0, msgLeft=0;     //Cantidad de mensajes(enteros) que se extrajeron del buffer, mensajes que quedan por procesar
-    uint16_t first_byte[33]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
+    uint16_t first_byte[2000]={0};    //Array de enteros que guarda la posicion del primer byte de un mensaje en pila, notar que el primer elemento de este vector siempre es 0
     static vector<char> pila;       //Vector utilizado para almacenar los bytes leidos
 
     try {
@@ -18,10 +19,11 @@ void ReaderThread::handleRead(){
         //Se procesa cada mensaje en cada ciclo
         for(uint i=0;i<cant_msg;i++){
             LACAN_MSG msg;
-            char sub_pila[13]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
+            char sub_pila[30]={0}; //Buffer para guardar los mensajes individuales (notar que tiene la longitud maxima posible de un mensaje)
 
             //Copio un mensaje de la pila al buffer(el primero que llego)
             for(uint j=0;j<first_byte[1];j++){
+                assert(j<14);
                 sub_pila[j]=pila.at(j);
             }
 
@@ -51,7 +53,7 @@ void ReaderThread::handleRead(){
 //Verifica los primeros 12bits para verificar que es un mensaje valido, no se contempla la verificacion del final del mensaje
 uint ReaderThread::readport(vector<char> &pila, uint16_t* first_byte, QSerialPort& serial_port){
     qint64 newdataflag = 0;
-    static char buffer[200];
+    static char buffer[20000];
     uint cantBytes=0;
     static uint losedMsgCount = 0;
     uint16_t cant_msg = 0;
@@ -66,6 +68,8 @@ uint ReaderThread::readport(vector<char> &pila, uint16_t* first_byte, QSerialPor
         cantBytes++;
         index_buffer++;        //ya apunta a la siguiente
         uint current_byte = index_buffer - 1;
+
+        assert(current_byte<20000);
 
         try {
             if((buffer[current_byte]&0xFF)==0xAA){

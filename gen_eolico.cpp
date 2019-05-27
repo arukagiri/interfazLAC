@@ -6,7 +6,6 @@
 #include <QTimer>
 #include "PC.h"
 #include "lacan_limits_gen.h"
-#include <QShortcut>
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),
@@ -15,16 +14,16 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     ui->setupUi(this);
     mw = qobject_cast<MainWindow*>(this->parent());
 
-
     this->setWindowTitle("Generador Eolico");
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     send_queries = true;
 
 //Configuracion del CombBox para los Modos
     ui->combo_modo->addItem("Velocidad (0)",QVariant(LACAN_VAR_MOD_VEL));
-    ui->combo_modo->addItem("Potencia (1)",QVariant(LACAN_VAR_MOD_POT));
+    ui->combo_modo->addItem("MPPT (1)",QVariant(LACAN_VAR_MOD_MPPT));
     ui->combo_modo->addItem("Torque (2)",QVariant(LACAN_VAR_MOD_TORQ));
-    ui->combo_modo->addItem("MPPT (3)",QVariant(LACAN_VAR_MOD_MPPT));
+    ui->combo_modo->addItem("Potencia (3)",QVariant(LACAN_VAR_MOD_POT));
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
 
@@ -64,7 +63,7 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     send_qry_variables();
     referenceChanged = false;
 
-    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
@@ -73,6 +72,10 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
 Gen_Eolico::~Gen_Eolico()
 {
     delete ui;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
+    disconnect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+    delete editHotKey;
 }
 
 void Gen_Eolico::timer_handler(){
@@ -165,39 +168,23 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
 
 void Gen_Eolico::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //gen_vo
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //gen_io
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_I_BAT_INST,false,dest);   //gen_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_INST,false,dest);   //gen_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_TORQ_INST,false,dest);   //gen_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_INST,false,dest);   //gen_po
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 void Gen_Eolico::send_qry_references(){
-    mw->LACAN_Query(LACAN_VAR_STATUS,false,dest);   //status
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_SETP,false,dest);   //speed_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_SETP,false,dest);   //po_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_TORQ_SETP,false,dest);   //torq_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IEF_SETP,false,dest);   //ief
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_ISD_SETP,false,dest);   //isd
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_I_BAT_SETP,false,dest);   //lim_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_VO_SETP,false,dest);   //lim_vdc
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 
     mw->LACAN_Query(LACAN_VAR_MOD,false,dest);   //modo
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 //Se actualizan todos los valores del GENERADOR
@@ -243,6 +230,7 @@ void Gen_Eolico::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
@@ -252,6 +240,7 @@ void Gen_Eolico::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
@@ -260,6 +249,7 @@ void Gen_Eolico::on_pushButton_stop_clicked()
 void Gen_Eolico::on_pushButton_comandar_clicked()
 {
    Comandar *comwin = new Comandar(mw,dest);
+   comwin->setAttribute(Qt::WA_DeleteOnClose);
    comwin->setModal(true);
    comwin->show();
    send_queries = false;
@@ -282,6 +272,7 @@ void Gen_Eolico::verificar_mode_changed(){
         modo.var_char[2] = 0;
         modo.var_char[3] = 0;
         mw->LACAN_Set(LACAN_VAR_MOD,modo,false,dest);
+        assert(mw->msg_ack.back());
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->agregar_log_sent();
         referenceChanged = true;
@@ -351,10 +342,7 @@ void Gen_Eolico::on_combo_modo_currentIndexChanged(int index)
 
 void Gen_Eolico::closeEvent(QCloseEvent *e){
     time_2sec->stop();
-    delete time_2sec;
-
     emit genWindowsClosed();
-
     QDialog::closeEvent(e);
 }
 

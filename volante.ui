@@ -304,7 +304,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Usa el atajo Ctrl+E para cambiar este checkbox.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Editable</string>
+         <string>Editable (Ctrl+E)</string>
         </property>
        </widget>
       </item>
@@ -403,7 +403,7 @@
    </property>
    <property name="icon">
     <iconset resource="imagenes.qrc">
-     <normaloff>:/Imagenes/STOP3.png</normaloff>:/Imagenes/STOP3.png</iconset>
+     <normaloff>:/Imagenes/stop_normal.png</normaloff>:/Imagenes/stop_normal.png</iconset>
    </property>
    <property name="iconSize">
     <size>
