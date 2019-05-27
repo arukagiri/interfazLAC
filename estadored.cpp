@@ -13,10 +13,16 @@ EstadoRed::EstadoRed(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EstadoRed)
 {
+    //Como estado de red a su vez envia mensajes cuya respuesta debe mostrarse en si misma es necesaria
+    //una flag que indique que dicha ventana se encuentra abierta y que ademas las respuestas entrantes corresponderan
+    //a los mensajes que ella envio
+    mw = qobject_cast<MainWindow*>(this->parent());
+    mw->change_ERflag(true);
+    connect(mw, SIGNAL(postforER_arrived(LACAN_MSG)), this, SLOT(ERpost_Handler(LACAN_MSG)));
+
     ui->setupUi(this);
 
-    mw = qobject_cast<MainWindow*>(this->parent());
-
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     this->setWindowTitle("Estado de Red");
 
@@ -51,11 +57,16 @@ EstadoRed::EstadoRed(QWidget *parent) :
 void EstadoRed::refresh_values(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
-        ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
-        ui->label_gen_velocidad->setText(QString::number(double(gen_vel),'f',2));
-        ui->label_gen_torque->setText(QString::number(double(gen_tor),'f',2));
-        ui->label_gen_modo->setText(detect_mode(gen_mod));
+        if(gen_vo>refValue)
+            ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
+        if(gen_io>refValue)
+            ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
+        if(gen_vel>refValue)
+            ui->label_gen_velocidad->setText(QString::number(double(gen_vel),'f',2));
+        if(gen_tor>refValue)
+            ui->label_gen_torque->setText(QString::number(double(gen_tor),'f',2));
+        if(gen_vo<modRefValue)
+            ui->label_gen_modo->setText(detect_mode(gen_mod));
     }
     else{
         ui->label_gen_vo->setText("----");
@@ -88,29 +99,29 @@ void EstadoRed::send_qry(){
     if(mw->device_is_connected(LACAN_ID_GEN)){
         dest=LACAN_ID_GEN;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_IO_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_W_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_TORQ_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_MOD, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
         dest=LACAN_ID_VOLANTE;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_IO_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_W_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_TORQ_INST, false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_MOD,false,dest);
-        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
+//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
     }
 }
 
@@ -200,10 +211,10 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
 
 }
 
-
 void EstadoRed::on_button_vol_clicked()
 {
     volante *vol_win = new volante(mw);
+    vol_win->setAttribute(Qt::WA_DeleteOnClose);
     vol_win->setModal(true);
     vol_win->show();
 
@@ -216,6 +227,7 @@ void EstadoRed::on_button_vol_clicked()
 void EstadoRed::on_button_gen_clicked()
 {
     Gen_Eolico *gen_win = new Gen_Eolico(mw);
+    gen_win->setAttribute(Qt::WA_DeleteOnClose);
     gen_win->setModal(true);
     gen_win->show();
 
@@ -228,6 +240,7 @@ void EstadoRed::on_button_gen_clicked()
 void EstadoRed::on_button_boost_clicked()
 {
     boost *boost_win = new boost(mw);
+    boost_win->setAttribute(Qt::WA_DeleteOnClose);
     boost_win->setModal(true);
     boost_win->show();
 
@@ -241,6 +254,7 @@ void EstadoRed::on_pushButton_gen_enable_clicked(){
     dest = LACAN_ID_GEN;
     cmd = LACAN_CMD_ENABLE;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -249,6 +263,7 @@ void EstadoRed::on_pushButton_gen_disable_clicked(){
     dest = LACAN_ID_GEN;
     cmd = LACAN_CMD_DISABLE;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -257,6 +272,7 @@ void EstadoRed::on_pushButton_vol_enable_clicked(){
     dest = LACAN_ID_VOLANTE;
     cmd = LACAN_CMD_ENABLE;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
@@ -266,21 +282,23 @@ void EstadoRed::on_pushButton_vol_disable_clicked(){
     dest = LACAN_ID_VOLANTE;
     cmd = LACAN_CMD_DISABLE;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
 
 
 void EstadoRed::closeEvent(QCloseEvent *e){
-    mw->change_ERflag();
+    mw->change_ERflag(false);
     time_2sec->stop();
-    delete time_2sec;
     QDialog::closeEvent(e);
 }
 
 EstadoRed::~EstadoRed()
 {
     delete ui;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
 }
 
 

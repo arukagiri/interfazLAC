@@ -11,6 +11,7 @@ OpenPort::OpenPort(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowTitle("Config COM");
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
         ui->ports_comboBox->addItem(info.portName());
@@ -72,10 +73,10 @@ void OpenPort::on_pushButton_clicked()
         QMessageBox::warning(this, "Ups",
                                        "No se pudo conectar con el puerto",
                                        QMessageBox::Ok);
-        //return;
     }
 
     MainWindow* mw=new MainWindow(*serial_port);
+    mw->setAttribute(Qt::WA_DeleteOnClose);
     mw->show();
 }
 

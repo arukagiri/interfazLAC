@@ -11,9 +11,8 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_EnableHighDpiScaling);
 
     OpenPort* op=new OpenPort();
-
+    op->setAttribute(Qt::WA_DeleteOnClose);
     op->show();
 
     return a.exec();
-
 }

@@ -5,7 +5,6 @@
 #include <QtGui>
 #include <QTimer>
 #include "PC.h"
-#include <QShortcut>
 #include <QtMath>
 
 volante::volante(QWidget *parent) :
@@ -15,6 +14,8 @@ volante::volante(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowTitle("Volante de Inercia");
+
+    this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
     mw = qobject_cast<MainWindow*>(this->parent());
 
@@ -45,7 +46,7 @@ volante::volante(QWidget *parent) :
     send_qry_references();
     referenceChanged=false;
 
-    QShortcut* editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
+    editHotKey = new QShortcut(QKeySequence(tr("Ctrl+E", "Edit")), this);
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
@@ -54,6 +55,10 @@ volante::volante(QWidget *parent) :
 volante::~volante()
 {
     delete ui;
+    disconnect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
+    delete editHotKey;
+    disconnect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
+    delete time_2sec;
 }
 
 void volante::timer_handler(){
@@ -124,27 +129,18 @@ void volante::VOLpost_Handler(LACAN_MSG msg){
 
 void volante::send_qry_variables(){
     mw->LACAN_Query(LACAN_VAR_VO_INST,false,dest);  //vol_vo
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_IO_INST,false,dest);  //vol_io
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_I_BAT_INST,false,dest);   //vol_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_W_INST,false,dest);   //vol_vel
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_TORQ_INST,false,dest);   //vol_ibat
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_PO_INST,false,dest);   //vol_po
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 
     mw->LACAN_Query(LACAN_VAR_MOD,false,dest);   //modo
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 void volante::send_qry_references(){
     mw->LACAN_Query(LACAN_VAR_ISD_SETP,false,dest);   //id_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->LACAN_Query(LACAN_VAR_STANDBY_W_SETP,false,dest);   //standby_ref
-    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
 }
 
 void volante::refresh_values(){
@@ -209,6 +205,7 @@ void volante::on_pushButton_start_clicked()
 {
     cmd=LACAN_CMD_START;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -217,15 +214,16 @@ void volante::on_pushButton_stop_clicked()
 {
     cmd=LACAN_CMD_STOP;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
-
 
 void volante::on_pushButton_shutdown_clicked()
 {
     cmd=LACAN_CMD_SHUTDOWN;
     mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
@@ -233,13 +231,13 @@ void volante::on_pushButton_shutdown_clicked()
 void volante::on_pushButton_comandar_clicked()
 {
     Comandar *comwin = new Comandar(mw,dest);
+    comwin->setAttribute(Qt::WA_DeleteOnClose);
     comwin->setModal(true);
     comwin->show();
 }
 
 void volante::closeEvent(QCloseEvent *e){
     time_2sec->stop();
-    delete time_2sec;
 
     emit volWindowsClosed();
 
