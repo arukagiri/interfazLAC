@@ -8,6 +8,7 @@
 #include "boost.h"
 #include "lacan_detect.h"
 #include <QString>
+#include "assert.h"
 
 EstadoRed::EstadoRed(QWidget *parent) :
     QDialog(parent),

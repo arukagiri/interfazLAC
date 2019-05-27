@@ -51,7 +51,7 @@ private:
     QTimer *time_2sec;
 
     data_can recibed_val;
-    float refValue = -5.0;
+    float refValue = -9999.0;
     uint16_t modRefValue = 0xFFFF;
 
     bool send_queries=false;

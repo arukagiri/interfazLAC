@@ -6,6 +6,7 @@
 #include "PC.h"
 #include <QWidget>
 #include <QMap>
+#include "assert.h"
 
 Comandar::Comandar(QWidget *parent, uint16_t destEx) :
     QDialog(parent),

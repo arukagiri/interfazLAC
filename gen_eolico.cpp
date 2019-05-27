@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "PC.h"
 #include "lacan_limits_gen.h"
+#include "assert.h"
 
 Gen_Eolico::Gen_Eolico(QWidget *parent) :
     QDialog(parent),

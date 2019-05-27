@@ -24,6 +24,7 @@
 #include "lacan_limits_broad.h"
 #include "lacan_limits_gen.h"
 #include <QThread>
+#include "assert.h"
 
 
 /***Funciones genericas***/
@@ -241,7 +242,7 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_GEN;
-    newdev->hb_status=ACTIVE;
+    newdev->hb_status=INACTIVE;
     hb_con.push_back(newdev);
     //Para futuras implementaciones
 //    newdev=new HB_CONTROL();
@@ -252,8 +253,6 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
     newdev->device=LACAN_ID_VOLANTE;
     newdev->hb_status=INACTIVE;
     hb_con.push_back(newdev);
-
-    add_device_ui(LACAN_ID_GEN); //TEST
 
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
         assert((*it_hb));

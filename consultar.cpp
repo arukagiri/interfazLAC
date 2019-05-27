@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include "assert.h"
 
 Consultar::Consultar(QWidget *parent, uint16_t destMw) :
 

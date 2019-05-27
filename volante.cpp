@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "PC.h"
 #include <QtMath>
+#include "assert.h"
 
 volante::volante(QWidget *parent) :
     QDialog(parent),

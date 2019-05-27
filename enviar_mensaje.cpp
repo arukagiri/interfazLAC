@@ -3,6 +3,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMap>
+#include "assert.h"
 
 enum MENSAJES {DO, SET, QRY, POST, ERR, HB, ACK};
 
