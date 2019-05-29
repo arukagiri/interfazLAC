@@ -66,7 +66,6 @@ void volante::timer_handler(){
     static uint count = 0;
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
-//    if(true){
         if(send_queries){
             ui->pushButton_start->blockSignals(false);
             refresh_values();       //actualiza los valores de la pantalla

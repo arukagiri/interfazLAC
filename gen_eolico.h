@@ -38,7 +38,7 @@ private:
     bool referenceChanged;
     bool send_queries;
     QTimer *time_2sec;
-    int refValue = -5; // un valor que sea menor que cualquiera de los limites
+    int refValue = -9999; // un valor que sea menor que cualquiera de los limites
     QShortcut* editHotKey;
 
     void refresh_mode();

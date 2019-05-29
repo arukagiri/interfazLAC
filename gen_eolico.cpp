@@ -28,6 +28,8 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     connect(ui->combo_modo,SIGNAL(activated(int)),this,SLOT(verificar_mode_changed()));
     on_combo_modo_currentIndexChanged(0);
 
+    ui->combo_modo->setEnabled(true);
+
 //Inicializacion de Labels
     ui->label_gen_io->setText("----");
     ui->label_gen_vo->setText("----");
@@ -280,6 +282,7 @@ void Gen_Eolico::verificar_mode_changed(){
     }
     else{
         actual_mode=previous_mode;
+        ui->combo_modo->setCurrentIndex(ui->combo_modo->findData(QVariant(actual_mode)));
     }
 }
 
