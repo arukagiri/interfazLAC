@@ -217,7 +217,29 @@ void volante::on_pushButton_stop_clicked()
     assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
+
+    QPixmap pixmap(":/Imagenes/stop_press.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
 }
+
+void volante::on_pushButton_stop_released()
+{
+    QPixmap pixmap(":/Imagenes/stop_normal.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
+}
+
+
+void volante::on_pushButton_clicked()
+{
+    cmd=LACAN_CMD_ENABLE;
+    mw->LACAN_Do(cmd,false,dest);
+    assert(mw->msg_ack.back());
+    connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
+    mw->agregar_log_sent();
+}
+
 
 void volante::on_pushButton_shutdown_clicked()
 {
@@ -325,4 +347,6 @@ void volante::changeEditState()
 {
     ui->edit_checkBox->toggle();
 }
+
+
 

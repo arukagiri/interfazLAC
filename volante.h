@@ -96,6 +96,8 @@ private slots:
     void changeEditState();
 
     void on_pushButton_shutdown_clicked();
+    void on_pushButton_clicked();
+    void on_pushButton_stop_released();
 };
 
 #endif // VOLANTE_H

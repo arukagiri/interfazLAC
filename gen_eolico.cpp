@@ -247,6 +247,16 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
+    QPixmap pixmap(":/Imagenes/stop_press.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
+}
+
+void Gen_Eolico::on_pushButton_stop_released()
+{
+    QPixmap pixmap(":/Imagenes/stop_normal.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
 }
 
 void Gen_Eolico::on_pushButton_comandar_clicked()
@@ -484,3 +494,4 @@ void Gen_Eolico::changeEditState()
 {
     ui->edit_checkBox->toggle();
 }
+
