@@ -589,8 +589,7 @@
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>Imagenes/stop_normal.png</normaloff>
-     <activeon>Imagenes/stop_press.png</activeon>Imagenes/stop_normal.png</iconset>
+     <normaloff>Imagenes/stop_normal.png</normaloff>Imagenes/stop_normal.png</iconset>
    </property>
    <property name="iconSize">
     <size>

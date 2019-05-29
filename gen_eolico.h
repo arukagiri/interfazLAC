@@ -108,6 +108,7 @@ private slots:
 
     void changeEditState();
     void on_pushButton_stop_released();
+    void on_pushButton_stop_pressed();
 };
 
 #endif // GEN_EOLICO_H

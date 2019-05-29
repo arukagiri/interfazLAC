@@ -68,6 +68,11 @@ Gen_Eolico::Gen_Eolico(QWidget *parent) :
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
+
+//INICIALIZAR ICONO DEL BOTON STOP
+    QPixmap pixmap(":/Imagenes/stop_normal.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
 }
 
 Gen_Eolico::~Gen_Eolico()
@@ -245,10 +250,15 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 
+}
+
+void Gen_Eolico::on_pushButton_stop_pressed()
+{
     QPixmap pixmap(":/Imagenes/stop_press.png");
     QIcon ButtonIcon(pixmap);
     ui->pushButton_stop->setIcon(ButtonIcon);
 }
+
 
 void Gen_Eolico::on_pushButton_stop_released()
 {
@@ -492,4 +502,5 @@ void Gen_Eolico::changeEditState()
 {
     ui->edit_checkBox->toggle();
 }
+
 

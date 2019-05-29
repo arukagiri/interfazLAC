@@ -51,6 +51,11 @@ volante::volante(QWidget *parent) :
     connect(editHotKey, SIGNAL(activated()), this, SLOT(changeEditState()));
 
     ui->label_edit->setDisabled(true);
+
+//INICIALIZAR ICONO DEL BOTON STOP
+    QPixmap pixmap(":/Imagenes/stop_normal.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
 }
 
 volante::~volante()
@@ -217,10 +222,6 @@ void volante::on_pushButton_stop_clicked()
     assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
-
-    QPixmap pixmap(":/Imagenes/stop_press.png");
-    QIcon ButtonIcon(pixmap);
-    ui->pushButton_stop->setIcon(ButtonIcon);
 }
 
 void volante::on_pushButton_stop_released()
@@ -230,6 +231,12 @@ void volante::on_pushButton_stop_released()
     ui->pushButton_stop->setIcon(ButtonIcon);
 }
 
+void volante::on_pushButton_stop_pressed()
+{
+    QPixmap pixmap(":/Imagenes/stop_press.png");
+    QIcon ButtonIcon(pixmap);
+    ui->pushButton_stop->setIcon(ButtonIcon);
+}
 
 void volante::on_pushButton_clicked()
 {
@@ -347,6 +354,7 @@ void volante::changeEditState()
 {
     ui->edit_checkBox->toggle();
 }
+
 
 
 
