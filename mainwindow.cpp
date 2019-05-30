@@ -251,10 +251,8 @@ MainWindow::MainWindow(QSerialPort &serial_port0,QWidget *parent) :
 //    hb_con.push_back(newdev);
     newdev=new HB_CONTROL();
     newdev->device=LACAN_ID_VOLANTE;
-    newdev->hb_status=INACTIVE;
+    newdev->hb_status=ACTIVE;
     hb_con.push_back(newdev);
-
-    add_device_ui(LACAN_ID_VOLANTE);
 
     for(vector<HB_CONTROL*>::iterator it_hb=hb_con.begin(); it_hb < hb_con.end(); it_hb++){
         assert((*it_hb));
