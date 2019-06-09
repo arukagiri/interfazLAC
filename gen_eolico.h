@@ -107,7 +107,9 @@ private slots:
     void on_edit_checkBox_stateChanged(int checked);
 
     void changeEditState();
+
     void on_pushButton_stop_released();
+
     void on_pushButton_stop_pressed();
 };
 

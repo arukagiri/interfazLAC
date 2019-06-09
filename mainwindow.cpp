@@ -397,7 +397,10 @@ void MainWindow::agregar_log_rec(){
     ABSTRACTED_MSG abs_msg;
     abs_msg=abstract_msg(msg_log.back());
     msg_log.pop_back();
-    if(do_log){
+
+    bool is_interesting = !ERflag && abs_msg.fun!=LACAN_FUN_POST;
+
+    if(do_log && is_interesting){
         if(list_rec_cont>=LOG_LIMIT){  //limite de mensajes
             QMessageBox::StandardButton reply;
             reply=QMessageBox::warning(this,"Limite de log alcanzado.","Se ha superado la cantidad maxima de mensajes del log. Desea iniciar una nueva sesion?\n Se borraran los mensajes de la sesion anterior",QMessageBox::Yes|QMessageBox::No);
@@ -438,6 +441,7 @@ void MainWindow::agregar_log_rec(){
 
         ui->tableWidget_received->scrollToBottom();
     }
+
     agregar_textlog(abs_msg,"Recibido");
 }
 
@@ -712,7 +716,8 @@ void MainWindow::LACAN_ERR_Handler(uint16_t source,uint16_t err_cod){
     QMessageBox::warning(this,"Mensaje de Error recibido",msg_err,QMessageBox::Ok);
 }
 
-//Maneja la llegada de un mensaje del tipo Post
+//Maneja la llegada de un mensaje del tipo Post. Por el momento solo se loguea como cualquier otro mensaje.
+//Se deja este dummy para futuras implementaciones
 void MainWindow::LACAN_POST_Handler(uint16_t source,uint16_t variable, data_can data){}
 
 //Frente la llegada de un ack, esta funcion marca el estado de ack del mensaje correspondiente como recibido
@@ -927,6 +932,8 @@ int16_t MainWindow::LACAN_Query(uint16_t variable, bool show_ack, uint16_t dest)
     stack.push_back(msg);
     msg_log.push_back(*msg);
 
+    //El envio de Queries se loguea unicamente si no se esta en la MainWindows
+    //(tampoco se trackean debido a que en las demas ventanas se envian sincronicamente cada un cierto periodo)
     if(!ERflag)
     {
         TIMED_MSG* new_msg=new TIMED_MSG();

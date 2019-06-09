@@ -65,6 +65,8 @@ void ByteSend::on_sendButton_clicked(){
 
     bool okDLC=true;
 
+    //[[clang::fallthrough]]; es una directiva agregada de Qt q manifesta explicitamente que nuestros cases pueden
+    //no tener break, haciendo una cadena de cases.
     switch(actual_dlc){
         case 8:
             msg.BYTE7=uchar(ui->data7->text().toInt(&okDLC,base));
@@ -107,7 +109,7 @@ void ByteSend::on_sendButton_clicked(){
                 break;
             }
     }
-    if(okDLC&&okID1&&okID2){
+    if(okDLC&&okID1&&okID2){ //si las verificaciones de ID y DLC se realizaron correctamente se envia el mensaje
         serialsend(*(mw->serial_port),msg);
     }else{
         QMessageBox::warning(this,"Error","Error al enviar el mensaje");

@@ -27,7 +27,6 @@ private:
     Ui::Enviar_Mensaje *ui;
     MainWindow* mw ;
 
-    //estos de aca abajo podrian hacerse en una sola variable y que se vayan pisando... pero alta paja
     uint16_t var;
     uint16_t cmd;
     uint16_t err_cod;
@@ -40,14 +39,23 @@ private:
     QMap<QString,LACAN_VAR>* dev_maps;
 private slots:
     void MENSAJE_changed(void);
+
     void DO_selected(void);
+
     void SET_selected(void);
+
     void ACK_selected(void);
+
     void ERR_selected(void);
+
     void QRY_selected(void);
+
     void POST_selected(void);
+
     void HB_selected(void);
+
     void VAR_Changed();
+
     void on_button_ENVIAR_MENSAJE_clicked();
 };
 

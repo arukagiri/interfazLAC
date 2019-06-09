@@ -68,7 +68,7 @@ Comandar::Comandar(QWidget *parent, uint16_t destEx) :
         break;
     }
 
-    SET_selected();
+    SET_selected();//por defecto arranca seleccionado el SET
     connect(ui->radio_DO,SIGNAL(clicked(bool)),this,SLOT(DO_selected()));
     connect(ui->radio_SET,SIGNAL(clicked(bool)),this,SLOT(SET_selected()));
 
@@ -79,12 +79,13 @@ void Comandar::on_button_ENVIAR_clicked()
 {
     uint prevsize= mw->msg_ack.size();
 
-
     if(ui->radio_DO->isChecked()){
         mw->LACAN_Do(cmd,1,dest);
         mw->agregar_log_sent();
     }else if(ui->radio_SET->isChecked()){
         data_can data;
+        //Si es un SET hay que revisar si la variable es el modo, debido a que es la unica que no tiene un valor
+        //numerico que complete la orden, sino que se debe tomar la opcion de a que modo se quiere cambiar
         if (ui->list_VARIABLE->currentText() == "Modo"){
             data.var_char[0]=uchar(mode_set);
             data.var_char[1]=0;
@@ -99,7 +100,8 @@ void Comandar::on_button_ENVIAR_clicked()
                 mw->LACAN_Set(var_set,data,1,dest);
                 mw->agregar_log_sent();
             }
-            else{
+            else{ // En caso de que se quiera mandar algo que no cumple con el requisito minimo para la variable
+                  //se ignora el valor ingresado y se le avisa al usuario que esta por mandar el valor minimo
                 QMessageBox::StandardButton reply;
                 QString str = "El valor minimo para esta variable es ";
                 str.append(QString::number(minimo));

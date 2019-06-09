@@ -100,29 +100,19 @@ void EstadoRed::send_qry(){
     if(mw->device_is_connected(LACAN_ID_GEN)){
         dest=LACAN_ID_GEN;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_IO_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_W_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_TORQ_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_MOD, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
         dest=LACAN_ID_VOLANTE;
         mw->LACAN_Query(LACAN_VAR_VO_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_IO_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_W_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_TORQ_INST, false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
         mw->LACAN_Query(LACAN_VAR_MOD,false,dest);
-//        connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()),  SLOT(verificarACK()));
     }
 }
 
