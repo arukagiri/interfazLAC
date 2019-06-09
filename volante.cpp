@@ -8,6 +8,9 @@
 #include <QtMath>
 #include "assert.h"
 
+//Esta ventana es homologa a la del generador (pero mas simple), referirse
+//a aquella para entender el funcionamiento de esta
+
 volante::volante(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::volante)
@@ -246,7 +249,6 @@ void volante::on_pushButton_clicked()
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
 }
-
 
 void volante::on_pushButton_shutdown_clicked()
 {

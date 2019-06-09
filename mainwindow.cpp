@@ -649,7 +649,6 @@ void MainWindow::filter_on_rec_searchBar(QString filter){
     }
 }
 
-
 /* *Funciones de recepcion de mensajes* */
 
 //En el caso de que llegue a la computadora un mensaje que no tiene sentido, como por ejemplo un SET, DO o QUERY,

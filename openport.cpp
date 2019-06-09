@@ -41,6 +41,7 @@ void OpenPort::on_pushButton_clicked()
     QSerialPort* serial_port=new QSerialPort();
     int retval=false;
     if(ui->autocon_checkBox->isChecked()){
+        //Escanea todos los puertos y se queda con el PRIMERO que puede abrir
         //sale del foreach con retval=1 solo si encontro un puerto que se puede abrir
         foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){//revisamos los puertos habilitados
             serial_port=new QSerialPort(info);
@@ -55,6 +56,7 @@ void OpenPort::on_pushButton_clicked()
             }
         }
     }else{
+        //Conecta con el puerto seleccionado en el combo box
         serial_port=new QSerialPort(ui->ports_comboBox->currentText());
         serial_port->setBaudRate(SERIAL_BAUD);;
         serial_port->setDataBits(QSerialPort::Data8);
@@ -70,18 +72,17 @@ void OpenPort::on_pushButton_clicked()
     this->close();
 
     if(!retval){
-        QMessageBox::warning(this, "Ups",
-                                       "No se pudo conectar con el puerto",
-                                       QMessageBox::Ok);
+        QMessageBox::warning(this, "Ups", "No se pudo conectar con el puerto", QMessageBox::Ok);
+        //Luego de esto se cierra la aplicacion
+    }else{
+        //Si todo salio bien, se abre la MainWindow
+        MainWindow* mw=new MainWindow(*serial_port);
+        mw->setAttribute(Qt::WA_DeleteOnClose);
+        mw->show();
     }
-
-    MainWindow* mw=new MainWindow(*serial_port);
-    mw->setAttribute(Qt::WA_DeleteOnClose);
-    mw->show();
 }
 
-
-
+//Boton de actualizacion de puertos disponibles
 void OpenPort::on_update_pushButton_clicked()
 {
     ui->ports_comboBox->clear();

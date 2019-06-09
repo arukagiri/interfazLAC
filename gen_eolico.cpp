@@ -89,11 +89,13 @@ void Gen_Eolico::timer_handler(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
         if(send_queries){
-            ui->pushButton_start->blockSignals(false);
+            ui->pushButton_start->blockSignals(false);  //lamentablemente la unica solucion que le encontramos al triggereo erroneo de la
+                                                        //señal clicked del boton start fue bloquearla al utilizar el modo editable pero
+                                                        //volver a habilitarla luego de un tiempo
             refresh_values();       //actualiza los valores de la pantalla
             count++;
             send_qry_variables();
-            if(count%5==0||referenceChanged){
+            if(count%5==0||referenceChanged){//si pasan 10seg o cambio alguna referencia (desde la UI), consulto las referencias al dispositivo
                 send_qry_references();
                 referenceChanged = false;
                 count = 0;
@@ -110,6 +112,7 @@ void Gen_Eolico::timer_handler(){
 }
 
 //Me fijo que variable es la que llego, y le asigno el valor correspondiente, a la variable propia de la clase
+//Esta funcion recibe los post que les pasa Estado de red
 void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
 
     int actual_mode_index = -1;
@@ -165,7 +168,7 @@ void Gen_Eolico::GENpost_Handler(LACAN_MSG msg){
             ui->combo_modo->setEnabled(true);
             ui->combo_modo->setCurrentIndex(actual_mode_index);
         }
-        refresh_values();  //ver si va este o el anterior (cambio el 17/3)
+        refresh_values();
         break;
     default:
         break;
@@ -249,9 +252,10 @@ void Gen_Eolico::on_pushButton_stop_clicked()
     assert(mw->msg_ack.back());
     connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     mw->agregar_log_sent();
-
 }
 
+//Para hacer que el boton de stop lo parezca realmente se da esa idea mediante dos imagenes distintas
+//que cambian para cada estado del boton
 void Gen_Eolico::on_pushButton_stop_pressed()
 {
     QPixmap pixmap(":/Imagenes/stop_press.png");
@@ -279,6 +283,8 @@ void Gen_Eolico::on_pushButton_comandar_clicked()
 
 }
 
+//Esta funcion esta conectada con el cambio en el combo box de modo
+//bajo un cambio del modo seleccionado, se confirma con el usuario y se envia el mensaje correspondiente
 void Gen_Eolico::verificar_mode_changed(){
     QMessageBox::StandardButton reply;
     QString str="¿Esta seguro que desea cambiar al modo ";
@@ -304,7 +310,7 @@ void Gen_Eolico::verificar_mode_changed(){
     }
 }
 
-//habilita y deshabilita los campos, dependiendo el modo actual
+//Habilita y deshabilita los campos, dependiendo el modo actual
 void Gen_Eolico::refresh_mode(){
 
     switch (actual_mode) {
@@ -368,14 +374,18 @@ void Gen_Eolico::closeEvent(QCloseEvent *e){
     QDialog::closeEvent(e);
 }
 
+//Para volver a habilitar los queries cuando se cierra comandar(abierta desde esta ventana)
 void Gen_Eolico::focusReturned(){
     send_queries = true;
 }
 
+//Esta funcion se utiliza para procesar los cambios que se quieren realizar mediante un spinbox
 void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, float prevValue)
 {
+    //Se bloquean todas las señales de los spinboxes para prevenir errores
     blockAllSpinSignals(true);
-    //spin->clearFocus();
+    //Se guardan los valores y se envia el mensaje correspondiente luego de confirmar
+    // con el usuario
     data_can data;
     float value = float(spin->value());
     int reply;
@@ -385,17 +395,18 @@ void Gen_Eolico::processEditingFinished(QDoubleSpinBox* spin, uint16_t var, floa
     reply=QMessageBox::question(this,"Valor a enviar",str,QMessageBox::Yes|QMessageBox::No);
 
     if(reply==QMessageBox::Yes){
-        data.var_float = value; //si esta seleccionado algo que no sea modo, manda el valor de spin
+        data.var_float = value;
         mw->LACAN_Set(var, data, 1, dest);
         mw->agregar_log_sent();
-        referenceChanged = true;
+        referenceChanged = true;//flag para triggear el refresco del campo mediante el envio de una query
     }
-    blockAllSpinSignals(false);
-    spin->setValue(double(prevValue));
 
-    ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);
+    spin->setValue(double(prevValue));//se vuelve a mostrar el valor previo hasta que se confirmen los cambios mediante una query
+
+    ui->edit_checkBox->setCheckState(Qt::CheckState::Unchecked);//deshabilitamos el modo editable al terminar
 }
 
+//Bloquea todas las señales de los spinboxes debido a errores de eventos espureos
 void Gen_Eolico::blockAllSpinSignals(bool b){
 
     ui->spin_gen_isd_ref->blockSignals(b);
@@ -407,6 +418,8 @@ void Gen_Eolico::blockAllSpinSignals(bool b){
     ui->spin_gen_torque_ref->blockSignals(b);
 }
 
+//Cuando se recibe la señal de un spinbox(al apretar enter o perder focus) se procede a procesarlo mediante
+//la funcion antes vista, identificando la variable a la cual corresponde
 void Gen_Eolico::on_spin_gen_speed_ref_editingFinished()
 {
     processEditingFinished(ui->spin_gen_speed_ref, LACAN_VAR_W_SETP, speed_ref);
@@ -442,6 +455,9 @@ void Gen_Eolico::on_spin_gen_lim_vdc_ref_editingFinished()
     processEditingFinished(ui->spin_gen_lim_vdc_ref, LACAN_VAR_VO_SETP, lim_vdc);
 }
 
+//Cambia los estados de los widgets correspondientes segun el checkbox de modo editable
+//Principalmente deshabilita los botones y habilita el modo editable de los spinbox,
+//volviendo a habilitar todas sus señales
 void Gen_Eolico::on_edit_checkBox_stateChanged(int checked)
 {
     if(checked)

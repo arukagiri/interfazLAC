@@ -4,6 +4,7 @@
 
 lacan_app::lacan_app(int &argc, char **argv):QApplication(argc, argv){}
 
+//Utilizada unicamente para implementar un catcher global de excepciones en el programa
 bool lacan_app::notify(QObject* receiver, QEvent* event){
     bool done = true;
     try {

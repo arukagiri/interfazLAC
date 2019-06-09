@@ -278,6 +278,8 @@ void Enviar_Mensaje::set_TIPO_VAR(){
 
 void Enviar_Mensaje::on_button_ENVIAR_MENSAJE_clicked()
 {
+    //Tomamos toda la informacion en los widgets para realizar tomar la decision de
+    //que mensaje se debe enviar y completar sus campos
     data_can data;
     data.var_float = float(ui->spin_valor->value());
 

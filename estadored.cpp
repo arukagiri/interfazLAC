@@ -47,18 +47,19 @@ EstadoRed::EstadoRed(QWidget *parent) :
     ui->label_boost_io->setText("----");
     ui->label_boost_modo->setText("Modo: ----");
 
-    send_qry();
-    set_states();
+    send_qry();//se envia una consulta inicial
+    set_states();//se configura el estado inicial de los dispositivos
     connect(time_2sec, SIGNAL(timeout()), this, SLOT(timer_handler()));
-    send_queries = true;
-    time_2sec->start(2000);
+    send_queries = true;//por defecto se deben enviar queries, esto cambia al abrir las demas ventanas para no sobrecargar
+                        //con mensajes redundantes a la red
+    time_2sec->start(2000); // periodo tras el cual se actualizaran valores y se enviaran queries
 
 }
 
 void EstadoRed::refresh_values(){
 
     if(mw->device_is_connected(LACAN_ID_GEN)){
-        if(gen_vo>refValue)
+        if(gen_vo>refValue)//chequeo de valores correctos antes de cambiar la UI
             ui->label_gen_vo->setText(QString::number(double(gen_vo),'f',2));
         if(gen_io>refValue)
             ui->label_gen_io->setText(QString::number(double(gen_io),'f',2));
@@ -78,11 +79,21 @@ void EstadoRed::refresh_values(){
     }
 
     if(mw->device_is_connected(LACAN_ID_VOLANTE)){
-        ui->label_vol_vo->setText(QString::number(double(vol_vo),'f',2));
-        ui->label_vol_io->setText(QString::number(double(vol_io),'f',2));
-        ui->label_vol_velocidad->setText(QString::number(double(vol_vel),'f',2));
-        ui->label_vol_torque->setText(QString::number(double(vol_tor),'f',2));
-        ui->label_vol_modo->setText(detect_mode(vol_mod));
+        if(vol_vo>refValue){
+            ui->label_vol_vo->setText(QString::number(double(vol_vo),'f',2));
+        }
+        if(vol_io>refValue){
+            ui->label_vol_io->setText(QString::number(double(vol_io),'f',2));
+        }
+        if(vol_tor>refValue){
+            ui->label_vol_torque->setText(QString::number(double(vol_tor),'f',2));
+        }
+        if(vol_vel>refValue){
+            ui->label_vol_velocidad->setText(QString::number(double(vol_vel),'f',2));
+        }
+        if(vol_mod<modRefValue){
+            ui->label_vol_modo->setText(detect_mode(vol_mod));
+        }
     }
     else{
         ui->label_vol_vo->setText("----");
@@ -136,6 +147,10 @@ void EstadoRed::set_states(){
 
 }
 
+//La ventana de Estado de Red funciona como un redireccionador de mensajes,
+//sabiendo que esta esta abierta siempre que haya una ventana de dispositivo abierta,
+//recibimos los post desde la MainWindows y decidimos a que dispositivo pertenece, pasandole los mensajes
+//en caso de no haber ventana de dispositivo abierta la consume ella misma.
 void EstadoRed::ERpost_Handler(LACAN_MSG msg){
 
     uint16_t source=msg.ID&LACAN_IDENT_MASK;
@@ -204,13 +219,17 @@ void EstadoRed::ERpost_Handler(LACAN_MSG msg){
 
 void EstadoRed::on_button_vol_clicked()
 {
+    //Abrimos la ventana
     volante *vol_win = new volante(mw);
-    vol_win->setAttribute(Qt::WA_DeleteOnClose);
+    vol_win->setAttribute(Qt::WA_DeleteOnClose);//para liberar memoria al cerrar ventanas
     vol_win->setModal(true);
     vol_win->show();
 
+    //Dejamos de enviar mensajes en Estado de red
     send_queries = false;
 
+    //Conectamos con las señales pertinentes para lograr la correcta distribucion de mensajes
+    //restituyendo el envio de queries en esta ventana de ser necesario (al cerrar una ventana de dispositivo)
     connect(vol_win, SIGNAL(volWindowsClosed()), this, SLOT(handle_dispWindowsClosed()));
     connect(this, SIGNAL(postforVOL_arrived(LACAN_MSG)), vol_win, SLOT(VOLpost_Handler(LACAN_MSG)));
 }
@@ -240,7 +259,8 @@ void EstadoRed::on_button_boost_clicked()
    // connect(this, SIGNAL(postforBOOST_arrived(LACAN_MSG)), boost_win, SLOT(GENpost_Handler(LACAN_MSG)));
 }
 
-
+//Envia al dispositivo correspondiente la señal para que se encienda (debe tener correctamente configuradas las interrupciones
+//para que esto sea posible)
 void EstadoRed::on_pushButton_gen_enable_clicked(){
     dest = LACAN_ID_GEN;
     cmd = LACAN_CMD_ENABLE;
@@ -280,6 +300,7 @@ void EstadoRed::on_pushButton_vol_disable_clicked(){
 
 
 void EstadoRed::closeEvent(QCloseEvent *e){
+    //Anunciamos a la Mainwindows que se cerro esta ventana y detenemos el timer
     mw->change_ERflag(false);
     time_2sec->stop();
     QDialog::closeEvent(e);

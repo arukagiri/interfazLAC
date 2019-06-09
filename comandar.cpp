@@ -102,6 +102,7 @@ void Comandar::on_button_ENVIAR_clicked()
             }
             else{ // En caso de que se quiera mandar algo que no cumple con el requisito minimo para la variable
                   //se ignora el valor ingresado y se le avisa al usuario que esta por mandar el valor minimo
+                  //si el valor del spin no cumple con el minimo, pasa a tener su valor minimo cuando pierde el focus
                 QMessageBox::StandardButton reply;
                 QString str = "El valor minimo para esta variable es ";
                 str.append(QString::number(minimo));
@@ -118,7 +119,7 @@ void Comandar::on_button_ENVIAR_clicked()
         QMessageBox::warning(this,"Ups... Algo salio mal","Ninguna de las dos opciones seleccionadas");
     }
 
-    if(mw->msg_ack.size()>prevsize){
+    if(mw->msg_ack.size()>prevsize){ //si hay un mensaje que nuevo que necesita ack, se conecta su timer con un slot de verificacion
         assert(mw->msg_ack.back());
         connect(&(mw->msg_ack.back()->ack_timer),SIGNAL(timeout()), mw, SLOT(verificarACK()));
     }
@@ -150,7 +151,7 @@ void Comandar::SET_VAR_Changed(){               //habilita y deshabilita los cam
         SET_ACTUAL_VAR();}
 }
 
-void Comandar::SET_ACTUAL_VAR(){
+void Comandar::SET_ACTUAL_VAR(){ //actualiza la variable seleccionada en el momento
    QString var_selectedstr;
    var_selectedstr=ui->list_VARIABLE->currentText();
    var_set = varmap[var_selectedstr].setp;
