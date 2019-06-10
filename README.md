@@ -7,10 +7,9 @@ El mismo consiste en una interfaz de usuario gráfica (GUI) que permite la conex
 Esta red CAN interconecta a su vez la red de energía electrica del laboratorio, permitiendo consultar y comandar los dispositivos que la componen para su fácil administración.
 
 ## Clonación del repositorio y uso
-
 Principalmente este repositorio esta orientado a dar material de referencia a futuros Ingenieros de la facultad que necesiten realizar una GUI para sus proyectos.
 
-El proyecto debería de funcionar sin mucho problema, salvo la verificación de ciertos requisitos.
+El proyecto debería de funcionar sin mucho problema, salvo la verificación de ciertos requisitos. Los archivos de *source*, *header* y *GUI* se encuentran bajo el directorio fuente, pero esto no es problema debido a que Qt Creator se encarga de dividirlos en carpetas para su facil manejo.
 
 ### Prerrequisitos
 
