@@ -584,6 +584,26 @@
     </item>
    </layout>
   </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>BUS CC 300V</string>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="imagenes.qrc"/>
