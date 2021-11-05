@@ -36,7 +36,7 @@ Para realizar el *deployment* de la aplicación en Windows debe ejecutarse el ap
 ## Autores
 
 * **Lucas Sandoz** - *Trabajo inicial* - [AraragiRukasu](https://github.com/AraragiRukasu)
-* **Agustín Baffo** - *Trabajo inicial* - [Buffer23](https://github.com/Baffer23)
+* **Agustín Baffo** - *Trabajo inicial* - [AgustinBaffo](https://github.com/AgustinBaffo)
 
 Ver lista de [contribuidores](https://github.com/your/project/contributors) que participaron en el proyecto.
 
